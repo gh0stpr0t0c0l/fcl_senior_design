@@ -1,0 +1,76 @@
+\documentclass[12pt, titlepage]{article}
+\usepackage{hyperref}
+
+\title{Feedback Controls Lab Weekly Report \\ \normalsize{Week 1}}
+\author{Aydan Vissing, Brady Schick, Gabriel Southwell, Simon Ross}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Aydan Vissing - CFO (5 hrs spent)}
+
+We started the week on Wednesday, where we had our first student team meeting. I set up some talking points as we were starting the meeting and took notes throughout. After the main portion of the meeting, I took an hour to look around Google and Amazon for a possible drone. Simon nor I were able to find anything definitively good for our application. Before our second meeting, this time with Dr. Fredette, I set up some more talking points and questions for her and her desires for the project. At the meeting, I took notes. Later that week, Saturday, I watched the desired videos and did more research on quadcopters/drones, there doesn’t seem to be any particular kit or drone available with a basic search, we’ll have to do some better keyword searching for better results. 
+
+\section*{Brady Schick - CTO (5 hrs spent)}
+
+We met as a group on Thursday for about two hours to discuss possible directions for our project and to come up with some questions for Dr. Fredette concerning the project details and requirements. On Friday, our team met with Dr. Fredette for an hour to discuss the project requirements, present possible ideas, and to further solidify ideas of the possible directions for our project. Individually, I spent two hours on Saturday completing the Basic Controllers Mini Project to improve my understanding of PID controllers.
+
+\section*{Gabriel Southwell - CSO (5 hrs spent)}
+
+This week we began our senior design project. We started with a team meeting on Thursday where we discussed some about the project but we really did not know much about the scope or goal of the project. On Friday we met with Dr. Fredette to discuss more of the goals for the project and what we are aiming to teach. \\
+
+	My understanding of the project right now is we are going to create a lab system that teaches a few important concepts of controls. We hope to be able to explore PID control hovering and replicable disturbances, demonstrate step response by changing hovering altitudes, and track some kind of marker on the ground. \\
+
+	I spent a lot of time this weekend researching and thinking about the project as a whole and how best to achieve these goals. We could go with a pre-made drone or a learning kit drone, but that presents some issues. I was unable to find any drone kits that would really work for our goals. I also struggled with finding pre-made drones that allow the kind of programming that we would want. I would come across a recommendation from a forum or video and then find the drone out of stock or discontinued. For this reason I am recommending that the team seek to design our own drone kit for the students to build themselves. \\
+	
+	The hobby drone space is huge and has a lot of resources. I think building  our own kits will be easier than it sounds. What we will need for a good kit: \\
+	
+\begin{itemize}
+\item A frame
+	\begin{itemize}
+	\item Small and ducted “whoop” frames are readily available online and STLs for printing \href{https://www.printables.com/model/538153-basher-tiny-whoop-frame}{are available online}
+	\end{itemize}
+\item 4 motors
+	\begin{itemize}
+	\item Going with a standard drone platform lets us pick \href{https://microdcmotors.com/product/7mm-coreless-dc-motor-16mm-type-model-nfp-d0716}{common motors} for that platform
+	\item This will help with availability and price per kit
+	\end{itemize}
+\item Battery
+	\begin{itemize}
+	\item Rc batteries are cheap and common
+	\item \href{https://www.towerhobbies.com/product/3.7v-1s-400mah-lipo-battery-molex-51005/HBZ-1266.html}{These} probably are good for 5 or so minutes of flight
+	\end{itemize}		
+\item Propellers
+	\begin{itemize}
+	\item \href{https://newbeedrone.com/products/hqprop-35mmx3-tri-blade-35mm-micro-whoop-prop-1mm-shaft-4-pack}{Widely available for cheap}
+	\end{itemize}
+\item Sensors
+	\begin{itemize}
+	\item Not sure what all we need yet lol
+	\item Probably cheap
+	\end{itemize}
+\item Programmable flight controller (two options right now)
+	\begin{itemize}
+	\item \href{https://docs.zephyrproject.org/latest/boards/weact/stm32f405_core/doc/index.html}{STM32F405}
+		\begin{itemize}
+		\item Very common choice for small hobby drones
+		\item Lots of software support for building drones
+		\item Only one core (Not sure if pro or con lol)
+		\end{itemize}
+	\item \href{https://esp32s3.com/}{ESP32-S3}
+		\begin{itemize}
+		\item Less command for drones; more common everywhere else
+		\item Networking for wireless data logging and maybe even computer control
+		\item 2 cores really fast cores (might be a pro, might be a con)
+		\end{itemize}
+	\item Dev boards for both are <\$10
+	\item Leaning towards the STM and adding a networking module for the improved software support
+	\end{itemize}
+\end{itemize} 
+
+\section*{Simon Ross - CEO (6 hrs spent)}
+
+This week served to lay much of the groundwork for the Feedback Controls Lab senior design project. As a team, we began researching and planning what the rest of the semester would look like, beginning with the assignment of roles for our team. For research, we all watched various videos on PID controllers, and discussed with Dr. Fredette what the outcomes of the lab should be. Aydan and I did some preliminary research into what types of drones we should consider buying, with little result so far. Additionally, we began compiling a list of lab topics that are important for our project to cover in a classroom environment. The most important breakthrough we made was the realization that with a drone we could command various positional changes and record the actual response of the system, creating a space for many different controls problems. Much of my personal work this week has gone into researching PID controllers to gain a basic understanding of what we’re working with for the lab. For the upcoming week, we will continue to research potential drone options, work on our project proposal, and consider how practical lab activities can be accomplished through this project.
+
+\end{document}
