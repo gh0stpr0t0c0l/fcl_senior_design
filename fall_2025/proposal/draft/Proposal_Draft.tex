@@ -1,4 +1,6 @@
 \documentclass[12pt, titlepage]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
 %\usepackage{hyperref}
 
 \title{Feedback Controls Lab Project Proposal \\ \normalsize{EGEE 4810 - Senior Design}}
@@ -188,6 +190,13 @@ This project is very software heavy, but hardware is going to inform software de
 
 \section{Project Schedule}
 The Gantt chart below proposes a notional schedule for the important project checkpoints, including the milestones discussed in the section below. Though likely not perfect, this schedule will keep the project focused, providing tasks and elements to consider weekly as the project progresses.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\textwidth]{../gantt/gantt.png}
+  \caption{Project Gantt Chart Schedule}
+  \label{fig:gantt}
+\end{figure}
+
 
 \section{Milestones}
 
@@ -231,6 +240,35 @@ These tests are to verify that the drone and surrounding systems are able to ful
 
 \section{Budget}
 The budget below describes how we intend to use funds in constructing a prototype. Under this paradigm, we will be far under our proposed budget of \$600. However, this budget does not account for mistakes in prototyping and drastic changes to the program. Instead, it serves as a theoretical cost for the test and evaluation of a single prototype drone, while more funds may be directed towards redundancy, error correction, and modifications to our initial plans.
-
+\begin{table}[h!]
+\centering
+\caption{Unit Budget for Feedback Controls Lab Prototype}
+\label{tab:budget}
+\begin{tabular}{||c|c|c|c||}
+\hline 
+\hline
+\textbf{Component/Expense} & \textbf{Price} & \textbf{Order Date} & \textbf{Comments} \\ 
+\hline 
+Prototype Microcontroller & \$0 & N/A & Dr. Kohl gave us one to borrow \\
+\hline 
+Perfboard & \$10 & 15-Sep & Large Perfboard for redundancy \\ 
+\hline 
+Motor Control Circuit & \$5 & 15-Sep & 2 H-bridges \\ 
+\hline 
+Motors & \$40 & 15-Sep & 4 motors \\ 
+\hline 
+Body & \$0 & N/A & 3D printed \\ 
+\hline 
+Props & \$10 & 15-Sep & As many props as we can get \\ 
+\hline 
+Battery & \$10 & 15-Sep & \textasciitilde 500mah Lithium \\ 
+\hline 
+PCB(s) & \$75 & 15-Nov & 3 boards for redundancy \\ 
+\hline 
+\textbf{Total Cost} & \textbf{\$150} &  &  \\ 
+\hline 
+\hline
+\end{tabular} 
+\end{table}
 
 \end{document}
