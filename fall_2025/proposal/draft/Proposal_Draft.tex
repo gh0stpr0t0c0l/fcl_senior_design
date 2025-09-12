@@ -34,6 +34,7 @@ This project proposal outlines our intent to reimaginine the Feedback Controls L
 
 This project seeks to redefine the Cedarville Feedback Controls Laboratory experience by designing a quadcopter drone to use as an entertaining platform to teach classroom concepts.
 
+
 \section{Background}
 The current lab used for EGME-4660 uses the Feedback Analogue Unit 33-110 and the Feedback Mechanical Unit 33-100. Although the labs using the equipment teach the material necessary, they are often tedious. The user interface to conduct the experiments is a circuit board with several banana plug chords, which may seem boring and irrelevant to the mechanical engineering students. In addition, adjusting the power supply or wiring the power incorrectly can result in damage to the equipment, often requiring parts to be replaced. We plan to improve the lab experience by replacing the current equipment with drones that can be reprogrammed for the purposes of the lab with a friendly user interface.
 \section{Objectives}
@@ -67,7 +68,7 @@ The current lab used for EGME-4660 uses the Feedback Analogue Unit 33-110 and th
   \item[$\Rightarrow$] Soft Requirements:
   \begin{itemize}
     \item Sturdy frame
-    \item Conveniently swappable and rechargeable batteries
+    \item Conviently swappable and rechargable batteries
   \end{itemize}
 \end{itemize}
 \subsubsection{Software Requirements}
@@ -106,7 +107,46 @@ To aid in the organization of this project, we have outlined four officer design
 Again, these roles simply provide a basic structure for the team so that essential duties are not forgotten - each member will likely have a large amount of overlap in their duties in the project.
 
 \section{Strategy}
-Hardware and Software
+This project is very software heavy, but hardware is going to inform software decisions. All members will participate in the selection and planning of hardware and software, but the research will be led by the members who have the most experience and knowledge in those areas. The team aims to select parts that will allow the drone to sense its environment and produce repeatable results in a lab setting.
+
+\subsection{Hardware}
+\begin{enumerate}
+
+\item Microcontroller
+\begin{itemize}
+\item Very important component because other hardware and software selections depend on what microcontroller is chosen
+\item Needs to support a good ammount of I/O for sensors and motors
+\item Needs to be fast to support multiple PID loops
+\item Could have onboard networking to support wireless telemetry
+\end{itemize}
+
+\item Custom PCB
+\begin{itemize}
+\item Needs to combine all important components into a simple, pre assembled package
+\item Could be designed to also be drone frame
+\end{itemize}
+
+\item Inertial Measurement Unit (IMU)
+\begin{itemize}
+\item Needs to accurately sense rotation in 3 axes for calculating error
+\end{itemize}
+
+\item Motors and Motor Controllers
+\begin{itemize}
+\item Need to be powerful but with few componenets
+\item If the drone kits are small enough, brushed motors would be a good choice
+\end{itemize}
+
+
+ 
+
+\end{enumerate}
+
+
+\subsection{Software}
+\begin{enumerate}
+\item computer :)
+\end{enumerate}
 
 \section{Project Schedule}
 
@@ -123,7 +163,7 @@ Every Friday at 11:00 AM, weekly team meeting will be held with the project advi
   
 On December 12th, a design report will be submitted to document the progress that has been made up to that point.
   
-At the end of April, a final report will be submitted to document the entirety of the project.
+At the end of April, a final report will be submitted to document the entirity of the project.
 
 \section{Testing Plan}
 What things do we want to be able to test
