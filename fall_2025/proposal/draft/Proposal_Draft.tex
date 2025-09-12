@@ -21,7 +21,7 @@
 
 %FIXME improve abstract
 \begin{abstract}
-This project proposal outlines our intent to reimaginine the Feedback Controls Laboratory experience at Cedarville University. The main goals of this project are to make the lab experience more engaging and relevant for students, simpler to work with, more reliable than previous solutions, and more cost-effective. To achieve these ends, we plan to design a cheap drone platform that is capable of communicating fundamental feedback controls concepts with a simple software user interface. We will start by selecting hardware components that meet our end goals, creating a hardware prototype. Once this prototype is complete, we will program, test, and modify it until we are satisfied with the platform. Finally, we will refine a final design and software solution including simple choices for the user that aid learning. If this is completed with time to spare, we will refine the experience, adding features and focusing the lab experience. Ultimately, we hope to transform the way students look at Feedback Controls class, relating classwork to concepts they are familiar with and making lab time enjoyable.
+This project proposal outlines our intent to reimaginine the Feedback Controls Laboratory experience at Cedarville University. The main goals of this project are to make the lab experience more engaging and relevant for students, simpler to work with, more reliable than previous solutions, and more cost-effective. To achieve these ends, we plan to design a cheap drone platform that is capable of communicating fundamental feedback controls concepts with a simple software user interface. We will start by selecting hardware components that meet our end goals, creating a hardware prototype. Once this prototype is complete, we will program, test, and modify it until we are satisfied with the platform. Finally, we will refine a final design and software solution including simple choices for the user that aid learning. If this is completed with time to spare, we will refine the experience, adding features and focusing the lab experience. Ultimately, we hope to transform the way students view Feedback Controls lab, relating classwork to concepts they are familiar with and making lab time enjoyable.
 \end{abstract}
 
 \newpage
@@ -35,7 +35,9 @@ This project proposal outlines our intent to reimaginine the Feedback Controls L
 This project seeks to redefine the Cedarville Feedback Controls Laboratory experience by designing a quadcopter drone to use as an entertaining platform to teach classroom concepts.
 
 \section{Background}
-The current lab used for EGME-4660 uses the Feedback Analogue Unit 33-110 and the Feedback Mechanical Unit 33-100. Although the labs using the equipment teach the material necessary, they are often tedious. The user interface to conduct the experiments is a circuit board with several banana plug chords, which may seem boring and irrelevant to the mechanical engineering students. In addition, adjusting the power supply or wiring the power incorrectly can result in damage to the equipment, often requiring parts to be replaced. We plan to improve the lab experience by replacing the current equipment with drones that can be reprogrammed for the purposes of the lab with a friendly user interface.
+
+The current lab experience for EGME-4660 uses the Feedback Analogue Unit 33-110 and the Feedback Mechanical Unit 33-100. Although the labs using the equipment do cover the desired content, they are often tedious and perhaps confusing to new users, especially users unfamiliar with Feedback Controls concepts. The user interface to conduct the experiments is a circuit board with nodes and banana plug cords. The user can connect these nodes to create feedback circuits whose effect is then shown using the mechanical unit. As mentioned, understanding what is happening between the units (and even in the electrical circuits) can be challenging for students. This causes the applications of the class material to  seem boring and irrelevant, especially for mechanical engineering students who may not have extensive electronics background. In addition, the equipment is old and fragile - adjusting the power supply or wiring the power incorrectly can result in damage to the equipment, often requiring parts to be replaced. Since the equipment is quite expensive, the current repair method has been de-soldering and soldering components by hand. We plan to improve the lab experience by replacing the current equipment with cheap and robust drones that can be reprogrammed for the purposes of the lab with a user-friendly interface. In this way, the instructor can choose the complexity of the tasks given to students for the lab, instead of making them start from ground zero.
+
 \section{Objectives}
 \subsection{Marketing Requirements}
 \begin{itemize}
@@ -76,20 +78,21 @@ The current lab used for EGME-4660 uses the Feedback Analogue Unit 33-110 and th
   \begin{itemize}
     \item PID controller logic so drone can fly
     \item Memory for data collection
-    \item User-friendly GUI for programming
+    \item User-friendly interface for programming
     \item Software to plot collected data
   \end{itemize}
   \item[$\Rightarrow$] Soft Requirements:
   \begin{itemize}
     \item Wireless communication
+    \item Intuitive GUI
   \end{itemize}
 \end{itemize}
 \subsection{Constraints}
 \begin{itemize}
-  \item Labs conducted in ENS 145
-  \item \$600 budget
-  \item Lab safety
-  \item No MATLAB
+  \item The laboratory experiments must be able to be conducted in ENS 145 at Cedarville University.
+  \item The total cost of design, test, and evaluation must not exceed \$600.
+  \item The final laboratory experience must not endanger the safety of the students.
+  \item The laboratory experience must not use MATLAB.
 \end{itemize}
 
 \section{Officer Designations}
