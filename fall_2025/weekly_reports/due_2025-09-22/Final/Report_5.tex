@@ -1,0 +1,43 @@
+\documentclass[12pt, titlepage]{article}
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=magenta]{hyperref}
+
+\title{Feedback Controls Lab Weekly Report \\ \normalsize{Week 5}}
+\author{Aydan Vissing, Brady Schick, Gabriel Southwell, Simon Ross}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Aydan Vissing (8 hrs spent)}
+
+Most of my time this week was spent on testing Dr. Fredette’s new lab for Controls so I can better understand what the learning goals should be for the drone labs. I also spent a lot of time trying to learn how to use the ESP software and programming tools, after Gabe showed me how to download it. 
+
+\section*{Brady Schick (7.5 hrs spent)}
+
+This week was mainly spent on developing and organizing the mathematical model individually and with Simon. The current mathematical model with details is in a PowerPoint which has been saved to the GitHub. We also had our weekly meeting on Friday to discuss our current progress and our plan to order parts.
+
+\section*{Gabriel Southwell (8.5 hrs spent)}
+
+Most of my week on senior design was spent working with the ESP32 that I got from Dr. Kohl. I learned a lot about writing apps for it and also spent a long time troubleshooting the development environment. I could not get it to flash for the life of me, but now I think I know enough to set up development environments for the esp for other members of the team. The main esp skill that I learned this week was about how to use FreeRTOS. This coming week I hope to work on using i2c to communicate with and IMU and maybe also work some on logging the data on the EPROM.
+
+We worked some on finding parts to order for prototyping the drone hardware which will give me more to work to on.
+
+I also sat down and wrote a document for the repository about the software stack. This document contains my current, working plan for both firmware and desktop application.
+
+
+\section*{Simon Ross (8 hrs spent)}
+
+Overall, I think our progress on the project this week has been good. There are still many unknowns in how this is all going to work out, but as you'll see below, we are working to eliminate as many of these unknowns as possible. So far we are on schedule, with the exception of decorating our corner of the Senior Design Lab. Additionally, the mathematical model is in a limbo state, with no real-world parameters to plug in yet. This next week will continue development of the model. 
+
+This past week, I worked on a bunch of scattered components toward the final goal. I think my most important contribution was posting a picture of Ben Paxson on the Senior Design Lab door with the caption "Se\~nor Design". In all seriousness, I also worked on the mathematical model for the drone with Brady, collected frame design ideas, attended the Excel workshop, and helped select parts for ordering. 
+
+As mentioned, the mathematical model is pretty, but will need some real world testing. We plan to implement the model in MATLAB with a sample transfer function to test our work. The current model flow is gaining the necessary PID'ed pitch, roll, and yaw values and then combining these with a heavily weighted user set point altitude (from the user PID). Finally, we will throw this result to the drone as PWM signals.  This is highly over-simplified, but hopefully presents a basic thought process. 
+
+The frame of the drone will likely be super simple - I researched many ideas this week, and I think it really is as simple as 4 cylinders connected with some crossbeams and the PCB screwed on top (and some sort of motor and battery mount solutions). Aydan and I will communicate to get this designed in CAD. 
+
+Finally, I did a significant amount of research on a very elusive topic: how much thrust do we need to fly? Since the weight of the drone is not yet defined, it's probably foolish to think that my calculations are anything close to accurate, but they and some ChatGPT guestimates indicate that the 720 coreless brushed motors presented by Gabe will be a good start for our testing. They will either have just the right amount of thrust or be slightly underpowered (but still functional). From this point, we can decide if an upgrade is needed. Click \href{https://github.com/gh0stpr0t0c0l/fcl_senior_design/blob/main/fall_2025/notes/2025_9_21_Weight_Estimate.md}{here} to see the reasoning behind this decision, along with the research findings.
+
+This upcoming week has a few large tasks to accomplish. I personally need to make sure the drone frame gets designed in CAD (likely with Aydan's assistance). I'll also try to spin up the mathematical model in Simulink with Brady for some testing. As a team, we need to decorate our corner of the Lab and work on implementing the mathematical model in code. It'll definitely be a challenge to get all of this done, but I think we stand a chance.
+
+
+\end{document}
