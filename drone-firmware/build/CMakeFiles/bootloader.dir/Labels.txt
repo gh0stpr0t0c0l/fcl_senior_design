@@ -1,0 +1,13 @@
+# Target labels
+ bootloader
+# Source files and their labels
+/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build/CMakeFiles/bootloader
+/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build/CMakeFiles/bootloader.rule
+/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build/CMakeFiles/bootloader-complete.rule
+/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
+/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule
