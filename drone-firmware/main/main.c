@@ -12,8 +12,62 @@
 #include "driver/gpio.h"
 #include "esp_system.h"
 #include "sdkconfig.h"
+#include "mpu6050.h"
+#include "driver/i2c.h"
+
+// i2c declarations
+#define I2C_MASTER_SCL_IO           22
+#define I2C_MASTER_SDA_IO           21
+#define I2C_MASTER_NUM              I2C_NUM_0
+#define I2C_MASTER_FREQ_HZ          100000
+#define I2C_MASTER_TX_BUF_DISABLE   0
+#define I2C_MASTER_RX_BUF_DISABLE   0
 
 #define BLINK_GPIO 2
+
+// used to init i2c for all devices
+static void i2c_master_init()
+{
+    i2c_config_t conf = {
+        .mode = I2C_MODE_MASTER,
+        .sda_io_num = I2C_MASTER_SDA_IO,
+        .scl_io_num = I2C_MASTER_SCL_IO,
+        .sda_pullup_en = GPIO_PULLUP_ENABLE,
+        .scl_pullup_en = GPIO_PULLUP_ENABLE,
+        .master.clk_speed = I2C_MASTER_FREQ_HZ,
+    };
+    i2c_param_config(I2C_MASTER_NUM, &conf);
+    i2c_driver_install(I2C_MASTER_NUM, conf.mode,
+                       I2C_MASTER_RX_BUF_DISABLE,
+                       I2C_MASTER_TX_BUF_DISABLE, 0);
+}
+
+void mpu_logging(void *pvPerameter)
+{
+    mpu6050_handle_t mpu6050 = mpu6050_create(I2C_MASTER_NUM, MPU6050_I2C_ADDRESS); 
+    esp_err_t ret = mpu6050_config(mpu6050, ACCE_FS_4G, GYRO_FS_500DPS);
+    if (ret != ESP_OK) {
+        printf("MPU6050 config failed\n");
+        return;
+    }
+
+    mpu6050_wake_up(mpu6050);
+
+    while (1) {
+        mpu6050_acce_value_t acce;
+        mpu6050_gyro_value_t gyro;
+
+        mpu6050_get_acce(mpu6050, &acce);
+        mpu6050_get_gyro(mpu6050, &gyro);
+
+        printf("Accel: x=%.2f g, y=%.2f g, z=%.2f g | "
+               "Gyro: x=%.2f dps, y=%.2f dps, z=%.2f dps\n",
+               acce.acce_x, acce.acce_y, acce.acce_z,
+               gyro.gyro_x, gyro.gyro_y, gyro.gyro_z);
+
+        vTaskDelay(pdMS_TO_TICKS(500));
+    }
+}
 
 void hello_task(void *pvParameter)
 {
@@ -39,97 +93,8 @@ void blinky(void *pvParameter)
 }
 void app_main()
 {
+    i2c_master_init();
     xTaskCreate(&hello_task, "hello_task", 2048, NULL, 5, NULL);
-    xTaskCreate(&blinky, "blinky", 2048,NULL,5,NULL );
+    xTaskCreate(&blinky, "blinky", 2048,NULL,5,NULL);
+    xTaskCreate(&mpu_logging, "mpu", 1024,NULL,5,NULL);
 }
-
-// static const char *TAG = "example";
-
-// /* Use project configuration menu (idf.py menuconfig) to choose the GPIO to blink,
-//    or you can edit the following line and set a number here.
-// */
-// #define BLINK_GPIO CONFIG_BLINK_GPIO
-
-// static uint8_t s_led_state = 0;
-
-// #ifdef CONFIG_BLINK_LED_STRIP
-
-// static led_strip_handle_t led_strip;
-
-// static void blink_led(void)
-// {
-//     /* If the addressable LED is enabled */
-//     if (s_led_state) {
-//         /* Set the LED pixel using RGB from 0 (0%) to 255 (100%) for each color */
-//         led_strip_set_pixel(led_strip, 0, 16, 16, 16);
-//         /* Refresh the strip to send data */
-//         led_strip_refresh(led_strip);
-//     } else {
-//         /* Set all LED off to clear all pixels */
-//         led_strip_clear(led_strip);
-//     }
-// }
-
-// static void configure_led(void)
-// {
-//     ESP_LOGI(TAG, "Example configured to blink addressable LED!");
-//     /* LED strip initialization with the GPIO and pixels number*/
-//     led_strip_config_t strip_config = {
-//         .strip_gpio_num = BLINK_GPIO,
-//         .max_leds = 1, // at least one LED on board
-//     };
-// #if CONFIG_BLINK_LED_STRIP_BACKEND_RMT
-//     led_strip_rmt_config_t rmt_config = {
-//         .resolution_hz = 10 * 1000 * 1000, // 10MHz
-//         .flags.with_dma = false,
-//     };
-//     ESP_ERROR_CHECK(led_strip_new_rmt_device(&strip_config, &rmt_config, &led_strip));
-// #elif CONFIG_BLINK_LED_STRIP_BACKEND_SPI
-//     led_strip_spi_config_t spi_config = {
-//         .spi_bus = SPI2_HOST,
-//         .flags.with_dma = true,
-//     };
-//     ESP_ERROR_CHECK(led_strip_new_spi_device(&strip_config, &spi_config, &led_strip));
-// #else
-// #error "unsupported LED strip backend"
-// #endif
-//     /* Set all LED off to clear all pixels */
-//     led_strip_clear(led_strip);
-// }
-
-// #elif CONFIG_BLINK_LED_GPIO
-
-// static void blink_led(void)
-// {
-//     /* Set the GPIO level according to the state (LOW or HIGH)*/
-//     gpio_set_level(BLINK_GPIO, s_led_state);
-// }
-
-// static void configure_led(void)
-// {
-//     ESP_LOGI(TAG, "Example configured to blink GPIO LED!");
-//     gpio_reset_pin(BLINK_GPIO);
-//     /* Set the GPIO as a push/pull output */
-//     gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
-// }
-
-// #else
-// #error "unsupported LED type"
-// #endif
-
- 
-
-// void app_main(void)
-// {
-
-//     /* Configure the peripheral according to the LED type */
-//     configure_led();
-
-//     while (1) {
-//         ESP_LOGI(TAG, "Turning the LED %s!", s_led_state == true ? "ON" : "OFF");
-//         blink_led();
-//         /* Toggle the LED state */
-//         s_led_state = !s_led_state;
-//         vTaskDelay(CONFIG_BLINK_PERIOD / portTICK_PERIOD_MS);
-//     }
-// }
