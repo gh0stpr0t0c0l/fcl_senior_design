@@ -8,6 +8,7 @@
 */
 #include <stdio.h>
 #include <math.h>
+#include <unistd.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "driver/gpio.h"
@@ -22,6 +23,8 @@
 #include "esp_err.h"
 #include "esp_log.h"
 
+//#define START_GPIO 23
+
 // i2c declarations
 #define I2C_MASTER_SCL_IO           22
 #define I2C_MASTER_SDA_IO           21
@@ -32,7 +35,66 @@
 
 #define BLINK_GPIO 2
 
-// used to init i2c for all devices
+//littleFS defs
+#define BUFFER_SIZE 512
+#define FILE_PATH "/littlefs/log.csv"
+
+static char ram_buffer[BUFFER_SIZE];
+static size_t buffer_index = 0;
+
+void buffer_flush()
+{
+    if (buffer_index == 0) return; // nothing to flush
+
+    FILE *f = fopen(FILE_PATH, "a"); // append mode
+    if (f == NULL) {
+        printf("Failed to open file for writing\n");
+        return;
+    }
+
+    fwrite(ram_buffer, 1, buffer_index, f);
+    fclose(f);
+
+    buffer_index = 0; // reset buffer
+}
+
+void buffer_write(const char *csv_line)
+{
+    size_t len = strlen(csv_line);
+
+    // If line doesn't end with newline, add one
+    bool needs_newline = (len == 0 || csv_line[len - 1] != '\n');
+
+    size_t total_len = len + (needs_newline ? 1 : 0);
+
+    // If it won't fit, flush first
+    if (buffer_index + total_len >= BUFFER_SIZE) {
+        buffer_flush();
+    }
+
+    memcpy(&ram_buffer[buffer_index], csv_line, len);
+    buffer_index += len;
+
+    if (needs_newline) {
+        ram_buffer[buffer_index++] = '\n';
+    }
+}
+
+//start button init
+// static void start_button_init()
+// {
+//     // Configure the pin as input, with an internal pull-up
+//     gpio_config_t io_conf = {
+//         .pin_bit_mask = (1ULL << START_GPIO),
+//         .mode = GPIO_MODE_INPUT,
+//         .pull_up_en = GPIO_PULLUP_ENABLE,
+//         .pull_down_en = GPIO_PULLDOWN_DISABLE,
+//         .intr_type = GPIO_INTR_DISABLE
+//     };
+//     gpio_config(&io_conf);
+// }
+
+//used to init i2c for all devices
 static void i2c_master_init()
 {
     i2c_config_t conf = {
@@ -47,6 +109,25 @@ static void i2c_master_init()
     i2c_driver_install(I2C_MASTER_NUM, conf.mode,
                        I2C_MASTER_RX_BUF_DISABLE,
                        I2C_MASTER_TX_BUF_DISABLE, 0);
+}
+
+static void littleFS_init()
+{
+    esp_vfs_littlefs_conf_t conf = {
+            .base_path = "/littlefs",
+            .partition_label = "littlefs",
+            .format_if_mount_failed = true,
+            .read_only = false,
+    };
+    
+    esp_err_t ret = esp_vfs_littlefs_register(&conf);
+    if (ret != ESP_OK) {
+        printf("Failed to mount or format filesystem\n");
+        return;
+    }
+
+    //Deletes old log if it exists
+    unlink(FILE_PATH);
 }
 
 void mpu_logging(void *pvPerameter)
@@ -72,34 +153,38 @@ void mpu_logging(void *pvPerameter)
 
         //Update time
         int64_t now_time = esp_timer_get_time();
-        float dt = now_time - prev_time;
+        float dt = (now_time - prev_time) / 1000000.0f;
         prev_time = now_time;
 
-        // Accelerometer angles (radians → degrees)
+        // Accelerometer angles converted to degrees from radians
         float pitch_acc = atan2f(-acce.acce_x, sqrtf(acce.acce_y * acce.acce_y + acce.acce_z * acce.acce_z)) * 180.0f / M_PI;
         float roll_acc  = atan2f(acce.acce_y, acce.acce_z) * 180.0f / M_PI;
 
-        // Complementary filter
-        pitch = 0.98f * (pitch + gyro.gyro_y * dt) + 0.02f * pitch_acc;
-        roll  = 0.98f * (roll  + gyro.gyro_x * dt) + 0.02f * roll_acc;
+        // Complementary filter (Might need different ratios)
+        pitch = 0.95f * (pitch + gyro.gyro_y * dt) + 0.05f * pitch_acc;
+        roll  = 0.95f * (roll  + gyro.gyro_x * dt) + 0.05f * roll_acc;
 
         //Print to computer console
         //will replace with data logging
-        printf("Pitch: %.2f°, Roll: %.2f° | AccelPitch: %.2f°, AccelRoll: %.2f°\n",
-               pitch, roll, pitch_acc, roll_acc);
+        //printf("Pitch: %.2f°, Roll: %.2f° | AccelPitch: %.2f°, AccelRoll: %.2f°\n",
+        //       pitch, roll, pitch_acc, roll_acc);
 
+        float now_s = now_time / 1e6;
+        char line[128];
+        snprintf(line, sizeof(line), "%.3f,%.2f,%.2f\n", now_s, pitch, roll);
+        buffer_write(line);
         vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
 
-void hello_task(void *pvParameter)
-{
-	while(1)
-	{
-	    printf("Hello world!\n");
-	    vTaskDelay(100 / portTICK_PERIOD_MS);
-	}
-}
+// void hello_task(void *pvParameter)
+// {
+// 	while(1)
+// 	{
+// 	    printf("Hello world!\n");
+// 	    vTaskDelay(100 / portTICK_PERIOD_MS);
+// 	}
+// }
 void blinky(void *pvParameter)
 {
     //gpio_pad_select_gpio(BLINK_GPIO);
@@ -117,7 +202,12 @@ void blinky(void *pvParameter)
 void app_main()
 {
     i2c_master_init();
+    littleFS_init();
+    start_button_init();
     //xTaskCreate(&hello_task, "hello_task", 2048, NULL, 5, NULL);
+    //while(gpio_get_level(START_GPIO)){}
+    
     xTaskCreate(&blinky, "blinky", 2048,NULL,5,NULL);
+    buffer_write("Time,Pitch,Roll"); //header for csv
     xTaskCreate(&mpu_logging, "mpu", 4096,NULL,5,NULL);
 }
