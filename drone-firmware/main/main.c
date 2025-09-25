@@ -7,13 +7,20 @@
    CONDITIONS OF ANY KIND, either express or implied.
 */
 #include <stdio.h>
+#include <math.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "driver/gpio.h"
 #include "esp_system.h"
+#include "esp_timer.h"
 #include "sdkconfig.h"
 #include "mpu6050.h"
-#include "driver/i2c.h"
+#include "driver/i2c_master.h"
+
+#include "esp_littlefs.h"
+#include "spi_flash_mmap.h"
+#include "esp_err.h"
+#include "esp_log.h"
 
 // i2c declarations
 #define I2C_MASTER_SCL_IO           22
@@ -48,24 +55,40 @@ void mpu_logging(void *pvPerameter)
     esp_err_t ret = mpu6050_config(mpu6050, ACCE_FS_4G, GYRO_FS_500DPS);
     if (ret != ESP_OK) {
         printf("MPU6050 config failed\n");
-        return;
+        vTaskDelete(NULL);
     }
 
     mpu6050_wake_up(mpu6050);
 
+    float pitch = 0, roll = 0;
+    int64_t prev_time = esp_timer_get_time();
+
     while (1) {
+        //Get values from imu
         mpu6050_acce_value_t acce;
         mpu6050_gyro_value_t gyro;
-
         mpu6050_get_acce(mpu6050, &acce);
         mpu6050_get_gyro(mpu6050, &gyro);
 
-        printf("Accel: x=%.2f g, y=%.2f g, z=%.2f g | "
-               "Gyro: x=%.2f dps, y=%.2f dps, z=%.2f dps\n",
-               acce.acce_x, acce.acce_y, acce.acce_z,
-               gyro.gyro_x, gyro.gyro_y, gyro.gyro_z);
+        //Update time
+        int64_t now_time = esp_timer_get_time();
+        float dt = now_time - prev_time;
+        prev_time = now_time;
 
-        vTaskDelay(pdMS_TO_TICKS(500));
+        // Accelerometer angles (radians → degrees)
+        float pitch_acc = atan2f(-acce.acce_x, sqrtf(acce.acce_y * acce.acce_y + acce.acce_z * acce.acce_z)) * 180.0f / M_PI;
+        float roll_acc  = atan2f(acce.acce_y, acce.acce_z) * 180.0f / M_PI;
+
+        // Complementary filter
+        pitch = 0.98f * (pitch + gyro.gyro_y * dt) + 0.02f * pitch_acc;
+        roll  = 0.98f * (roll  + gyro.gyro_x * dt) + 0.02f * roll_acc;
+
+        //Print to computer console
+        //will replace with data logging
+        printf("Pitch: %.2f°, Roll: %.2f° | AccelPitch: %.2f°, AccelRoll: %.2f°\n",
+               pitch, roll, pitch_acc, roll_acc);
+
+        vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
 
@@ -94,7 +117,7 @@ void blinky(void *pvParameter)
 void app_main()
 {
     i2c_master_init();
-    xTaskCreate(&hello_task, "hello_task", 2048, NULL, 5, NULL);
+    //xTaskCreate(&hello_task, "hello_task", 2048, NULL, 5, NULL);
     xTaskCreate(&blinky, "blinky", 2048,NULL,5,NULL);
-    xTaskCreate(&mpu_logging, "mpu", 1024,NULL,5,NULL);
+    xTaskCreate(&mpu_logging, "mpu", 4096,NULL,5,NULL);
 }

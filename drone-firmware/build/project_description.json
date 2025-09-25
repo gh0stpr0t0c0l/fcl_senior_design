@@ -1,7 +1,7 @@
 {
     "version":            "1.2",
     "project_name":       "drone-firmware",
-    "project_version":    "e916fa3-dirty",
+    "project_version":    "029ad1d-dirty",
     "project_path":       "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware",
     "idf_path":           "/home/gabe/esp/esp-idf",
     "build_dir":          "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build",
@@ -21,12 +21,12 @@
     "monitor_toolprefix": "xtensa-esp32-elf-",
     "c_compiler":         "/home/gabe/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20241119/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc",
     "config_environment" : {
-        "COMPONENT_KCONFIGS" : "/home/gabe/esp/esp-idf/components/driver/Kconfig;/home/gabe/esp/esp-idf/components/efuse/Kconfig;/home/gabe/esp/esp-idf/components/esp_common/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_ana_cmpr/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_bitscrambler/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_dac/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_gpio/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_gptimer/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_i2c/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_i2s/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_ledc/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_mcpwm/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_parlio/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_pcnt/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_rmt/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_sdm/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_spi/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_tsens/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_twai/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_uart/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_usb_serial_jtag/Kconfig;/home/gabe/esp/esp-idf/components/esp_hw_support/Kconfig;/home/gabe/esp/esp-idf/components/esp_mm/Kconfig;/home/gabe/esp/esp-idf/components/esp_partition/Kconfig;/home/gabe/esp/esp-idf/components/esp_pm/Kconfig;/home/gabe/esp/esp-idf/components/esp_ringbuf/Kconfig;/home/gabe/esp/esp-idf/components/esp_rom/Kconfig;/home/gabe/esp/esp-idf/components/esp_security/Kconfig;/home/gabe/esp/esp-idf/components/esp_system/Kconfig;/home/gabe/esp/esp-idf/components/esp_timer/Kconfig;/home/gabe/esp/esp-idf/components/freertos/Kconfig;/home/gabe/esp/esp-idf/components/hal/Kconfig;/home/gabe/esp/esp-idf/components/heap/Kconfig;/home/gabe/esp/esp-idf/components/log/Kconfig;/home/gabe/esp/esp-idf/components/mbedtls/Kconfig;/home/gabe/esp/esp-idf/components/newlib/Kconfig;/home/gabe/esp/esp-idf/components/pthread/Kconfig;/home/gabe/esp/esp-idf/components/soc/Kconfig;/home/gabe/esp/esp-idf/components/spi_flash/Kconfig",
+        "COMPONENT_KCONFIGS" : "/home/gabe/esp/esp-idf/components/driver/Kconfig;/home/gabe/esp/esp-idf/components/efuse/Kconfig;/home/gabe/esp/esp-idf/components/esp_common/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_ana_cmpr/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_bitscrambler/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_dac/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_gpio/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_gptimer/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_i2c/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_i2s/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_ledc/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_mcpwm/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_parlio/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_pcnt/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_rmt/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_sdm/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_spi/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_tsens/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_twai/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_uart/Kconfig;/home/gabe/esp/esp-idf/components/esp_driver_usb_serial_jtag/Kconfig;/home/gabe/esp/esp-idf/components/esp_hw_support/Kconfig;/home/gabe/esp/esp-idf/components/esp_mm/Kconfig;/home/gabe/esp/esp-idf/components/esp_partition/Kconfig;/home/gabe/esp/esp-idf/components/esp_pm/Kconfig;/home/gabe/esp/esp-idf/components/esp_ringbuf/Kconfig;/home/gabe/esp/esp-idf/components/esp_rom/Kconfig;/home/gabe/esp/esp-idf/components/esp_security/Kconfig;/home/gabe/esp/esp-idf/components/esp_system/Kconfig;/home/gabe/esp/esp-idf/components/esp_timer/Kconfig;/home/gabe/esp/esp-idf/components/freertos/Kconfig;/home/gabe/esp/esp-idf/components/hal/Kconfig;/home/gabe/esp/esp-idf/components/heap/Kconfig;/home/gabe/esp/esp-idf/components/log/Kconfig;/home/gabe/esp/esp-idf/components/mbedtls/Kconfig;/home/gabe/esp/esp-idf/components/newlib/Kconfig;/home/gabe/esp/esp-idf/components/pthread/Kconfig;/home/gabe/esp/esp-idf/components/soc/Kconfig;/home/gabe/esp/esp-idf/components/spi_flash/Kconfig;/home/gabe/esp/esp-idf/components/vfs/Kconfig;/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/managed_components/joltwallet__littlefs/Kconfig",
         "COMPONENT_KCONFIGS_PROJBUILD" : "/home/gabe/esp/esp-idf/components/bootloader/Kconfig.projbuild;/home/gabe/esp/esp-idf/components/esp_app_format/Kconfig.projbuild;/home/gabe/esp/esp-idf/components/esp_rom/Kconfig.projbuild;/home/gabe/esp/esp-idf/components/esptool_py/Kconfig.projbuild;/home/gabe/esp/esp-idf/components/partition_table/Kconfig.projbuild"
     },
     "common_component_reqs": [ "cxx", "newlib", "freertos", "esp_hw_support", "heap", "log", "soc", "hal", "esp_rom", "esp_common", "esp_system", "xtensa" ],
-    "build_components" : [ "app_update", "bootloader", "bootloader_support", "cxx", "driver", "efuse", "esp_app_format", "esp_bootloader_format", "esp_common", "esp_driver_ana_cmpr", "esp_driver_bitscrambler", "esp_driver_dac", "esp_driver_gpio", "esp_driver_gptimer", "esp_driver_i2c", "esp_driver_i2s", "esp_driver_ledc", "esp_driver_mcpwm", "esp_driver_parlio", "esp_driver_pcnt", "esp_driver_rmt", "esp_driver_sdio", "esp_driver_sdm", "esp_driver_sdmmc", "esp_driver_sdspi", "esp_driver_spi", "esp_driver_tsens", "esp_driver_twai", "esp_driver_uart", "esp_driver_usb_serial_jtag", "esp_hw_support", "esp_mm", "esp_partition", "esp_pm", "esp_ringbuf", "esp_rom", "esp_security", "esp_system", "esp_timer", "espressif__mpu6050", "esptool_py", "freertos", "hal", "heap", "log", "main", "mbedtls", "newlib", "partition_table", "pthread", "sdmmc", "soc", "spi_flash", "xtensa", "" ],
-    "build_component_paths" : [ "/home/gabe/esp/esp-idf/components/app_update", "/home/gabe/esp/esp-idf/components/bootloader", "/home/gabe/esp/esp-idf/components/bootloader_support", "/home/gabe/esp/esp-idf/components/cxx", "/home/gabe/esp/esp-idf/components/driver", "/home/gabe/esp/esp-idf/components/efuse", "/home/gabe/esp/esp-idf/components/esp_app_format", "/home/gabe/esp/esp-idf/components/esp_bootloader_format", "/home/gabe/esp/esp-idf/components/esp_common", "/home/gabe/esp/esp-idf/components/esp_driver_ana_cmpr", "/home/gabe/esp/esp-idf/components/esp_driver_bitscrambler", "/home/gabe/esp/esp-idf/components/esp_driver_dac", "/home/gabe/esp/esp-idf/components/esp_driver_gpio", "/home/gabe/esp/esp-idf/components/esp_driver_gptimer", "/home/gabe/esp/esp-idf/components/esp_driver_i2c", "/home/gabe/esp/esp-idf/components/esp_driver_i2s", "/home/gabe/esp/esp-idf/components/esp_driver_ledc", "/home/gabe/esp/esp-idf/components/esp_driver_mcpwm", "/home/gabe/esp/esp-idf/components/esp_driver_parlio", "/home/gabe/esp/esp-idf/components/esp_driver_pcnt", "/home/gabe/esp/esp-idf/components/esp_driver_rmt", "/home/gabe/esp/esp-idf/components/esp_driver_sdio", "/home/gabe/esp/esp-idf/components/esp_driver_sdm", "/home/gabe/esp/esp-idf/components/esp_driver_sdmmc", "/home/gabe/esp/esp-idf/components/esp_driver_sdspi", "/home/gabe/esp/esp-idf/components/esp_driver_spi", "/home/gabe/esp/esp-idf/components/esp_driver_tsens", "/home/gabe/esp/esp-idf/components/esp_driver_twai", "/home/gabe/esp/esp-idf/components/esp_driver_uart", "/home/gabe/esp/esp-idf/components/esp_driver_usb_serial_jtag", "/home/gabe/esp/esp-idf/components/esp_hw_support", "/home/gabe/esp/esp-idf/components/esp_mm", "/home/gabe/esp/esp-idf/components/esp_partition", "/home/gabe/esp/esp-idf/components/esp_pm", "/home/gabe/esp/esp-idf/components/esp_ringbuf", "/home/gabe/esp/esp-idf/components/esp_rom", "/home/gabe/esp/esp-idf/components/esp_security", "/home/gabe/esp/esp-idf/components/esp_system", "/home/gabe/esp/esp-idf/components/esp_timer", "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/managed_components/espressif__mpu6050", "/home/gabe/esp/esp-idf/components/esptool_py", "/home/gabe/esp/esp-idf/components/freertos", "/home/gabe/esp/esp-idf/components/hal", "/home/gabe/esp/esp-idf/components/heap", "/home/gabe/esp/esp-idf/components/log", "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/main", "/home/gabe/esp/esp-idf/components/mbedtls", "/home/gabe/esp/esp-idf/components/newlib", "/home/gabe/esp/esp-idf/components/partition_table", "/home/gabe/esp/esp-idf/components/pthread", "/home/gabe/esp/esp-idf/components/sdmmc", "/home/gabe/esp/esp-idf/components/soc", "/home/gabe/esp/esp-idf/components/spi_flash", "/home/gabe/esp/esp-idf/components/xtensa", "" ],
+    "build_components" : [ "app_update", "bootloader", "bootloader_support", "cxx", "driver", "efuse", "esp_app_format", "esp_bootloader_format", "esp_common", "esp_driver_ana_cmpr", "esp_driver_bitscrambler", "esp_driver_dac", "esp_driver_gpio", "esp_driver_gptimer", "esp_driver_i2c", "esp_driver_i2s", "esp_driver_ledc", "esp_driver_mcpwm", "esp_driver_parlio", "esp_driver_pcnt", "esp_driver_rmt", "esp_driver_sdio", "esp_driver_sdm", "esp_driver_sdmmc", "esp_driver_sdspi", "esp_driver_spi", "esp_driver_tsens", "esp_driver_twai", "esp_driver_uart", "esp_driver_usb_serial_jtag", "esp_hw_support", "esp_mm", "esp_partition", "esp_pm", "esp_ringbuf", "esp_rom", "esp_security", "esp_system", "esp_timer", "esp_vfs_console", "espressif__mpu6050", "esptool_py", "freertos", "hal", "heap", "joltwallet__littlefs", "log", "main", "mbedtls", "newlib", "partition_table", "pthread", "sdmmc", "soc", "spi_flash", "vfs", "xtensa", "" ],
+    "build_component_paths" : [ "/home/gabe/esp/esp-idf/components/app_update", "/home/gabe/esp/esp-idf/components/bootloader", "/home/gabe/esp/esp-idf/components/bootloader_support", "/home/gabe/esp/esp-idf/components/cxx", "/home/gabe/esp/esp-idf/components/driver", "/home/gabe/esp/esp-idf/components/efuse", "/home/gabe/esp/esp-idf/components/esp_app_format", "/home/gabe/esp/esp-idf/components/esp_bootloader_format", "/home/gabe/esp/esp-idf/components/esp_common", "/home/gabe/esp/esp-idf/components/esp_driver_ana_cmpr", "/home/gabe/esp/esp-idf/components/esp_driver_bitscrambler", "/home/gabe/esp/esp-idf/components/esp_driver_dac", "/home/gabe/esp/esp-idf/components/esp_driver_gpio", "/home/gabe/esp/esp-idf/components/esp_driver_gptimer", "/home/gabe/esp/esp-idf/components/esp_driver_i2c", "/home/gabe/esp/esp-idf/components/esp_driver_i2s", "/home/gabe/esp/esp-idf/components/esp_driver_ledc", "/home/gabe/esp/esp-idf/components/esp_driver_mcpwm", "/home/gabe/esp/esp-idf/components/esp_driver_parlio", "/home/gabe/esp/esp-idf/components/esp_driver_pcnt", "/home/gabe/esp/esp-idf/components/esp_driver_rmt", "/home/gabe/esp/esp-idf/components/esp_driver_sdio", "/home/gabe/esp/esp-idf/components/esp_driver_sdm", "/home/gabe/esp/esp-idf/components/esp_driver_sdmmc", "/home/gabe/esp/esp-idf/components/esp_driver_sdspi", "/home/gabe/esp/esp-idf/components/esp_driver_spi", "/home/gabe/esp/esp-idf/components/esp_driver_tsens", "/home/gabe/esp/esp-idf/components/esp_driver_twai", "/home/gabe/esp/esp-idf/components/esp_driver_uart", "/home/gabe/esp/esp-idf/components/esp_driver_usb_serial_jtag", "/home/gabe/esp/esp-idf/components/esp_hw_support", "/home/gabe/esp/esp-idf/components/esp_mm", "/home/gabe/esp/esp-idf/components/esp_partition", "/home/gabe/esp/esp-idf/components/esp_pm", "/home/gabe/esp/esp-idf/components/esp_ringbuf", "/home/gabe/esp/esp-idf/components/esp_rom", "/home/gabe/esp/esp-idf/components/esp_security", "/home/gabe/esp/esp-idf/components/esp_system", "/home/gabe/esp/esp-idf/components/esp_timer", "/home/gabe/esp/esp-idf/components/esp_vfs_console", "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/managed_components/espressif__mpu6050", "/home/gabe/esp/esp-idf/components/esptool_py", "/home/gabe/esp/esp-idf/components/freertos", "/home/gabe/esp/esp-idf/components/hal", "/home/gabe/esp/esp-idf/components/heap", "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/managed_components/joltwallet__littlefs", "/home/gabe/esp/esp-idf/components/log", "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/main", "/home/gabe/esp/esp-idf/components/mbedtls", "/home/gabe/esp/esp-idf/components/newlib", "/home/gabe/esp/esp-idf/components/partition_table", "/home/gabe/esp/esp-idf/components/pthread", "/home/gabe/esp/esp-idf/components/sdmmc", "/home/gabe/esp/esp-idf/components/soc", "/home/gabe/esp/esp-idf/components/spi_flash", "/home/gabe/esp/esp-idf/components/vfs", "/home/gabe/esp/esp-idf/components/xtensa", "" ],
     "build_component_info" : {
         "app_update": {
             "alias": "idf::app_update",
@@ -460,7 +460,7 @@
             "managed_reqs": [],
             "managed_priv_reqs": [],
             "file": "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build/esp-idf/esp_driver_uart/libesp_driver_uart.a",
-            "sources": [ "/home/gabe/esp/esp-idf/components/esp_driver_uart/src/uart.c", "/home/gabe/esp/esp-idf/components/esp_driver_uart/src/uart_wakeup.c" ],
+            "sources": [ "/home/gabe/esp/esp-idf/components/esp_driver_uart/src/uart.c", "/home/gabe/esp/esp-idf/components/esp_driver_uart/src/uart_wakeup.c", "/home/gabe/esp/esp-idf/components/esp_driver_uart/src/uart_vfs.c" ],
             "include_dirs": [ "include" ]
         },
         "esp_driver_usb_serial_jtag": {
@@ -613,6 +613,21 @@
             "sources": [ "/home/gabe/esp/esp-idf/components/esp_timer/src/esp_timer.c", "/home/gabe/esp/esp-idf/components/esp_timer/src/esp_timer_init.c", "/home/gabe/esp/esp-idf/components/esp_timer/src/ets_timer_legacy.c", "/home/gabe/esp/esp-idf/components/esp_timer/src/system_time.c", "/home/gabe/esp/esp-idf/components/esp_timer/src/esp_timer_impl_common.c", "/home/gabe/esp/esp-idf/components/esp_timer/src/esp_timer_impl_lac.c" ],
             "include_dirs": [ "include" ]
         },
+        "esp_vfs_console": {
+            "alias": "idf::esp_vfs_console",
+            "target": "___idf_esp_vfs_console",
+            "prefix": "idf",
+            "dir": "/home/gabe/esp/esp-idf/components/esp_vfs_console",
+            "type": "LIBRARY",
+            "lib": "__idf_esp_vfs_console",
+            "reqs": [],
+            "priv_reqs": [ "vfs", "esp_driver_uart", "esp_driver_usb_serial_jtag" ],
+            "managed_reqs": [],
+            "managed_priv_reqs": [],
+            "file": "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build/esp-idf/esp_vfs_console/libesp_vfs_console.a",
+            "sources": [ "/home/gabe/esp/esp-idf/components/esp_vfs_console/vfs_console.c" ],
+            "include_dirs": [ "include" ]
+        },
         "espressif__mpu6050": {
             "alias": "idf::espressif__mpu6050",
             "target": "___idf_espressif__mpu6050",
@@ -688,6 +703,21 @@
             "sources": [ "/home/gabe/esp/esp-idf/components/heap/heap_caps_base.c", "/home/gabe/esp/esp-idf/components/heap/heap_caps.c", "/home/gabe/esp/esp-idf/components/heap/heap_caps_init.c", "/home/gabe/esp/esp-idf/components/heap/multi_heap.c", "/home/gabe/esp/esp-idf/components/heap/tlsf/tlsf.c", "/home/gabe/esp/esp-idf/components/heap/port/memory_layout_utils.c", "/home/gabe/esp/esp-idf/components/heap/port/esp32/memory_layout.c" ],
             "include_dirs": [ "include", "tlsf" ]
         },
+        "joltwallet__littlefs": {
+            "alias": "idf::joltwallet__littlefs",
+            "target": "___idf_joltwallet__littlefs",
+            "prefix": "idf",
+            "dir": "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/managed_components/joltwallet__littlefs",
+            "type": "LIBRARY",
+            "lib": "__idf_joltwallet__littlefs",
+            "reqs": [ "sdmmc", "esp_partition" ],
+            "priv_reqs": [ "esptool_py", "spi_flash", "vfs" ],
+            "managed_reqs": [],
+            "managed_priv_reqs": [],
+            "file": "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build/esp-idf/joltwallet__littlefs/libjoltwallet__littlefs.a",
+            "sources": [ "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/managed_components/joltwallet__littlefs/src/littlefs/lfs.c", "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/managed_components/joltwallet__littlefs/src/littlefs/lfs_util.c", "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/managed_components/joltwallet__littlefs/src/esp_littlefs.c", "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/managed_components/joltwallet__littlefs/src/littlefs_esp_part.c", "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/managed_components/joltwallet__littlefs/src/lfs_config.c" ],
+            "include_dirs": [ "include" ]
+        },
         "log": {
             "alias": "idf::log",
             "target": "___idf_log",
@@ -711,9 +741,9 @@
             "type": "LIBRARY",
             "lib": "__idf_main",
             "reqs": [],
-            "priv_reqs": [ "espressif__mpu6050" ],
+            "priv_reqs": [ "espressif__mpu6050", "joltwallet__littlefs" ],
             "managed_reqs": [],
-            "managed_priv_reqs": [ "espressif__mpu6050" ],
+            "managed_priv_reqs": [ "espressif__mpu6050", "joltwallet__littlefs" ],
             "file": "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build/esp-idf/main/libmain.a",
             "sources": [ "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/main/main.c" ],
             "include_dirs": [ "." ]
@@ -821,6 +851,21 @@
             "managed_priv_reqs": [],
             "file": "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build/esp-idf/spi_flash/libspi_flash.a",
             "sources": [ "/home/gabe/esp/esp-idf/components/spi_flash/flash_brownout_hook.c", "/home/gabe/esp/esp-idf/components/spi_flash/spi_flash_chip_drivers.c", "/home/gabe/esp/esp-idf/components/spi_flash/spi_flash_chip_generic.c", "/home/gabe/esp/esp-idf/components/spi_flash/spi_flash_chip_issi.c", "/home/gabe/esp/esp-idf/components/spi_flash/spi_flash_chip_mxic.c", "/home/gabe/esp/esp-idf/components/spi_flash/spi_flash_chip_gd.c", "/home/gabe/esp/esp-idf/components/spi_flash/spi_flash_chip_winbond.c", "/home/gabe/esp/esp-idf/components/spi_flash/spi_flash_chip_boya.c", "/home/gabe/esp/esp-idf/components/spi_flash/spi_flash_chip_mxic_opi.c", "/home/gabe/esp/esp-idf/components/spi_flash/spi_flash_chip_th.c", "/home/gabe/esp/esp-idf/components/spi_flash/memspi_host_driver.c", "/home/gabe/esp/esp-idf/components/spi_flash/cache_utils.c", "/home/gabe/esp/esp-idf/components/spi_flash/flash_mmap.c", "/home/gabe/esp/esp-idf/components/spi_flash/flash_ops.c", "/home/gabe/esp/esp-idf/components/spi_flash/spi_flash_wrap.c", "/home/gabe/esp/esp-idf/components/spi_flash/esp_flash_api.c", "/home/gabe/esp/esp-idf/components/spi_flash/esp_flash_spi_init.c", "/home/gabe/esp/esp-idf/components/spi_flash/spi_flash_os_func_app.c", "/home/gabe/esp/esp-idf/components/spi_flash/spi_flash_os_func_noos.c" ],
+            "include_dirs": [ "include" ]
+        },
+        "vfs": {
+            "alias": "idf::vfs",
+            "target": "___idf_vfs",
+            "prefix": "idf",
+            "dir": "/home/gabe/esp/esp-idf/components/vfs",
+            "type": "LIBRARY",
+            "lib": "__idf_vfs",
+            "reqs": [],
+            "priv_reqs": [ "esp_timer", "esp_driver_uart", "esp_driver_usb_serial_jtag", "esp_vfs_console" ],
+            "managed_reqs": [],
+            "managed_priv_reqs": [],
+            "file": "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build/esp-idf/vfs/libvfs.a",
+            "sources": [ "/home/gabe/esp/esp-idf/components/vfs/vfs.c", "/home/gabe/esp/esp-idf/components/vfs/vfs_eventfd.c", "/home/gabe/esp/esp-idf/components/vfs/vfs_semihost.c", "/home/gabe/esp/esp-idf/components/vfs/nullfs.c" ],
             "include_dirs": [ "include" ]
         },
         "xtensa": {
@@ -2143,33 +2188,9 @@
             "dir": "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/main",
             "lib": "__idf_main",
             "reqs": [],
-            "priv_reqs": [ "espressif__mpu6050" ],
+            "priv_reqs": [ "espressif__mpu6050", "joltwallet__littlefs" ],
             "managed_reqs": [],
-            "managed_priv_reqs": [ "espressif__mpu6050" ],
-            "include_dirs": [ "." ]
-        },
-        "I2Cdev": {
-            "alias": "idf::I2Cdev",
-            "target": "___idf_I2Cdev",
-            "prefix": "idf",
-            "dir": "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/components/I2Cdev",
-            "lib": "__idf_I2Cdev",
-            "reqs": [],
-            "priv_reqs": [],
-            "managed_reqs": [],
-            "managed_priv_reqs": [],
-            "include_dirs": [ "." ]
-        },
-        "MPU6050": {
-            "alias": "idf::MPU6050",
-            "target": "___idf_MPU6050",
-            "prefix": "idf",
-            "dir": "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/components/MPU6050",
-            "lib": "__idf_MPU6050",
-            "reqs": [ "I2Cdev" ],
-            "priv_reqs": [],
-            "managed_reqs": [],
-            "managed_priv_reqs": [],
+            "managed_priv_reqs": [ "espressif__mpu6050", "joltwallet__littlefs" ],
             "include_dirs": [ "." ]
         },
         "espressif__mpu6050": {
@@ -2180,6 +2201,18 @@
             "lib": "__idf_espressif__mpu6050",
             "reqs": [ "driver" ],
             "priv_reqs": [],
+            "managed_reqs": [],
+            "managed_priv_reqs": [],
+            "include_dirs": [ "include" ]
+        },
+        "joltwallet__littlefs": {
+            "alias": "idf::joltwallet__littlefs",
+            "target": "___idf_joltwallet__littlefs",
+            "prefix": "idf",
+            "dir": "/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/managed_components/joltwallet__littlefs",
+            "lib": "__idf_joltwallet__littlefs",
+            "reqs": [ "sdmmc", "esp_partition" ],
+            "priv_reqs": [ "esptool_py", "spi_flash", "vfs" ],
             "managed_reqs": [],
             "managed_priv_reqs": [],
             "include_dirs": [ "include" ]

@@ -304,6 +304,21 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
+  include("/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build/esp-idf/esp_vfs_console/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build/esp-idf/vfs/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
+  include("/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build/esp-idf/joltwallet__littlefs/cmake_install.cmake")
+endif()
+
+if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+  # Include the install script for the subdirectory.
   include("/home/gabe/Documents/School/2025-2026 School/srDesign/fcl_senior_design/drone-firmware/build/esp-idf/main/cmake_install.cmake")
 endif()
 

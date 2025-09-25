@@ -14,5 +14,8 @@
   ],
   "idf.espIdfPath": "/home/gabe/esp/esp-idf",
   "idf.pythonInstallPath": "/usr/bin/python",
-  "idf.toolsPath": "/home/gabe/.espressif"
+  "idf.toolsPath": "/home/gabe/.espressif",
+  "files.associations": {
+    "stdio.h": "c"
+  }
 }
