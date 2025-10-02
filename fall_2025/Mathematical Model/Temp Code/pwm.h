@@ -8,7 +8,7 @@
 
 //FIXME: These are just random pin numbers. I don't know what pins we plan to use yet
 FIXME
-int pwm_gpios[4] = {18, 19, 21, 22}; //Pin Numbers
+int pwm_gpios[4] = { 18, 19, 21, 22 }; //Pin Numbers
 
 void app_main() {//THIS CODE IS JUST FOR SETUP, See functions at bottom to change duty cycle later.
     // Configure the PWM timer
