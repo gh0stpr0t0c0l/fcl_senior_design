@@ -1,0 +1,35 @@
+\documentclass[12pt, titlepage]{article}
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=magenta]{hyperref}
+
+\title{Feedback Controls Lab Weekly Report \\ \normalsize{Week 6}}
+\author{Aydan Vissing, Brady Schick, Gabriel Southwell, Simon Ross}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Aydan Vissing (8 hrs spent)}
+
+After our meetings on Thursday and Friday, I spent my time this week on making the 3D model for our drone chassis. I was going to do the development GUI as well, but I did not have time after modeling the chassis. I plan on working on that this week. 
+
+\section*{Brady Schick (8 hrs spent)}
+
+Throughout this week, I got a start on implementing the mathematical model using C. Specifically, I made a .h file for a PID struct with some relevant functions. This can be found in the GitHub in the Mathematical Model file (with the slideshow). On Thursday, I also finished the report for the controls MP. On Friday, we met as a team with Dr. Fredette and Dr. Kohl to discuss the parts we wanted to order for the drones.
+
+\section*{Gabriel Southwell (10.5 hrs spent)}
+
+This week I made a lot of progress on the drone firmware. The MPU 6050 that Dr. Fredette lent us is logging data to the ESP32. I also spent a lot of time getting familiar with the littleFS library for logging flight telemetry onto the ESP32. To reduce the write cycles on the flash storage onboard, the ESP writes the flight data to a buffer in RAM and when the buffer is full, it flushes flash. Since the ESP does not have a USB interface, getting files to a laptop is a little tricky over the UART interface. Fortunately there is an Espressif tool called esptool that can dump the contents of the file system partition to a bin file. That bin file can then be decoded into a csv with a python script I vibe coded. I believe all this functionality will be easily wrapped into the desktop app for a seamless experience.
+
+A concern that I had about the MPU is that it will have a hard time telling if the drone has started to rotate about the YAW axis. I email Dr. Kohl about this and asked if he though a magnetometer would be a good solution for this problem. He pointed out that a magnetometer would likely give us really bad and noisy data in the basement of the ENS. While the rotation might still be a problem, we will try to solve it with other sensors.
+
+As a team we met with Dr. Kohl on Friday to get advice and guidance on several things moving forward. The biggest one for me was what he knew about sensors. Previously we were tennatively planning on using ultrasonic sensors , but I had not realized how cheap and good time-of-flight sensors had gotten.  
+
+This coming week I plan to work on creating a framework for interfacing with the motors and TOF sensors. That will put us well ahead on milestone 1. If I have lots of extra time, I will also work on the wireless data logging and a simple desktop interface to abstract all python scripts.
+
+\section*{Simon Ross (9 hrs spent)}
+
+This week's progress on the project has been strained by exams, but we have still moved forward, and are mostly on schedule. Additionally, we are on track to complete our milestone at the end of the week. Brady and I have almost completely determined the form of the mathematical model, and I have started implementing the model in Simulink. We have purchased all of the necessary components for constructing a simple drone prototype, and are waiting for the components to come in. 
+
+This week, we will continue to implement the mathematical model in code and in Simulink, and work on implementing firmware and flight code as well (at least according to the schedule). Additionally, we will begin designing the PCB using CAD, at the advice of Dr. Kohl. This will include defining the power supply system. Finally, we will assemble our prototype drone and allow this model to determine our future decisions. 
+
+\end{document}
