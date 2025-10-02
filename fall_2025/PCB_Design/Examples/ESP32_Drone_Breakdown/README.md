@@ -1,0 +1,1 @@
+This is an open source drone project that uses an ESP32. For this reason, it has a lot of similarity to what we will likely end up with. The [[ESP32_Drone_Breakdown.canvas]] file above is a file that can be opened in Obsidian. It is a blown up view of the whole drone with part names and things filled in.
