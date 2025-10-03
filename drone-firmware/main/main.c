@@ -17,13 +17,20 @@
 #include "sdkconfig.h"
 #include "mpu6050.h"
 #include "driver/i2c_master.h"
+//#include "button_gpio.h"
+//#include "iot_button.h"
 
 #include "esp_littlefs.h"
 #include "spi_flash_mmap.h"
 #include "esp_err.h"
 #include "esp_log.h"
 
-//#define START_GPIO 23
+// #include "lwip/sockets.h"
+// #include "esp_wifi.h"
+// #include "esp_event.h"
+// #include "nvs_flash.h"
+
+#define START_BUTTON_GPIO 0
 
 // i2c declarations
 #define I2C_MASTER_SCL_IO           22
@@ -38,6 +45,12 @@
 //littleFS defs
 #define BUFFER_SIZE 1024
 #define FILE_PATH "/littlefs/log.csv"
+
+//wifi defs
+// #define WIFI_SSID "DRONE_WIFI"
+// #define WIFI_PASS "password"
+// #define UDP_PORT 1234
+// #define BROADCAST_IP "255.255.255.255"
 
 static char ram_buffer[BUFFER_SIZE];
 static size_t buffer_index = 0;
@@ -63,7 +76,7 @@ void buffer_write(const char *csv_line)
     size_t len = strlen(csv_line);
 
     // If line doesn't end with newline, add one
-    //bool needs_newline = (len == 0 || csv_line[len - 1] != '\n');
+    bool needs_newline = (len == 0 || csv_line[len - 1] != '\n');
 
     size_t total_len = len + (needs_newline ? 1 : 0);
 
@@ -80,18 +93,23 @@ void buffer_write(const char *csv_line)
     // }
 }
 
-//start button init
-// static void start_button_init()
+// esp_err_t button_init(uint32_t button_num)
 // {
-//     // Configure the pin as input, with an internal pull-up
-//     gpio_config_t io_conf = {
-//         .pin_bit_mask = (1ULL << START_GPIO),
-//         .mode = GPIO_MODE_INPUT,
-//         .pull_up_en = GPIO_PULLUP_ENABLE,
-//         .pull_down_en = GPIO_PULLDOWN_DISABLE,
-//         .intr_type = GPIO_INTR_DISABLE
-//     };
-//     gpio_config(&io_conf);
+//     // const button_config_t btn_cfg = {0};
+//     // const button_config_t gpio_cfg = {
+//     //     .gpio_num = button_num,
+//     //     .active_level = 1,
+//     // };
+    
+//     // button_handle_t btn = NULL;
+//     // esp_err_t ret = iot_button_new_gpio_device(&btn_cfg, &gpio_cfg, &btn);
+
+//     // if (ret != ESP_OK || btn == NULL) {
+//     //     ESP_LOGE(TAG, "Button create failed, ret=0x%x", ret);
+//     //     return ret;
+//     // }
+//     gpio_set_direction(button_num, GPIO_MODE_INPUT);
+
 // }
 
 //used to init i2c for all devices
@@ -125,8 +143,7 @@ static void littleFS_init()
         printf("Failed to mount or format filesystem\n");
         return;
     }
-
-    //Deletes old log if it exists
+    //delete old log file
     unlink(FILE_PATH);
 }
 
@@ -166,6 +183,7 @@ void mpu_logging(void *pvPerameter)
 
         //Print to computer console
         //will replace with data logging
+        //Logging data over the usb  prevents dumping the flash 
         //printf("Pitch: %.2f°, Roll: %.2f° | AccelPitch: %.2f°, AccelRoll: %.2f°\n",
         //       pitch, roll, pitch_acc, roll_acc);
 
@@ -201,12 +219,11 @@ void blinky(void *pvParameter)
 }
 void app_main()
 {
-    i2c_master_init();
+    gpio_set_direction(START_BUTTON_GPIO, GPIO_MODE_INPUT);
+    while(gpio_get_level(START_BUTTON_GPIO) == 1){}
+
     littleFS_init();
-    start_button_init();
-    //xTaskCreate(&hello_task, "hello_task", 2048, NULL, 5, NULL);
-    //while(gpio_get_level(START_GPIO)){}
-    
+    i2c_master_init();
     xTaskCreate(&blinky, "blinky", 2048,NULL,5,NULL);
     buffer_write("Time,Pitch,Roll"); //header for csv
     xTaskCreate(&mpu_logging, "mpu", 4096,NULL,5,NULL);
