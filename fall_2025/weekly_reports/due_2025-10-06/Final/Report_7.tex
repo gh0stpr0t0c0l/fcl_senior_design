@@ -1,0 +1,38 @@
+\documentclass[12pt, titlepage]{article}
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=magenta]{hyperref}
+
+\title{Feedback Controls Lab Weekly Report \\ \normalsize{Week 7}}
+\author{Aydan Vissing, Brady Schick, Gabriel Southwell, Simon Ross}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Aydan Vissing ( hrs spent)}
+
+
+
+\section*{Brady Schick (8 hrs spent)}
+
+Throughout this week, I continued implementing the mathematical model using C. Specifically, I made a .h file with the setup for PWM channels. I also began another file with a function to perform the necessary calculations based on the error. Both of these functions can be found in the Mathematical Model file in the GitHub. On Friday, we met as a team with Dr. Fredette, with one of the main discussions being deriving and verifying the mathematical model from a free-body diagram. I spent some time on Saturday furthering the derivation, and I plan to spend some more time in the upcoming week applying appropriate assumptions to achieve a linear model.
+
+\section*{Gabriel Southwell (9 hrs spent)}
+
+On Monday I completed the controls mini project. This gave me a much better understanding of how the integral and derivative terms affect a system. I also found it to be an enjoyable experience. It did take me a while to complete, but a lot of that was being unfamiliar with MatLab syntax.
+
+As for the drone, I refactored some of the drone code to make it less hard to read and maintain. I added code for the drone to halt when plugged in until a button pressed. For some reason, this broke the code for dumping the flash storage and I am not sure why. I probably will look more into it next week. There is also now the beginnings of some wireless logging code, but its not finished.
+
+This coming week I plan work some more on the wireless logging and start leaning how to use the time of flight sensors. The main things to test on the time of flights will be figuring out how to reassign their I2C addresses and finding how far apart they need to be to accurately sense if the drone is square with the wall.   
+
+
+\section*{Simon Ross (8 hrs spent)}
+
+This week has been important, with progress on many areas of the drone and an official milestone in the bag. This milestone marks all of the components ordered for constructing a prototype drone testing our connections, sensors, and battery and motor choices. The project is relatively on schedule, with the exception of the 3D printed frame, the power supply system, and the PCB design (according to Dr. Kohl, not the Gantt chart). However, intentional progress is being made on all of these components, and the only current limiting factor is the PCB design, which will lead into the power supply system.
+
+I personally have spent most of my week researching what open source drone PCB's look like and applying that to what we need for our drone. One drone on OSHWLabs uses an ESP32 microcontroller and a MPU6050 IMU, which are the same units we plan to use for our drone. I spent extra time dissecting this drone, researching high frequency noise reduction in circuits,  looking up how USB Type C works, and investigating power regulation. Overall, I think I have a basic idea of what our final PCB design will look like, and I will communicate with Dr. Kohl and Gabe for the details. 
+
+This week, we also had a really good conversation with both Drs. Fredette about how the frame of the drone will look once 3D printed. We settled on a lighter design over more protection, but will continue to evaluate this as the project progresses. Our current expectation is that the PETG plastic will be flexible enough to make a skeletonized frame that will be rigid enough to protect against bumps and drops.
+
+With the milestone this week, we have a bit of a break for this next week as far as the schedule extends. As mentioned, we will continue to work on the frame, PCB, and power supply this week, with a focus on getting the PCB ordered as soon as possible. This will include working out the power supply system with Brady. Approaching quickly is construction of the first drone prototype, so this week will continue work towards that. We will discuss with Dr. Kohl what he suggests we use for motor controllers to allow the success of this build. Finally, I have been slacking on the mathematical model, so I will redouble my efforts this week in helping make it a reality in code. I will also consider working on the feedback controls mini-project to hopefully learn more about D and I control.
+
+\end{document}
