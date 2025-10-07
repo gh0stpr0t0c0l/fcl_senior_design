@@ -1,22 +1,4 @@
 #pragma once
-/*#pragma once
-
-using namespace std;
-
-@@ -20,7 +20,7 @@ class PID {
-		D = deriv;
-	}
-
-	int updateVals(float newe) {
-	void updateVals(float newe) {
-		//update array
-		for (int i = 0; i < 20; i++) {
-			e[i] = e[i + 1];
-@@ -48,4 +48,47 @@ class PID {
-	float e[21] = { 0 };
-	float sum = 0;
-	float slope = 0;
-};*/
 
 using namespace std;
 
@@ -45,16 +27,23 @@ void PID_updateVals(PID* cont, float newe) {
 	cont->e[0] = cont->e[1];
 	cont->e[1] = newe;
 	cont->sum += newe;
-	if (cont->sum > 255) {//to prevent integral overshoot
-		cont->sum = 255;
+	if (cont->sum > 128) {//to prevent integral overshoot
+		cont->sum = 128;
+	}
+	else if (cont->sum < -127) {
+		cont->sum = -127;
 	}
 	cont->slope = cont->e[1] - cont->e[0];
 }
 
 int getDutyCycle(PID* cont) {
-	int DC = cont->P * cont->e[1] + cont->I * cont->sum - cont->D * cont->slope;
+	int DC = (int)(cont->P * cont->e[1] + cont->I * cont->sum - cont->D * cont->slope);
+	DC += 127;//Get into the 0-255 range
 	if (DC > 255) {
 		return 255;
+	}
+	else if (DC < 0) {
+		return 0;
 	}
 	return DC;
 }
