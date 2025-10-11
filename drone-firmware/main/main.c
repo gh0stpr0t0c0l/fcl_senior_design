@@ -1,11 +1,3 @@
-/* Blink Example
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
 #include <stdio.h>
 #include <math.h>
 #include <unistd.h>
@@ -25,10 +17,14 @@
 #include "esp_err.h"
 #include "esp_log.h"
 
-// #include "lwip/sockets.h"
-// #include "esp_wifi.h"
-// #include "esp_event.h"
-// #include "nvs_flash.h"
+#include "lwip/sockets.h"
+#include "esp_wifi.h"
+#include "esp_event.h"
+#include "nvs_flash.h"
+#include "esp_netif.h"
+
+#include <arpa/inet.h>
+#include <errno.h>
 
 #define START_BUTTON_GPIO 0
 
@@ -47,13 +43,27 @@
 #define FILE_PATH "/littlefs/log.csv"
 
 //wifi defs
-// #define WIFI_SSID "DRONE_WIFI"
-// #define WIFI_PASS "password"
-// #define UDP_PORT 1234
-// #define BROADCAST_IP "255.255.255.255"
+#define WIFI_SSID "DRONE_WIFI"
+#define WIFI_PASS "password"
+#define UDP_PORT 1234
+//#define BROADCAST_IP "192.168.4.255"
+#define TELEMETRY_MAX_LEN 128
+#define TELEMETRY_QUEUE_LEN 16
+//#define MULTICAST_IP "239.1.1.1"  
+#define UNICAST_IP "192.168.4.2"
 
 static char ram_buffer[BUFFER_SIZE];
 static size_t buffer_index = 0;
+
+typedef struct
+{
+    uint16_t len;
+    char buf[TELEMETRY_MAX_LEN];
+} telemetry_msg_t;
+
+static QueueHandle_t telemetry_queue = NULL;
+
+static const char *TAG = "Drone";
 
 void buffer_flush()
 {
@@ -87,10 +97,6 @@ void buffer_write(const char *csv_line)
 
     memcpy(&ram_buffer[buffer_index], csv_line, len);
     buffer_index += len;
-
-    // if (needs_newline) {
-    //     ram_buffer[buffer_index++] = '\n';
-    // }
 }
 
 // esp_err_t button_init(uint32_t button_num)
@@ -111,6 +117,27 @@ void buffer_write(const char *csv_line)
 //     gpio_set_direction(button_num, GPIO_MODE_INPUT);
 
 // }
+
+//init the udp broadcast
+void wifi_init(void) {
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    esp_wifi_init(&cfg);
+    esp_wifi_set_mode(WIFI_MODE_AP);
+    wifi_config_t ap_config = {
+        .ap = {
+            .ssid = WIFI_SSID,
+            .ssid_len = strlen(WIFI_SSID),
+            .password = WIFI_PASS,
+            .max_connection = 4,
+            .authmode = WIFI_AUTH_WPA_WPA2_PSK,
+        },
+    };
+    if (strlen(WIFI_PASS) == 0) {
+        ap_config.ap.authmode = WIFI_AUTH_OPEN;
+    }
+    esp_wifi_set_config(WIFI_IF_AP, &ap_config);
+    esp_wifi_start();
+}
 
 //used to init i2c for all devices
 static void i2c_master_init()
@@ -145,6 +172,7 @@ static void littleFS_init()
     }
     //delete old log file
     unlink(FILE_PATH);
+    buffer_write("Time,Pitch,Roll\n"); //header for csv
 }
 
 void mpu_logging(void *pvPerameter)
@@ -191,18 +219,19 @@ void mpu_logging(void *pvPerameter)
         char line[128];
         snprintf(line, sizeof(line), "%.3f,%.2f,%.2f\n", now_s, pitch, roll);
         buffer_write(line);
+
+        if (telemetry_queue != NULL) {
+            telemetry_msg_t tm = {0};
+            strncpy(tm.buf, line, TELEMETRY_MAX_LEN - 1);
+            tm.len = (uint16_t)snprintf(tm.buf, TELEMETRY_MAX_LEN, "%.3f,%.2f,%.2f\n", now_s, pitch, roll);
+            if (xQueueSend(telemetry_queue, &tm, 0) != pdTRUE){
+                ESP_LOGE(TAG, "Queue Full. Packet Droped");
+            }
+        }
         vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
 
-// void hello_task(void *pvParameter)
-// {
-// 	while(1)
-// 	{
-// 	    printf("Hello world!\n");
-// 	    vTaskDelay(100 / portTICK_PERIOD_MS);
-// 	}
-// }
 void blinky(void *pvParameter)
 {
     //gpio_pad_select_gpio(BLINK_GPIO);
@@ -217,14 +246,110 @@ void blinky(void *pvParameter)
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
+
+// Currently uses unicast to my computer's ip addres
+// Apparently broadacst has problem on the esp32
+// I tried multicast and i couldnt get it to work
+// Works for now
+// TODO: Make this use multicast so multiple computers can connect 
+void telemetry_broadcast(void *pvParameter)
+{
+    int sock = -1;
+    struct sockaddr_in serv_addr, unicast_addr;
+
+    vTaskDelay(pdMS_TO_TICKS(500));
+
+    //create socket
+    sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if (sock < 0) {
+        ESP_LOGE(TAG, "Unable to create socket: errno %d", errno);
+        vTaskDelete(NULL);
+        return;
+    }
+
+    //config socket
+    uint8_t ttl = 1;
+    if (setsockopt(sock, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(ttl)) < 0) {
+        ESP_LOGE(TAG, "Failed to set multicast TTL");
+        close(sock);
+        vTaskDelete(NULL);
+        return;
+    }
+
+    memset(&serv_addr, 0, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_addr.s_addr = INADDR_ANY;
+    serv_addr.sin_port = htons(0);
+
+    //bind socket
+    if (bind(sock, (const struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+        ESP_LOGE(TAG, "failed to bind: errno %d", errno);
+        close(sock);
+        vTaskDelete(NULL);
+        return;
+    }
+
+    memset(&unicast_addr, 0, sizeof(unicast_addr));
+    unicast_addr.sin_family = AF_INET;
+    unicast_addr.sin_port = htons(UDP_PORT);
+    inet_aton(UNICAST_IP, &unicast_addr.sin_addr);
+
+    ESP_LOGI(TAG, "UDP broadcast task started, sending to %s:%d", UNICAST_IP, UDP_PORT);
+
+    telemetry_msg_t msg;
+    
+    //send loop
+    while(1){
+        //block task until message in queue
+        if (xQueueReceive(telemetry_queue, &msg, portMAX_DELAY) == pdTRUE){
+            int sent = sendto(sock, msg.buf, msg.len, 0 , (struct sockaddr *)&unicast_addr, sizeof(unicast_addr));
+            //ESP_LOGE(TAG,"%d %s", strlen(msg.buf), msg.buf);
+            if (sent < 0){
+                ESP_LOGE(TAG, "Error occurred during sendto: errno %d (%s)", errno, strerror(errno));
+            }
+        }
+    }
+}
+
 void app_main()
 {
-    gpio_set_direction(START_BUTTON_GPIO, GPIO_MODE_INPUT);
-    while(gpio_get_level(START_BUTTON_GPIO) == 1){}
+    // init non volitile storage for wifi
+    esp_err_t ret = nvs_flash_init();
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        nvs_flash_erase();
+        ret = nvs_flash_init();
+    }
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "nvs_flash_init failed: %d", ret);
+    }
 
+    ESP_ERROR_CHECK(esp_netif_init());
+    ESP_ERROR_CHECK(esp_event_loop_create_default());
+    esp_netif_create_default_wifi_ap();
+    wifi_init();
+
+    vTaskDelay(pdMS_TO_TICKS(200));
+
+    //wait for button
+    gpio_set_direction(START_BUTTON_GPIO, GPIO_MODE_INPUT);
+    while (gpio_get_level(START_BUTTON_GPIO) == 1) {
+        vTaskDelay(pdMS_TO_TICKS(50));
+    }
+
+    // rest of initialization
     littleFS_init();
     i2c_master_init();
-    xTaskCreate(&blinky, "blinky", 2048,NULL,5,NULL);
-    buffer_write("Time,Pitch,Roll"); //header for csv
-    xTaskCreate(&mpu_logging, "mpu", 4096,NULL,5,NULL);
+
+    //create message queue for telemtery
+    telemetry_queue = xQueueCreate(TELEMETRY_QUEUE_LEN, sizeof(telemetry_msg_t));
+    if (telemetry_queue == NULL) {
+        ESP_LOGE(TAG, "Failed to create telemetry queue");
+    }
+
+    // create tasks
+    xTaskCreate(&blinky, "blinky", 2048, NULL, 5, NULL);
+    xTaskCreate(&mpu_logging, "mpu", 4096, NULL, 5, NULL);
+    if (telemetry_queue != NULL) {
+        xTaskCreate(&telemetry_broadcast, "udp_bcast", 4096, NULL, 5, NULL);
+    }
 }

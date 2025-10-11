@@ -10,5 +10,5 @@
 **/build/
 **/.vscode/
 **/managed_components/
-desktop_app/littlefs_dump.bin
+**/littlefs_dump.bin
 desktop_app/flight_log.csv

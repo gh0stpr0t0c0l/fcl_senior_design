@@ -1,5 +1,4 @@
 import esptool
-import sys
 from littlefs import LittleFS
 
 def read_partition(port, offset, size, outfile):
