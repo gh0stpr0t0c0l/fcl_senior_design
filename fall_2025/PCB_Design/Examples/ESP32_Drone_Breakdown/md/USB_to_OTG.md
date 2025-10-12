@@ -6,3 +6,4 @@
 	-  VBUS --> fuse --> cap --> regulator (not to battery)
 ## Notes
 - Will likely need most of this
+- Research if the UART interface is built into the ESP32. If not, make sure to add UART interfacing.
