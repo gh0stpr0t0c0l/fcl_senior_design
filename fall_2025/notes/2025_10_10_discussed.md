@@ -1,0 +1,3 @@
+- Look up LiteWing Drone
+- Make sure time of flight sensor on the bottom of the drone is not obstructed by the battery
+- UART interfact
