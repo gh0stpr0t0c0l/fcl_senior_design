@@ -1,0 +1,35 @@
+\documentclass[12pt, titlepage]{article}
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=magenta]{hyperref}
+
+\title{Feedback Controls Lab Weekly Report \\ \normalsize{Week 8}}
+\author{Aydan Vissing, Brady Schick, Gabriel Southwell, Simon Ross}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Aydan Vissing (8 hours spent)}
+
+This week, I worked on testing Dr. Fredette's lab during lab time and then we had our weekly meeting on Friday which I was able to further understand what I needed to do. After this meeting, I spent many hours trying to finish the design for the first 3D print of the frame. It was much more intense and time consuming than I expected but I was able to get it done and then print it, which I sent a picture of in the discord. 
+
+\section*{Brady Schick (1 hour spent)}
+
+This turned out to be a very busy week outside of senior design. I was only able to attend the weekly meeting and fix a minor error with the PID struct.
+
+\section*{Gabriel Southwell (12 hours spent)}
+
+WiFi is hard. But it works now with some limitations. What had held this up for so long was that I was trying to get the wireless logging to work by broadcasting the telemetry to all IP addresses over port 1234. This is a very standard way to do it and would have normally worked, but no packets were arriving at my laptop, even though the esp said it was sending them. I learned more than I ever ever thought I would about how ye olde POSIX sockets work. I tried checking if it my listener script was bad with NetShark. I tried checking if my OS was filtering broadcasts by messing with systemctl configs. I even tried plopping it all into ChatGPT and telling it to “pls fix. No bugs” but none of it worked. It was then that I stumbled onto an old forum post where someone was having a similar problem with their esp32 and the solution was that UDP broadcast is borked on esp32 and you should use unicast to a static IP address if possible. That finally worked.
+
+So right now it only sends packets to the IP address of the first device that connects to the drone’s AP. This might be fine. That said, before the final release I would like to improve it by making to send to all IPs connected. However it works great for development right now and that is what counts.
+
+This next week I plant to get started on the time of flight sensors so we experiment with how far apart they need to be sense if the drone is square with a wall.
+
+\section*{Simon Ross (6.75 hours spent)}
+
+Of all the weeks to get less work done, this was the best with respect to our schedule. However, it was not without fruit. While we still are behind schedule in the areas of PCB, frame, and power supply, significant progress has been made in each of these areas, and the project is still moving forward.
+
+This week, I worked mainly on the PCB for the drone. Gabe discovered a drone called LiteWing with open source hardware and software that our drone is nearly a duplicate of so far. This is a great aid, as it allows us to make some of the more difficult and unexplored decisions based of of a working project. I spent a good amount of time researching this drone and applying what I'd learned to our drone with some help from Dr. Kohl. Dr. Kohl changed his mind on the motor controllers since most of the open source drones I have found opt for MOSFETS. He thinks we can do this as well.
+
+The upcoming week will include more work on the PCB and frame, including the power supply. Additionally, we will continue to work towards a prototype drone, although work on the PCB may be more important at this point. In a month we need to have a functional proof of concept, which will be a challenge.
+
+\end{document}
