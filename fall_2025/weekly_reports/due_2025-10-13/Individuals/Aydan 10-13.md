@@ -1,0 +1,2 @@
+Hours: 8
+This week, I worked on testing Dr. Fredette's lab during lab time and then we had our weekly meeting on Friday which I was able to further understand what I needed to do. After this meeting, I spent many hours trying to finish the design for the first 3D print of the frame. It was much more intense and time consuming than I expected but I was able to get it done and then print it, which I sent a picture of in the discord. 
