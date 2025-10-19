@@ -1,0 +1,30 @@
+{
+	"nodes":[
+		{"id":"d5eefacd43537215","type":"file","file":"fall_2025/PCB_Design/Examples/LiteWingV2.5C/img/Charging_Module.png","x":-313,"y":-228,"width":400,"height":282},
+		{"id":"5e856c791e9669fd","type":"file","file":"fall_2025/PCB_Design/Examples/LiteWingV2.5C/img/Gyro.png","x":281,"y":-119,"width":358,"height":400},
+		{"id":"0cf70960bdba728e","type":"file","file":"fall_2025/PCB_Design/Examples/LiteWingV2.5C/img/Header.png","x":-1040,"y":-119,"width":400,"height":250,"color":"1"},
+		{"id":"e856de586e508e00","type":"file","file":"fall_2025/PCB_Design/Examples/LiteWingV2.5C/img/Interface_and_Regulation.png","x":-119,"y":720,"width":400,"height":281},
+		{"id":"bc39ae7720353904","type":"file","file":"fall_2025/PCB_Design/Examples/LiteWingV2.5C/img/MOSFETS.png","x":-1760,"y":-480,"width":400,"height":171},
+		{"id":"ed40f0bceba518e7","type":"file","file":"fall_2025/PCB_Design/Examples/LiteWingV2.5C/img/SOC.png","x":-1440,"y":675,"width":399,"height":326},
+		{"id":"b14a9b2c8a8b0ca4","type":"file","file":"fall_2025/PCB_Design/Examples/LiteWingV2.5C/img/Switch_bus_battery_regulator.png","x":1370,"y":747,"width":400,"height":204},
+		{"id":"36328f91588ea3b7","type":"file","file":"fall_2025/PCB_Design/Examples/LiteWingV2.5C/img/UART_Converter_and_Power_Management.png","x":639,"y":1389,"width":400,"height":333},
+		{"id":"868b6c45f0324416","type":"file","file":"fall_2025/PCB_Design/Examples/LiteWingV2.5C/md/MOSFETS.md","x":-1760,"y":-269,"width":400,"height":400},
+		{"id":"bebf94cf0dda4388","type":"file","file":"fall_2025/PCB_Design/Examples/LiteWingV2.5C/md/Header.md","x":-1040,"y":160,"width":400,"height":400,"color":"1"},
+		{"id":"832b549c97d44776","type":"file","file":"fall_2025/PCB_Design/Examples/LiteWingV2.5C/md/Charging_Module.md","x":-313,"y":100,"width":400,"height":400,"color":"1"},
+		{"id":"20818afb820e428f","type":"file","file":"fall_2025/PCB_Design/Examples/LiteWingV2.5C/md/Gyro.md","x":281,"y":320,"width":400,"height":400},
+		{"id":"a6a2d3a37b7520b9","type":"file","file":"fall_2025/PCB_Design/Examples/LiteWingV2.5C/md/Interface_and_Regulation.md","x":-119,"y":1040,"width":400,"height":400},
+		{"id":"b8d1a3bb4d3ba633","type":"file","file":"fall_2025/PCB_Design/Examples/LiteWingV2.5C/md/Switch_bus_battery_regulator.md","x":1370,"y":989,"width":400,"height":400},
+		{"id":"5bf8fb6da476463c","type":"file","file":"fall_2025/PCB_Design/Examples/LiteWingV2.5C/md/UART_Converter_and_Power_Management.md","x":639,"y":1760,"width":400,"height":400},
+		{"id":"c21257ff6b8201f7","type":"file","file":"fall_2025/PCB_Design/Examples/LiteWingV2.5C/md/SOC.md","x":-1440,"y":1040,"width":400,"height":400}
+	],
+	"edges":[
+		{"id":"ed6782b4b6064e25","fromNode":"ed40f0bceba518e7","fromSide":"bottom","toNode":"c21257ff6b8201f7","toSide":"top"},
+		{"id":"17b5c4f80e5ea3e4","fromNode":"0cf70960bdba728e","fromSide":"bottom","toNode":"bebf94cf0dda4388","toSide":"top"},
+		{"id":"eb7596bd330b9bbd","fromNode":"bc39ae7720353904","fromSide":"bottom","toNode":"868b6c45f0324416","toSide":"top"},
+		{"id":"9f3e314aa004ad04","fromNode":"d5eefacd43537215","fromSide":"bottom","toNode":"832b549c97d44776","toSide":"top"},
+		{"id":"4c12b68cc2fb7284","fromNode":"5e856c791e9669fd","fromSide":"bottom","toNode":"20818afb820e428f","toSide":"top"},
+		{"id":"146a51e552cf19be","fromNode":"b14a9b2c8a8b0ca4","fromSide":"bottom","toNode":"b8d1a3bb4d3ba633","toSide":"top"},
+		{"id":"8f061dbe32f05d8c","fromNode":"36328f91588ea3b7","fromSide":"bottom","toNode":"5bf8fb6da476463c","toSide":"top"},
+		{"id":"92265b4a22c3149f","fromNode":"e856de586e508e00","fromSide":"bottom","toNode":"a6a2d3a37b7520b9","toSide":"top"}
+	]
+}
