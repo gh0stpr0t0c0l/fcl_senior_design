@@ -1,0 +1,2 @@
+Hours: 7
+I took some time over the weekend to try and figure out how to use the QT editor, I think I am doing something incorrectly when it comes to it because I have not been able to figure anything out with my own experimentation. I attempted to find some videos for it but I wasn't successful at finding anything that helped. I then moved on to working on the next mini-project, battery and power storage. I spent some time researching and reading for that project. 
