@@ -12,3 +12,5 @@
 **/managed_components/
 **/littlefs_dump.bin
 desktop_app/flight_log.csv
+**/.cache/
+

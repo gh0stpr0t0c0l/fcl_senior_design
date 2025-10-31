@@ -8,5 +8,5 @@ set(COMPONENT_ADD_INCLUDEDIRS ".")
 idf_component_register(
     SRCS ${COMPONENT_SRCS}
     INCLUDE_DIRS ${COMPONENT_ADD_INCLUDEDIRS}
-    REQUIRES esp_netif esp_event esp_wifi nvs_flash esp_timer lwip spi_flash
+    REQUIRES esp_netif esp_event esp_wifi nvs_flash esp_timer lwip spi_flash i2c_bus
 )

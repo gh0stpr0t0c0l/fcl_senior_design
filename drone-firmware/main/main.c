@@ -8,7 +8,9 @@
 #include "esp_timer.h"
 #include "sdkconfig.h"
 #include "mpu6050.h"
-#include "driver/i2c_master.h"
+#include "i2cdev.h"
+#include "vl53l1x.h"
+// #include "driver/i2c_master.h"
 //#include "button_gpio.h"
 //#include "iot_button.h"
 
@@ -49,7 +51,7 @@
 //#define BROADCAST_IP "192.168.4.255"
 #define TELEMETRY_MAX_LEN 128
 #define TELEMETRY_QUEUE_LEN 16
-//#define MULTICAST_IP "239.1.1.1"  
+//#define MULTICAST_IP "239.1.1.1"
 #define UNICAST_IP "192.168.4.2"
 
 static char ram_buffer[BUFFER_SIZE];
@@ -99,25 +101,6 @@ void buffer_write(const char *csv_line)
     buffer_index += len;
 }
 
-// esp_err_t button_init(uint32_t button_num)
-// {
-//     // const button_config_t btn_cfg = {0};
-//     // const button_config_t gpio_cfg = {
-//     //     .gpio_num = button_num,
-//     //     .active_level = 1,
-//     // };
-    
-//     // button_handle_t btn = NULL;
-//     // esp_err_t ret = iot_button_new_gpio_device(&btn_cfg, &gpio_cfg, &btn);
-
-//     // if (ret != ESP_OK || btn == NULL) {
-//     //     ESP_LOGE(TAG, "Button create failed, ret=0x%x", ret);
-//     //     return ret;
-//     // }
-//     gpio_set_direction(button_num, GPIO_MODE_INPUT);
-
-// }
-
 //init the udp broadcast
 void wifi_init(void) {
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
@@ -139,7 +122,7 @@ void wifi_init(void) {
     esp_wifi_start();
 }
 
-//used to init i2c for all devices
+// used to init i2c for all devices
 static void i2c_master_init()
 {
     i2c_config_t conf = {
@@ -164,7 +147,7 @@ static void littleFS_init()
             .format_if_mount_failed = true,
             .read_only = false,
     };
-    
+
     esp_err_t ret = esp_vfs_littlefs_register(&conf);
     if (ret != ESP_OK) {
         printf("Failed to mount or format filesystem\n");
@@ -175,9 +158,52 @@ static void littleFS_init()
     buffer_write("Time,Pitch,Roll\n"); //header for csv
 }
 
+void tof_logging(void *pvPerameter)
+{
+    // --- VL53L1X configuration (make sure pins are not swapped) ---
+    static VL53L1_Dev_t dev;
+    static const I2cDef I2CConfig = {
+        .i2cPort       = I2C_MASTER_NUM,
+        .i2cClockSpeed = I2C_MASTER_FREQ_HZ,    // match master
+        .gpioSCLPin    = I2C_MASTER_SCL_IO,     // IMPORTANT: SCL = 22
+        .gpioSDAPin    = I2C_MASTER_SDA_IO,     // IMPORTANT: SDA = 21
+        .gpioPullup    = GPIO_PULLUP_ENABLE,
+    };
+
+    I2cDrv i2cBus = {
+        .def = &I2CConfig,
+    };
+
+    if (vl53l1xInit(&dev, &i2cBus)) {
+        ESP_LOGI(TAG, "VL53L1X init OK");
+    } else {
+        ESP_LOGE(TAG, "VL53L1X init FAILED");
+        // If it fails, check wiring and that the library didn't attempt to re-install the driver with swapped pins.
+        return;
+    }
+
+    // Now you can keep using VL53L1X and your MPU driver (which uses the same I2C pins/port).
+    while (1) {
+        // Example: get range / log
+        VL53L1_RangingMeasurementData_t data;
+        uint8_t dataReady = 0;
+        vl53l1xStartMeasurement(&dev);
+        while (!dataReady) {
+            VL53L1_GetMeasurementDataReady(&dev, &dataReady);
+            vTaskDelay(pdMS_TO_TICKS(1));
+        }
+        VL53L1_GetRangingMeasurementData(&dev, &data);
+        ESP_LOGI(TAG, "Distance: %d mm", data.RangeMilliMeter);
+        VL53L1_ClearInterrupt(&dev);
+        vl53l1xStopMeasurement(&dev);
+
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
+}
+
 void mpu_logging(void *pvPerameter)
 {
-    mpu6050_handle_t mpu6050 = mpu6050_create(I2C_MASTER_NUM, MPU6050_I2C_ADDRESS); 
+    mpu6050_handle_t mpu6050 = mpu6050_create(I2C_MASTER_NUM, MPU6050_I2C_ADDRESS);
     esp_err_t ret = mpu6050_config(mpu6050, ACCE_FS_4G, GYRO_FS_500DPS);
     if (ret != ESP_OK) {
         printf("MPU6050 config failed\n");
@@ -211,7 +237,7 @@ void mpu_logging(void *pvPerameter)
 
         //Print to computer console
         //will replace with data logging
-        //Logging data over the usb  prevents dumping the flash 
+        //Logging data over the usb  prevents dumping the flash
         //printf("Pitch: %.2f°, Roll: %.2f° | AccelPitch: %.2f°, AccelRoll: %.2f°\n",
         //       pitch, roll, pitch_acc, roll_acc);
 
@@ -251,7 +277,7 @@ void blinky(void *pvParameter)
 // Apparently broadacst has problem on the esp32
 // I tried multicast and i couldnt get it to work
 // Works for now
-// TODO: Make this use multicast so multiple computers can connect 
+// TODO: Make this use multicast so multiple computers can connect
 void telemetry_broadcast(void *pvParameter)
 {
     int sock = -1;
@@ -297,7 +323,7 @@ void telemetry_broadcast(void *pvParameter)
     ESP_LOGI(TAG, "UDP broadcast task started, sending to %s:%d", UNICAST_IP, UDP_PORT);
 
     telemetry_msg_t msg;
-    
+
     //send loop
     while(1){
         //block task until message in queue
@@ -349,6 +375,7 @@ void app_main()
     // create tasks
     xTaskCreate(&blinky, "blinky", 2048, NULL, 5, NULL);
     xTaskCreate(&mpu_logging, "mpu", 4096, NULL, 5, NULL);
+    xTaskCreate(&tof_logging, "tof", 4096, NULL, 5, NULL);
     if (telemetry_queue != NULL) {
         xTaskCreate(&telemetry_broadcast, "udp_bcast", 4096, NULL, 5, NULL);
     }
