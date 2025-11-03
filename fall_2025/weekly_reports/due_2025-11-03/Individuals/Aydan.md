@@ -1,0 +1,2 @@
+9 hr
+I spent a lot of time trying to redesign the frame of the drone, especially the part which will contain the motor and the blade guard. I wasn't able to print anything this weekend but the plan for the week is to get something printed before Friday. 
