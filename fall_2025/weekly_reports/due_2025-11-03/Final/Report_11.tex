@@ -1,0 +1,28 @@
+\documentclass[12pt, titlepage]{article}
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=magenta]{hyperref}
+
+\title{Feedback Controls Lab Weekly Report \\ \normalsize{Week 11}}
+\author{Aydan Vissing, Brady Schick, Gabriel Southwell, Simon Ross}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Aydan Vissing (9 hours spent)}
+
+I spent a lot of time trying to redesign the frame of the drone, especially the part which will contain the motor and the blade guard. I wasn't able to print anything this weekend but the plan for the week is to get something printed before Friday. 
+
+\section*{Brady Schick (8 hours spent)}
+
+I spent the first half of the week on preparing for the progress presentation. The rest of the week was spent working on the MATLAB simulation.
+
+\section*{Gabriel Southwell (12 hours spent)}
+
+Early in this week, I spent a lot of time preparing for our team progress presentation. I think it went well overall and everyone else does too. 
+As for the software, I have not made much tangible progress. The big thing I have run into is both the MPU library and the VL53L library include their own i2c drivers. Unfortunately they conflict. They normally would be okay with different libraries since they are both abstractions of the Espressif i2c library, but both libraries automatically run some initialization code. This code can only run once otherwise it makes the whole rtos crash. I have been exploring options for different libraries that either use the same driver or can be modified more easily. 
+
+\section*{Simon Ross (13.5 hours spent)}
+
+I don't have a ton of time to write a drawn-out report this week since I have been spending most of it designing the PCB and working on our presentation. Ultimately, I think we are on track to meet our milestone, and the PCB is coming along well. I will continue to communicate with the other members of the team regarding what we need.
+
+\end{document}
