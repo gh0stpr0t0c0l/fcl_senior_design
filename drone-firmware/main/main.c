@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 #include <unistd.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -9,6 +10,7 @@
 #include "sdkconfig.h"
 #include "mpu6050.h"
 #include "i2cdev.h"
+#include "vl53l1_core.h"
 #include "vl53l1x.h"
 // #include "driver/i2c_master.h"
 //#include "button_gpio.h"
@@ -64,6 +66,8 @@ typedef struct
 } telemetry_msg_t;
 
 static QueueHandle_t telemetry_queue = NULL;
+
+static i2c_rw_t i2c_bus_handle;
 
 static const char *TAG = "Drone";
 
@@ -123,21 +127,21 @@ void wifi_init(void) {
 }
 
 // used to init i2c for all devices
-static void i2c_master_init()
-{
-    i2c_config_t conf = {
-        .mode = I2C_MODE_MASTER,
-        .sda_io_num = I2C_MASTER_SDA_IO,
-        .scl_io_num = I2C_MASTER_SCL_IO,
-        .sda_pullup_en = GPIO_PULLUP_ENABLE,
-        .scl_pullup_en = GPIO_PULLUP_ENABLE,
-        .master.clk_speed = I2C_MASTER_FREQ_HZ,
-    };
-    i2c_param_config(I2C_MASTER_NUM, &conf);
-    i2c_driver_install(I2C_MASTER_NUM, conf.mode,
-                       I2C_MASTER_RX_BUF_DISABLE,
-                       I2C_MASTER_TX_BUF_DISABLE, 0);
-}
+// static void i2c_master_init()
+// {
+//     i2c_config_t conf = {
+//         .mode = I2C_MODE_MASTER,
+//         .sda_io_num = I2C_MASTER_SDA_IO,
+//         .scl_io_num = I2C_MASTER_SCL_IO,
+//         .sda_pullup_en = GPIO_PULLUP_ENABLE,
+//         .scl_pullup_en = GPIO_PULLUP_ENABLE,
+//         .master.clk_speed = I2C_MASTER_FREQ_HZ,
+//     };
+//     i2c_param_config(I2C_MASTER_NUM, &conf);
+//     i2c_driver_install(I2C_MASTER_NUM, conf.mode,
+//                        I2C_MASTER_RX_BUF_DISABLE,
+//                        I2C_MASTER_TX_BUF_DISABLE, 0);
+// }
 
 static void littleFS_init()
 {
@@ -161,38 +165,39 @@ static void littleFS_init()
 void tof_logging(void *pvPerameter)
 {
     static VL53L1_Dev_t dev;
-    static const I2cDef I2CConfig = {
-        .i2cPort       = I2C_MASTER_NUM,
-        .i2cClockSpeed = I2C_MASTER_FREQ_HZ,    // match master
-        .gpioSCLPin    = I2C_MASTER_SCL_IO,     // IMPORTANT: SCL = 22
-        .gpioSDAPin    = I2C_MASTER_SDA_IO,     // IMPORTANT: SDA = 21
-        .gpioPullup    = GPIO_PULLUP_ENABLE,
-    };
+    // static const I2cDef I2CConfig = {
+    //     .i2cPort       = I2C_MASTER_NUM,
+    //     .i2cClockSpeed = I2C_MASTER_FREQ_HZ,    // match master
+    //     .gpioSCLPin    = I2C_MASTER_SCL_IO,     // IMPORTANT: SCL = 22
+    //     .gpioSDAPin    = I2C_MASTER_SDA_IO,     // IMPORTANT: SDA = 21
+    //     .gpioPullup    = GPIO_PULLUP_ENABLE,
+    // };
 
-    I2cDrv i2cBus = {
-        .def = &I2CConfig,
-    };
+    // I2cDrv i2cBus = {
+    //     .def = &I2CConfig,
+    // };
+    vTaskDelay(pdMS_TO_TICKS(500));
 
-    if (vl53l1xInit(&dev, &i2cBus)) {
+    if (vl53l1xInit(&dev, NULL)) {
         ESP_LOGI(TAG, "VL53L1X init OK");
     } else {
         ESP_LOGE(TAG, "VL53L1X init FAILED");
-        return;
+        vTaskDelete(NULL);
     }
 
     while (1) {
         // Example: get range / log
         VL53L1_RangingMeasurementData_t data;
         uint8_t dataReady = 0;
-        vl53l1xStartMeasurement(&dev);
+        VL53L1_StartMeasurement(&dev);
         while (!dataReady) {
             VL53L1_GetMeasurementDataReady(&dev, &dataReady);
             vTaskDelay(pdMS_TO_TICKS(1));
         }
         VL53L1_GetRangingMeasurementData(&dev, &data);
         ESP_LOGI(TAG, "Distance: %d mm", data.RangeMilliMeter);
-        VL53L1_ClearInterrupt(&dev);
-        vl53l1xStopMeasurement(&dev);
+        VL53L1_clear_interrupt(&dev);
+        VL53L1_StopMeasurement(&dev);
 
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
@@ -200,59 +205,133 @@ void tof_logging(void *pvPerameter)
 
 void mpu_logging(void *pvPerameter)
 {
-    mpu6050_handle_t mpu6050 = mpu6050_create(I2C_MASTER_NUM, MPU6050_I2C_ADDRESS);
-    esp_err_t ret = mpu6050_config(mpu6050, ACCE_FS_4G, GYRO_FS_500DPS);
-    if (ret != ESP_OK) {
-        printf("MPU6050 config failed\n");
-        vTaskDelete(NULL);
-    }
+    mpu6050_dev_t dev;
+    memset(&dev, 0, sizeof(mpu6050_dev_t));
+    // Initialize MPU6050 device on I2C bus
+    ESP_ERROR_CHECK(mpu6050_init_desc(&dev, MPU6050_I2C_ADDRESS_LOW,
+                                        I2C_MASTER_NUM,
+                                        I2C_MASTER_SDA_IO,
+                                        I2C_MASTER_SCL_IO));
 
-    mpu6050_wake_up(mpu6050);
+    // Initialize the sensor
+    ESP_ERROR_CHECK(mpu6050_init(&dev));
+
+    // Wake up the sensor
+    ESP_ERROR_CHECK(mpu6050_set_sleep_enabled(&dev, false));
+
+    // Configure accelerometer and gyroscope ranges
+    ESP_ERROR_CHECK(mpu6050_set_accel_offset(&dev, MPU6050_ACCEL_RANGE_4, 0));
+    ESP_ERROR_CHECK(mpu6050_set_gyro_offset(&dev, MPU6050_GYRO_RANGE_500, 0));
+
+    ESP_LOGI(TAG, "MPU6050 initialized successfully");
 
     float pitch = 0, roll = 0;
     int64_t prev_time = esp_timer_get_time();
 
     while (1) {
-        //Get values from imu
-        mpu6050_acce_value_t acce;
-        mpu6050_gyro_value_t gyro;
-        mpu6050_get_acce(mpu6050, &acce);
-        mpu6050_get_gyro(mpu6050, &gyro);
+        // Get accelerometer and gyroscope data
+        mpu6050_acceleration_t accel;
+        mpu6050_rotation_t gyro;
 
-        //Update time
+        esp_err_t res = mpu6050_get_accel(&dev, &accel);
+        if (res != ESP_OK) {
+            ESP_LOGE(TAG, "Failed to read accelerometer: %d", res);
+            vTaskDelay(pdMS_TO_TICKS(50));
+            continue;
+        }
+
+        res = mpu6050_get_gyro(&dev, &gyro);
+        if (res != ESP_OK) {
+            ESP_LOGE(TAG, "Failed to read gyroscope: %d", res);
+            vTaskDelay(pdMS_TO_TICKS(50));
+            continue;
+        }
+
+        // Update time
         int64_t now_time = esp_timer_get_time();
-        float dt = (now_time - prev_time) / 1000000.0f; //convert to seconds
+        float dt = (now_time - prev_time) / 1000000.0f;
         prev_time = now_time;
 
-        // Accelerometer angles converted to degrees from radians
-        float pitch_acc = atan2f(-acce.acce_x, sqrtf(acce.acce_y * acce.acce_y + acce.acce_z * acce.acce_z)) * 180.0f / M_PI;
-        float roll_acc  = atan2f(acce.acce_y, acce.acce_z) * 180.0f / M_PI;
+        // Accelerometer angles (converted to degrees)
+        float pitch_acc = atan2f(-accel.x, sqrtf(accel.y * accel.y + accel.z * accel.z)) * 180.0f / M_PI;
+        float roll_acc = atan2f(accel.y, accel.z) * 180.0f / M_PI;
 
-        // Complementary filter (Might need different ratios)
-        pitch = 0.95f * (pitch + gyro.gyro_y * dt) + 0.05f * pitch_acc;
-        roll  = 0.95f * (roll  + gyro.gyro_x * dt) + 0.05f * roll_acc;
+        // Complementary filter
+        pitch = 0.95f * (pitch + gyro.y * dt) + 0.05f * pitch_acc;
+        roll = 0.95f * (roll + gyro.x * dt) + 0.05f * roll_acc;
 
-        //Print to computer console
-        //will replace with data logging
-        //Logging data over the usb  prevents dumping the flash
-        //printf("Pitch: %.2f°, Roll: %.2f° | AccelPitch: %.2f°, AccelRoll: %.2f°\n",
-        //       pitch, roll, pitch_acc, roll_acc);
-
+        // Log data
         float now_s = now_time / 1e6;
         char line[128];
         snprintf(line, sizeof(line), "%.3f,%.2f,%.2f\n", now_s, pitch, roll);
         buffer_write(line);
 
+        // Send telemetry
         if (telemetry_queue != NULL) {
             telemetry_msg_t tm = {0};
-            strncpy(tm.buf, line, TELEMETRY_MAX_LEN - 1);
-            tm.len = (uint16_t)snprintf(tm.buf, TELEMETRY_MAX_LEN, "%.3f,%.2f,%.2f\n", now_s, pitch, roll);
-            if (xQueueSend(telemetry_queue, &tm, 0) != pdTRUE){
-                ESP_LOGE(TAG, "Queue Full. Packet Droped");
+            tm.len = (uint16_t)snprintf(tm.buf, TELEMETRY_MAX_LEN,
+                                        "%.3f,%.2f,%.2f\n", now_s, pitch, roll);
+            if (xQueueSend(telemetry_queue, &tm, 0) != pdTRUE) {
+                // Queue full, skip this message
             }
         }
+
         vTaskDelay(pdMS_TO_TICKS(50));
     }
+
+    // mpu6050_handle_t mpu6050 = mpu6050_create(I2C_MASTER_NUM, MPU6050_I2C_ADDRESS);
+    // esp_err_t ret = mpu6050_config(mpu6050, ACCE_FS_4G, GYRO_FS_500DPS);
+    // if (ret != ESP_OK) {
+    //     ESP_LOGE(TAG, "MPU config failed errno: %d (%s)", errno, strerror(errno));
+    //     vTaskDelete(NULL);
+    // }
+
+    // mpu6050_wake_up(mpu6050);
+
+    // float pitch = 0, roll = 0;
+    // int64_t prev_time = esp_timer_get_time();
+
+    // while (1) {
+    //     //Get values from imu
+    //     mpu6050_acce_value_t acce;
+    //     mpu6050_gyro_value_t gyro;
+    //     mpu6050_get_acce(mpu6050, &acce);
+    //     mpu6050_get_gyro(mpu6050, &gyro);
+
+    //     //Update time
+    //     int64_t now_time = esp_timer_get_time();
+    //     float dt = (now_time - prev_time) / 1000000.0f; //convert to seconds
+    //     prev_time = now_time;
+
+    //     // Accelerometer angles converted to degrees from radians
+    //     float pitch_acc = atan2f(-acce.acce_x, sqrtf(acce.acce_y * acce.acce_y + acce.acce_z * acce.acce_z)) * 180.0f / M_PI;
+    //     float roll_acc  = atan2f(acce.acce_y, acce.acce_z) * 180.0f / M_PI;
+
+    //     // Complementary filter (Might need different ratios)
+    //     pitch = 0.95f * (pitch + gyro.gyro_y * dt) + 0.05f * pitch_acc;
+    //     roll  = 0.95f * (roll  + gyro.gyro_x * dt) + 0.05f * roll_acc;
+
+    //     //Print to computer console
+    //     //will replace with data logging
+    //     //Logging data over the usb  prevents dumping the flash
+    //     //printf("Pitch: %.2f°, Roll: %.2f° | AccelPitch: %.2f°, AccelRoll: %.2f°\n",
+    //     //       pitch, roll, pitch_acc, roll_acc);
+
+    //     float now_s = now_time / 1e6;
+    //     char line[128];
+    //     snprintf(line, sizeof(line), "%.3f,%.2f,%.2f\n", now_s, pitch, roll);
+    //     buffer_write(line);
+
+    //     if (telemetry_queue != NULL) {
+    //         telemetry_msg_t tm = {0};
+    //         strncpy(tm.buf, line, TELEMETRY_MAX_LEN - 1);
+    //         tm.len = (uint16_t)snprintf(tm.buf, TELEMETRY_MAX_LEN, "%.3f,%.2f,%.2f\n", now_s, pitch, roll);
+    //         if (xQueueSend(telemetry_queue, &tm, 0) != pdTRUE){
+    //             ESP_LOGE(TAG, "Queue Full. Packet Droped");
+    //         }
+    //     }
+    //     vTaskDelay(pdMS_TO_TICKS(50));
+    // }
 }
 
 void blinky(void *pvParameter)
@@ -361,7 +440,10 @@ void app_main()
 
     // rest of initialization
     littleFS_init();
-    i2c_master_init();
+
+    // Initialize i2cdev library ONCE
+    ESP_ERROR_CHECK(i2cdev_init());
+    ESP_LOGI(TAG, "i2cdev initialized");
 
     //create message queue for telemtery
     telemetry_queue = xQueueCreate(TELEMETRY_QUEUE_LEN, sizeof(telemetry_msg_t));

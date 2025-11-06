@@ -40,7 +40,7 @@
 #include "esp_log.h"
 
 #include "i2c_drv.h"
-#include "config.h"
+// #include "config.h"
 #define TAG "I2CDRV"
 
 // Definitions of sensors I2C bus
@@ -88,10 +88,3 @@ static void i2cdrvTryToRestartBus(I2cDrv *i2c)
 {
     i2cdrvInitBus(i2c);
 }
-
-
-
-
-
-
-
