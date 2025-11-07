@@ -29,14 +29,15 @@
  */
 
 #include "freertos/FreeRTOS.h"
+#include "freertos/projdefs.h"
 #include "freertos/task.h"
 
 #include "i2cdev.h"
 #include "mpu6050.h"
 // #include "eprintf.h"
-#include "stm32_legacy.h"
+// #include "stm32_legacy.h"
 #define DEBUG_MODULE "MPU6050"
-#include "debug_cf.h"
+// #include "debug_cf.h"
 
 static uint8_t devAddr;
 static I2C_Dev *I2Cx;
@@ -77,7 +78,7 @@ bool mpu6050Test(void)
  */
 bool mpu6050TestConnection()
 {
-    vTaskDelay(M2T(100));
+    vTaskDelay(pdMS_TO_TICKS(100));
     return mpu6050GetDeviceID() == 0b110100;
 }
 
@@ -104,7 +105,7 @@ bool mpu6050SelfTest()
     // First values after startup can be read as zero. Scrap a couple to be sure.
     for (scrap = 0; scrap < 5; scrap++) {
         mpu6050GetMotion6(&axi16, &ayi16, &azi16, &gxi16, &gyi16, &gzi16);
-        vTaskDelay(M2T(2));
+        vTaskDelay(pdMS_TO_TICKS(2));
     }
 
     // First measurement
@@ -168,7 +169,7 @@ bool mpu6050SelfTest()
             mpu6050EvaluateSelfTest(MPU6050_ST_ACCEL_LOW, MPU6050_ST_ACCEL_HIGH, axfDiff, "acc X") &&
             mpu6050EvaluateSelfTest(MPU6050_ST_ACCEL_LOW, MPU6050_ST_ACCEL_HIGH, ayfDiff, "acc Y") &&
             mpu6050EvaluateSelfTest(MPU6050_ST_ACCEL_LOW, MPU6050_ST_ACCEL_HIGH, azfDiff, "acc Z")) {
-        DEBUG_PRINTD("mpu6050 Self test [OK].\n");
+        // DEBUG_PRINTD("mpu6050 Self test [OK].\n");
     } else {
         testStatus = false;
     }
@@ -186,8 +187,8 @@ bool mpu6050SelfTest()
 bool mpu6050EvaluateSelfTest(float low, float high, float value, char *string)
 {
     if (value < low || value > high) {
-        DEBUG_PRINTD("Self test %s [FAIL]. low: %0.2f, high: %0.2f, measured: %0.2f\n",
-                     string, (double)low, (double)high, (double)value);
+        // DEBUG_PRINTD("Self test %s [FAIL]. low: %0.2f, high: %0.2f, measured: %0.2f\n",
+                     // string, (double)low, (double)high, (double)value);
         return false;
     }
 

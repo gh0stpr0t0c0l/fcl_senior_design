@@ -1,5 +1,4 @@
-idf_component_register(SRCS "vl53l1x.c"
-                    "zranger2.c"
+idf_component_register(SRCS "vl53l1x.c" 
                     "core/src/vl53l1_api_calibration.c"
                     "core/src/vl53l1_api_core.c"
                     "core/src/vl53l1_api_debug.c"
@@ -13,6 +12,4 @@ idf_component_register(SRCS "vl53l1x.c"
                     "core/src/vl53l1_silicon_core.c"
                     "core/src/vl53l1_wait.c"
                        INCLUDE_DIRS "." "include" "core/inc"
-                     REQUIRES i2c_bus platform)
-
-target_compile_options(${COMPONENT_LIB} PRIVATE "-Wno-overflow")
+                     REQUIRES i2c_bus ) 
