@@ -1,0 +1,2 @@
+Hours: 10
+Spent some time in meetings and remodeling the frame, testing the new structure of the motor mounts and prop guards. I found the new structure to be a lot better than the previous one, less prone to breaking. I spent a lot of time on the last mini-project and then continued to do more design on the frame. I am waiting now on the PCB to be complete before I can finish frame design. 
