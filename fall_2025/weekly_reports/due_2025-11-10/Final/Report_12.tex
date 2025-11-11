@@ -1,0 +1,52 @@
+\documentclass[12pt, titlepage]{article}
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=magenta]{hyperref}
+
+\title{Feedback Controls Lab Weekly Report \\ \normalsize{Week 12}}
+\author{Aydan Vissing, Brady Schick, Gabriel Southwell, Simon Ross}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Aydan Vissing (10 hours spent)}
+
+Spent some time in meetings and remodeling the frame, testing the new structure of the motor mounts and prop guards. I found the new structure to be a lot better than the previous one, less prone to breaking. I spent a lot of time on the last mini-project and then continued to do more design on the frame. I am waiting now on the PCB to be complete before I can finish frame design. 
+
+\section*{Brady Schick (8 hours spent)}
+
+The time for this week was split between continuing work on the MATLAB simulation and on Mini-Project 4.
+
+\section*{Gabriel Southwell (12 hours spent)}
+
+This week I did the the Serial Communication Mini-Project. I got Dr. Fredette's permission to use what I already have done on the MPU 6050 with the ESP32 for the second part of the project. This let me spend more time on the project.
+
+This week I made some pretty good progress on the problems that I had been stuck on. After looking at the documentation for both the vl53l and the MPU6050, I determined that the vl53 would be harder to re-implement if I had to. 
+
+This changed my approach to getting the vl53ls to work properly and then trying to add the MPU back in. I decided on this https://github.com/TeschRenan/ESP32-VL53L1X.git vl53l library because it seems easy to use and includes functions for re-addressing the sensors. I was able to get one sensor to read data, but I did not have time to finish writing and testing the readdressing function. 
+
+As for adding the MPU back in, I an not sure what approach I want to take for it. There are three options for what I could do:
+
+\begin{itemize}
+\item Writing a wrapper for an existing MPU library that translates the i2c calls into the equivalent calls for the library the vl53l uses
+   \begin{itemize}
+   \item	This would work and not be too hard, but it could come with some performance impacts. 
+   \end{itemize}
+\item Taking an existing library and patching it to use the same library as the vl53l
+   \begin{itemize}
+   \item This would be a little harder and it might not be possible for most libraries. But it would be native performance
+   \end{itemize}
+\item Writing my own MPU library
+   \begin{itemize}
+   \item I have looked at all the functions I would need to implement, and my hubris says it would be easy :) 
+   \end{itemize}
+\end{itemize}
+
+I will look into these options after I get the vl53l re-addressing working. 
+
+\section*{Simon Ross (26.5 hours spent)}
+
+I worked on the controls mini-project and the PCB design this week. Because of the ongoing PCB work, I again don't have enough time to write a drawn-out report. Ultimately, I think the team is making great progress and that our main pinch point is the PCB right now. I'll try to finish it by Friday.
+
+The prototype (now PCB) is the main thing on the schedule as well, with an interface prototype being the runner up. I'll make sure to discuss this soon.
+
+\end{document}
