@@ -10,9 +10,11 @@
 #include "esp_system.h"
 #include "esp_timer.h"
 #include "hal/gpio_types.h"
-#include "mpu6050.h"
+// #include "mpu6050.h"
 // #include "i2c_drv.h"
 #include "i2cdev.h"
+#include "vl53l1_api.h"
+#include "vl53l1_core.h"
 #include "vl53l1x.h"
 #include "driver/i2c.h"
 
@@ -51,7 +53,7 @@ static const I2cDef I2cConfig= {
 
 // time of flight decs
 #define TOF_COUNT 2
-#define TOF_DEFAULT_ADDR 0x29
+// #define TOF_DEFAULT_ADDR 0x29
 static const uint8_t tof_xshut_pins[TOF_COUNT] = {18, 19};
 
 #define BLINK_GPIO 2
@@ -167,16 +169,25 @@ static void littleFS_init()
 
 void tof_logging(void *pvPerameter)
 {
-    //TODO Add readdressing scheme
-    // VL53L1_Error status = VL53L1_ERROR_NONE;
-    VL53L1_RangingMeasurementData_t rangingData;
+    VL53L1_Error status = VL53L1_ERROR_NONE;
+    VL53L1_RangingMeasurementData_t rangingData[TOF_COUNT];
     uint8_t dataReady = 0;
     uint16_t ranges[TOF_COUNT];
     VL53L1_Dev_t dev[TOF_COUNT];
 
+    //init tof xshut pins
+    for (uint8_t sensor = 0; sensor < TOF_COUNT; sensor++){
+        gpio_set_direction(tof_xshut_pins[sensor], GPIO_MODE_OUTPUT);
+        gpio_set_level(tof_xshut_pins[sensor], 0);
+    }
+    vTaskDelay(pdMS_TO_TICKS(50));
+
     //readdress sensors
     for(uint8_t sensor = 0; sensor < TOF_COUNT; sensor++){
+        // Activate 1 TOF
         gpio_set_level(tof_xshut_pins[sensor], 1);
+        vTaskDelay(pdMS_TO_TICKS(10));
+        // init 1 sensor
         if (vl53l1xInit(&dev[sensor], i2c_bus))
         {
             ESP_LOGI(TAG,"Lidar Sensor %d VL53L1X [OK]", sensor);
@@ -186,50 +197,54 @@ void tof_logging(void *pvPerameter)
             ESP_LOGI(TAG,"Lidar Sensor %d VL53L1X [FAIL]", sensor);
             vTaskDelete(NULL);
         }
-        vl53l1xSetI2CAddress(&dev[sensor], TOF_DEFAULT_ADDR + sensor);
+
+        // Check that it worked
+        status = vl53l1xTestConnection(&dev[sensor]);
+        if(status != VL53L1_ERROR_NONE){
+            ESP_LOGW(TAG, "Test Connection failed (sensor %d), status = %d", sensor, status);
+        }
+
+        // log address
+        ESP_LOGW("CurrAddr", "0x%02X", dev[sensor].I2cDevAddr);
+
+        // Config stuff
         VL53L1_StopMeasurement(&dev[sensor]);
         VL53L1_SetDistanceMode(&dev[sensor], VL53L1_DISTANCEMODE_MEDIUM);
         VL53L1_SetMeasurementTimingBudgetMicroSeconds(&dev[sensor], 25000);
-        gpio_set_level(tof_xshut_pins[sensor], 0);
+        VL53L1_StartMeasurement(&dev[sensor]);
     }
 
-    //activate sensors
+    // Now all the sensors are activated with their xshut pins high
+    // and all have unique addresses    ESP_LOGI(TAG, "I2C scan after readdressing:");
+    // for (uint8_t addr = 1; addr < 127; ++addr) {
+    //     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+    //     i2c_master_start(cmd);
+    //     i2c_master_write_byte(cmd, (addr << 1) | I2C_MASTER_WRITE, true);
+    //     i2c_master_stop(cmd);
+    //     esp_err_t ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, pdMS_TO_TICKS(50));
+    //     i2c_cmd_link_delete(cmd);
+    //     if (ret == ESP_OK) {
+    //         ESP_LOGI(TAG, "I2C device found at 0x%02X", addr);
+    //     }
+    // }
 
     while(1){
-
         for(uint8_t sensor = 0; sensor < TOF_COUNT; sensor++){
-            ESP_LOGI(TAG, "In for loop");
-            gpio_set_level(tof_xshut_pins[sensor], 1);
-
-            VL53L1_StartMeasurement(&dev);
+            VL53L1_StartMeasurement(&dev[sensor]);
             while (dataReady == 0){
-                ESP_LOGI(TAG, "In while loop");
-                VL53L1_GetMeasurementDataReady(&dev, &dataReady);
-                vTaskDelete(pdMS_TO_TICKS(1));
+                VL53L1_GetMeasurementDataReady(&dev[sensor], &dataReady);
+                vTaskDelay(pdMS_TO_TICKS(1));
             }
-            ESP_LOGI(TAG, "out of while loop");
-            VL53L1_GetRangingMeasurementData(&dev, &rangingData);
-            ranges[sensor] = rangingData.RangeMilliMeter;
-            VL53L1_StopMeasurement(&dev);
-            gpio_set_level(tof_xshut_pins[sensor], 0);
+            dataReady = 0;
+            VL53L1_GetRangingMeasurementData(&dev[sensor], &rangingData[sensor]);
+            ranges[sensor] = rangingData[sensor].RangeMilliMeter;
+            VL53L1_StopMeasurement(&dev[sensor]);
+            VL53L1_clear_interrupt(&dev[sensor]);
+            VL53L1_StartMeasurement(&dev[sensor]);
         }
-        ESP_LOGI(TAG, "ready to print dists loop");
 
         ESP_LOGI(TAG, "Distance Left %d mm | Distance Right %d mm", ranges[1], ranges[0]);
         vTaskDelay(pdMS_TO_TICKS(50));
-
-        // VL53L1_StartMeasurement(&dev);
-        // while (dataReady == 0)
-        // {
-        //     // status = VL53L1_GetMeasurementDataReady(&dev, &dataReady);
-        //     vTaskDelay(pdMS_TO_TICKS(1));
-        // }
-        // // status = VL53L1_GetRangingMeasurementData(&dev, &rangingData);
-        // range = rangingData.RangeMilliMeter;
-        // VL53L1_StopMeasurement(&dev);
-        // VL53L1_StartMeasurement(&dev);
-        // ESP_LOGI(TAG,"Distance %d mm",range);
-        // vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
 
@@ -443,13 +458,7 @@ void app_main()
     // esp_netif_create_default_wifi_ap();
     // wifi_init();
 
-    //init tof xshut pins
-    // gpio_set_direction(tof_xshut_pins[0], GPIO_MODE_OUTPUT);
-    // gpio_set_level(tof_xshut_pins[0], 1);
-    for (uint8_t sensor = 0; sensor < TOF_COUNT; sensor++){
-        gpio_set_direction(tof_xshut_pins[sensor], GPIO_MODE_OUTPUT);
-        gpio_set_level(tof_xshut_pins[sensor], 0);
-    }
+
 
     // vTaskDelay(pdMS_TO_TICKS(200));
 

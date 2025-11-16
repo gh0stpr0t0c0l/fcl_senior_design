@@ -13,34 +13,9 @@ dependencies:
       registry_url: https://components.espressif.com/
       type: service
     version: 1.20.1
-  k0i05/esp_mpu6050:
-    component_hash: b509766442b68105dfbf7d0e33d7c28729ca1613f87e33de85f20dede1fe0428
-    dependencies:
-    - name: idf
-      require: private
-      version: '>5.3.0'
-    - name: k0i05/esp_type_utils
-      registry_url: https://components.espressif.com
-      require: private
-      version: '>=0.0.1'
-    source:
-      registry_url: https://components.espressif.com/
-      type: service
-    version: 1.2.7
-  k0i05/esp_type_utils:
-    component_hash: 95d8ec40268e045f7e264d8035f451e53844b4a2f6d5f112ece6645c5effd639
-    dependencies:
-    - name: idf
-      require: private
-      version: '>5.3.0'
-    source:
-      registry_url: https://components.espressif.com
-      type: service
-    version: 1.2.7
 direct_dependencies:
 - idf
 - joltwallet/littlefs
-- k0i05/esp_mpu6050
-manifest_hash: e406113888e5f29fb475ec4fd6c859cba5a76aa8fb7b2a8cc1f0fd5ebdeadf0b
+manifest_hash: d6cd4218bba9a2cf12b9982fe394eb0e2535b13852ac2af4a1341d22f58fb618
 target: esp32
 version: 2.0.0

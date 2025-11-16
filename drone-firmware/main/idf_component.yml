@@ -2,7 +2,7 @@
 dependencies:
   ## Required IDF version
   idf:
-    version: '>=4.1.0'
+    version: ">=4.1.0"
   # # Put list of dependencies here
   # # For components maintained by Espressif:
   # component: "~1.0.0"
@@ -17,4 +17,4 @@ dependencies:
   # espressif/mpu6050: ^1.2.0
   joltwallet/littlefs: ==1.20.1
   # esp-idf-lib/mpu6050: '*'
-  k0i05/esp_mpu6050: ^1.2.7
+  # k0i05/esp_mpu6050: ^1.2.7

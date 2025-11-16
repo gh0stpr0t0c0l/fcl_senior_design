@@ -53,7 +53,7 @@ extern "C"
 
 bool vl53l1xInit(VL53L1_Dev_t *pdev, I2C_Dev *I2cHandle);
 
-bool vl53l1xTestConnection(VL53L1_Dev_t* pdev);
+VL53L1_Error vl53l1xTestConnection(VL53L1_Dev_t* pdev);
 
 VL53L1_Error vl53l1xSetI2CAddress(VL53L1_Dev_t* pdev, uint8_t address);
 
@@ -281,4 +281,3 @@ VL53L1_Error VL53L1_WaitValueMaskEx(
 #endif
 
 #endif
-

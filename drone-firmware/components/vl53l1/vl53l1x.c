@@ -42,14 +42,16 @@
 #include "i2cdev.h"
 #include "vl53l1x.h"
 
+#include "freertos/portmacro.h"
+
 #define TAG "VL53X1_lib"
 
 #define VL53L1_get_register_name(a,b)
 
 
 // Set the start address 8 step after the VL53L0 dynamic addresses
-//static int nextI2CAddress = VL53L1X_DEFAULT_ADDRESS+8;
-
+static int nextI2CAddress = VL53L1X_DEFAULT_ADDRESS+8;
+static portMUX_TYPE vl53l1_mux = portMUX_INITIALIZER_UNLOCKED;
 
 bool vl53l1xInit(VL53L1_Dev_t *pdev, I2C_Dev *I2cHandle)
 {
@@ -60,13 +62,13 @@ bool vl53l1xInit(VL53L1_Dev_t *pdev, I2C_Dev *I2cHandle)
   i2cdevInit(pdev->I2Cx);
 
   /* Move initialized sensor to a new I2C address */
-  //int newAddress;
+  int newAddress;
 
-  //taskENTER_CRITICAL();
-  //newAddress = nextI2CAddress++;
-  //taskEXIT_CRITICAL();
+  taskENTER_CRITICAL(&vl53l1_mux);
+  newAddress = nextI2CAddress++;
+  taskEXIT_CRITICAL(&vl53l1_mux);
 
-  //vl53l1xSetI2CAddress(pdev, newAddress);
+  vl53l1xSetI2CAddress(pdev, newAddress);
 
   uint8_t byteData;
   uint16_t wordData;
@@ -100,20 +102,20 @@ bool vl53l1xInit(VL53L1_Dev_t *pdev, I2C_Dev *I2cHandle)
 	//VL53L1_StopMeasurement(pdev);
 	//status = VL53L1_SetDistanceMode(pdev,VL53L1_DISTANCEMODE_LONG);
 	//status = VL53L1_SetMeasurementTimingBudgetMicroSeconds(pdev, 160000);
-	//status = VL53L1_SetInterMeasurementPeriodMilliSeconds(pdev, 200);  
+	//status = VL53L1_SetInterMeasurementPeriodMilliSeconds(pdev, 200);
 	//status = VL53L1_StartMeasurement(pdev);
 
   return status == VL53L1_ERROR_NONE;
 }
 
-bool vl53l1xTestConnection(VL53L1_Dev_t* pdev)
+VL53L1_Error vl53l1xTestConnection(VL53L1_Dev_t* pdev)
 {
   VL53L1_DeviceInfo_t info;
   VL53L1_Error status = VL53L1_ERROR_NONE;
 
   status = VL53L1_GetDeviceInfo(pdev, &info);
 
-  return status == VL53L1_ERROR_NONE;
+  return status; //== VL53L1_ERROR_NONE;
 }
 
 /** Set I2C address
@@ -402,4 +404,3 @@ VL53L1_Error VL53L1_WaitValueMaskEx(
 
 	return status;
 }
-
