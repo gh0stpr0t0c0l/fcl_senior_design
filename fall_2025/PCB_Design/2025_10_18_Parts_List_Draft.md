@@ -171,14 +171,23 @@
 - JLCPCB Part #: C15127
 - Also this diode
 	- JLCPCB Part #: C8678
+- Now we're doing just diodes:
+	- Schottky diode (low voltage drop)
+		- This (went with this because Chat is broken):
+			- JLCPCB Part #: C22452
+		- Or this:
+			- JLCPCB Part #: C191023
 
-## Battery Connector:
+## Battery Connector
 - Previous Part (90$\degree$ offset mount):
 	- JLCPCB Part #: C295747
 - SMD With tabs:
 	- JLCPCB Part #: C722761
-- Through hole, current part:
-	- JLCPCB Part #: C131337
+- Through hole, **current part**:
+	- PH Connector
+		- JLCPCB Part #: C131337
+	- XH Connector:
+		- JLCPCB Part #: C20079
 
 ## Motor Solder Points
 - JLCPCB Part #: C492401
@@ -277,10 +286,10 @@
 - [x] Build LiteWing USB/batt swap
 	- [x] Still needs a big resistor to ground 
 	- [x] Still needs decoupling caps on the power regulator
-- [ ] Make absolutely sure the battery port polarity is correct!
-- [ ] Batteries - pick a polarity based on real life
-- [ ] Make absolutely sure the breakoff boards are correct pin polarity!
+- [x] Make absolutely sure the battery port polarity is correct!
+- [x] Batteries - pick a polarity based on real life
+- [x] Make absolutely sure the breakoff boards are correct pin polarity!
 - [ ] Double-check I/O usage on the Microcontroller (manually - chat is pretty sure)
-- [ ] Motor MOSFET close to the motors
-- [ ] Thick traces for the battery
-- [ ] Germanium or Schottky diode on the vertical input to the power converter?
+- [x] Motor MOSFET close to the motors
+- [x] Thick traces for the battery
+- [x] Germanium or Schottky diode on the vertical input to the power converter?
