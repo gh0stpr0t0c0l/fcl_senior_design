@@ -1,0 +1,47 @@
+\documentclass[12pt, titlepage]{article}
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=magenta]{hyperref}
+
+\title{Feedback Controls Lab Weekly Report \\ \normalsize{Week 13}}
+\author{Aydan Vissing, Brady Schick, Gabriel Southwell, Simon Ross}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Aydan Vissing (9 hours spent)}
+
+After some meetings and being able to now know the dimensions of the PCB, I have been able to almost have the frame ready. Making the frame smaller took much more time than I anticipated. It will be completed by Wednesday and hopefully printed the same day. 
+
+\section*{Brady Schick (8 hours spent)}
+
+The time for this week was split between continuing work on the MATLAB simulation and on linearizing the mathematical model so that it can be represented with a transfer function.
+
+\section*{Gabriel Southwell (11.5 hours spent)}
+
+This week I got the time of flight readdressing to work!!! This process took a very long time to complete for several reasons and I am annoyed with the solution. 
+
+Basically what I had been doing was:
+\begin{itemize}
+    \item Initialize sensors and store structs in arrays
+    \item Use a \textit{Library} function that claims to readdress the sensor
+\end{itemize}
+
+I figured out some reasons why this did not work. When this \textit{library} function set the new address, the address it sent to the sensor was shifted by one bit. I identified this as a bug and fixed it. Unfortunately, this still did not fix it. 
+
+Then I started to notice some other odd behavior. When I readdressed the sensors and ran an I2C scanner, they showed up on the bus with new addresses. However, when I tried to communicate with them over their new addresses, they would revert back to the default address. I spent hours with an oscilloscope trying to see what exactly was happening on the I2C bus. There were a lot of different possibilities that I checked, and I found nothing. 
+
+I set up a meeting with Dr.\ Kohl for Monday afternoon to try and figure this out, but I ended up not needing it. This Sunday afternoon I was reading through more of the library and I found a block of code that was commented out in the init function. The code claimed to increment the I2C address of every sensor it initializes. I uncommented it and everything just worked~:/ 
+
+Why is this not the default behavior? I do not know. Why did my method not work even though it did basically the same thing just at a different time? I do not know. 
+
+It really does do basically the same thing that my code was supposed to. It initializes the sensor with the default address and then tells it that it has a new address and updates the struct address. 
+
+\section*{Simon Ross (21 hours spent)}
+
+This week was another big one for me. Basically all of it was spent tweaking the PCB design, organizing the layout, and decorating the bottom. I really enjoyed this work, so the time flew past. Dr. Kohl is ordering the final product as soon as possible, so we should have a prototype by the end of break. He said it's likely that this prototype will need some adjustment, so I think it's probable that it may be until the end of the semester before we get a working one. Hopefully we can send one home with Gabe over Christmas break.
+
+With regards to scheduling, the sensor code is coming along well with the prototype alongside. I think I will adjust the plan to be getting a fully assembled prototype by the end of the semester. From there we can spend the next semester making it work. 
+
+Altogether, our team is making great progress and working together well. 
+
+\end{document}
