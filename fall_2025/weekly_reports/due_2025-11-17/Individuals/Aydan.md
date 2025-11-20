@@ -1,0 +1,2 @@
+Hours: 9 
+After some meetings and being able to now know the dimensions of the PCB, I have been able to almost have the frame ready, making the frame smaller took much more time than I anticipated. It will be completed by Wednesday and hopefully printed the same day. 
