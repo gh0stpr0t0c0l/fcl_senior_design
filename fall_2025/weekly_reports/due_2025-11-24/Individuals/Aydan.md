@@ -1,0 +1,2 @@
+Hours: 8
+This week I finished the design and printing of the frame. It turned out well and we hope to refine it once the PCB is in. I then worked on my part of the final fall presentation. We went over it with Dr. Fredette in our normal meeting time. 
