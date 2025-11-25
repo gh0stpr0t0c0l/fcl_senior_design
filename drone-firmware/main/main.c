@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include "freertos/FreeRTOS.h"
@@ -85,13 +86,12 @@ typedef struct
 typedef struct
 {
     //MPU data
+    int64_t mpu_timestamp_us;
     float pitch;
     float roll;
-    int64_t mpu_timestamp_us;
     //vl53l1 data
+    int64_t tof_timestamp_us[TOF_COUNT];
     int16_t ranges[TOF_COUNT];
-    // bool tof_valid[TOF_COUNT];
-    int64_t tof_timestamp_us;
 } telemetry_snapshot_t;
 
 static telemetry_snapshot_t latest_snapshot;
@@ -171,7 +171,18 @@ static void littleFS_init()
     }
     //delete old log file
     unlink(FILE_PATH);
-    buffer_write("Time,Pitch,Roll,TOF0,TOF1\n"); //header for csv
+
+    // Print header
+    char header[256];
+    size_t offset = 0;
+    offset += snprintf(header + offset, sizeof(header) - offset,
+        "log_time_s,mpu_time_s,pitch,roll");
+    for (uint8_t i = 0; i < TOF_COUNT && offset < sizeof(header); ++i){
+        offset += snprintf(header + offset, sizeof(header) - offset,
+            ",tof%d_time_s,tof%d_mm", i, i);
+    }
+    offset += snprintf(header + offset, sizeof(header) - offset, "\n");
+    buffer_write(header);
 }
 
 void tof_logging(void *pvPerameter)
@@ -248,16 +259,14 @@ void tof_logging(void *pvPerameter)
             VL53L1_StopMeasurement(&dev[sensor]);
             VL53L1_clear_interrupt(&dev[sensor]);
             VL53L1_StartMeasurement(&dev[sensor]);
-        }
 
-        if(xSemaphoreTake(snapshot_mutex, pdMS_TO_TICKS(10)) == pdTRUE){
-            latest_snapshot.tof_timestamp_us = esp_timer_get_time();
-            for(uint8_t i = 0; i < TOF_COUNT; i++){
-                latest_snapshot.ranges[i] = ranges[i];
+            // Put range into snapshot
+            if(xSemaphoreTake(snapshot_mutex, pdMS_TO_TICKS(10)) == pdTRUE){
+                latest_snapshot.tof_timestamp_us[sensor] = esp_timer_get_time();
+                latest_snapshot.ranges[sensor] = ranges[sensor];
+                xSemaphoreGive(snapshot_mutex);
             }
-            xSemaphoreGive(snapshot_mutex);
         }
-
         ESP_LOGI(TAG, "Distance Left %d mm | Distance Right %d mm", ranges[1], ranges[0]);
         vTaskDelay(pdMS_TO_TICKS(50));
     }
@@ -318,13 +327,7 @@ void mpu_logging(void *pvPerameter)
         pitch = 0.95f * (pitch + gyro_y * dt) + 0.05f * pitch_acc;
         roll = 0.95f * (roll + gyro_x * dt) + 0.05f * roll_acc;
 
-        // Log data
-        float now_s = now_time / 1e6;
-        char line[128];
-        snprintf(line, sizeof(line), "%.3f,%.2f,%.2f\n", now_s, pitch, roll);
-        buffer_write(line);
-
-        ESP_LOGW(TAG, "%.3f,%2f,%2f\n", now_s, pitch, roll);
+        ESP_LOGW(TAG, "%.3f,%2f,%2f\n", now_time / 1e6, pitch, roll);
 
         if (xSemaphoreTake(snapshot_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
             latest_snapshot.pitch = pitch;
@@ -419,8 +422,20 @@ void telemetry_broadcast(void *pvParameter)
 void telemetry_aggregator(void *pvPerameter)
 {
     const TickType_t agg_period = pdMS_TO_TICKS(50);
+
     telemetry_snapshot_t local;
-    char csv_line[256];
+    telemetry_snapshot_t last_snap = {0};
+
+    const int64_t stale_mpu_time = 150000LL; // Will need adjust
+    const int64_t stale_tof_time = 150000LL; // Will need to adjust
+
+
+    // double mpu_time_s;
+    // double tof_time_s[TOF_COUNT];
+    bool mpu_stale;
+    bool tof_stale[TOF_COUNT];
+
+    char csv_line[512];
 
     while(1){
         vTaskDelay(agg_period);
@@ -434,34 +449,65 @@ void telemetry_aggregator(void *pvPerameter)
             continue;
         }
 
-        //Check staleness
+        // Skip if no new data
+        bool any_changed = false;
+        if (local.mpu_timestamp_us != last_snap.mpu_timestamp_us) {
+            any_changed = true;
+        } else {
+            for (uint8_t i = 0; i < TOF_COUNT; ++i) {
+                if (local.tof_timestamp_us[i] != last_snap.tof_timestamp_us[i]) {
+                    any_changed = true;
+                    break;
+                }
+            }
+        }
+        if (!any_changed) {
+            continue;
+        }
+
+        // Check for stale data in case of silent failure
         int64_t now = esp_timer_get_time();
-        // const int64_t TOF_STALE_US = 200000; // 200 ms
-        // for (int i = 0; i < TOF_COUNT; ++i) {
-        //     if ((now - local.tof_timestamp_us[i]) > TOF_STALE_US) {
-        //         local.tof_valid[i] = false;
-        //     }
-        // }
+        mpu_stale = ((now - local.mpu_timestamp_us) > stale_mpu_time) ||
+                    (local.mpu_timestamp_us == 0);
+        for(uint8_t sensor = 0; sensor < TOF_COUNT; sensor++){
+            tof_stale[sensor] = ((now - local.tof_timestamp_us[sensor]) > stale_tof_time) ||
+                    (local.tof_timestamp_us[sensor] == 0);
+        }
 
         // Make csv line
-        double ts_s = now / 1e6;
-        snprintf(csv_line, sizeof(csv_line), "%.3f,%.2f,%.2f,%d,%d\n",
-                    ts_s,
-                    local.pitch,
-                    local.roll,
-                    local.ranges[0],
-                    local.ranges[1]);
-                    // local.tof_valid[0] ? (char [8]){0} : "NA",
-                    // local.tof_valid[1] ? (char [8]){0} : "NA"
+        // log_time_s,mpu_time,pitch,roll,tof[i]_time,tof[i]_mm...
+        size_t offset = 0;
+        offset += snprintf(csv_line + offset, sizeof(csv_line) - offset,
+                            "%.3f,%.3f",
+                            now / 1e6,
+                            local.mpu_timestamp_us / 1e6);
+        if (mpu_stale) {
+            offset += snprintf(csv_line + offset, sizeof(csv_line) - offset, ",NaN,NaN");
+        }
+        else {
+            offset += snprintf(csv_line + offset, sizeof(csv_line) - offset,
+                ",%.3f,%.3f", local.pitch, local.roll);
+        }
+        // Append with howevermany tofs there are
+        for (uint8_t sensor = 0; sensor < TOF_COUNT && offset < sizeof(csv_line); sensor++){
+           offset += snprintf(csv_line + offset, sizeof(csv_line) - offset,
+               ",%.3f,%d",
+               local.tof_timestamp_us[sensor] / 1e6,
+               tof_stale[sensor] ? -1 : local.ranges[sensor]);
+        }
+        offset += snprintf(csv_line + offset, sizeof(csv_line) - offset, "\n");
 
+        // Send to ram buffer
         buffer_write(csv_line);
 
-        // put into telemetry queue
+        // Put into telemetry queue
         if (telemetry_queue != NULL) {
-            telemetry_msg_t tm = {0};
+            telemetry_msg_t tm;
+            memset(&tm, 0, sizeof(tm));
             tm.len = (uint16_t)snprintf(tm.buf, TELEMETRY_MAX_LEN, "%s", csv_line);
             xQueueSend(telemetry_queue, &tm, 0);
         }
+        last_snap = local;
     }
 }
 
