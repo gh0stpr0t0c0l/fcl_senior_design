@@ -1,0 +1,40 @@
+\documentclass[12pt, titlepage]{article}
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=magenta]{hyperref}
+
+\title{Feedback Controls Lab Weekly Report \\ \normalsize{Week 14}}
+\author{Aydan Vissing, Brady Schick, Gabriel Southwell, Simon Ross}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Aydan Vissing (8 hours spent)}
+
+This week I finished the design and printing of the frame. It turned out well and we hope to refine it once the PCB is in. I then worked on my part of the final fall presentation. We went over it with Dr. Fredette in our normal meeting time. 
+
+\section*{Brady Schick (7 hours spent)}
+
+The time for this week was split between continuing work on linearizing the mathematical model and preparing for the semester presentation. 
+
+\section*{Gabriel Southwell (10.5 hours spent)}
+
+This week I was successful in integrating the time of flight sensors back into the rest of the system. Currently, all sensors work on the same i2c bus and data from all sensors are logged into the flash storage and sent over the wifi connection. 
+
+For the MPU 6050, I took the existing library from the ESP-drone project and updated it to work with the i2c abstraction that we are using. 
+
+Currently the data is collected from the time of flight sensors with the tof\_logging task and data from the mpu is collected with the mpu\_logging task. Once the data is collected, the task take a mutex and write the data to a global data struct. A new task with lower priority called telemtry\_aggregator takes the mutex to copy the global struct to a local struct. It then handles the writing to non-volitile storage and sending wifi packets. 
+
+Some current issues it faces are that the tof\_logging task takes substantially longer to collect data than the mpu\_logging task. This causes the collected data to have gaps and repeating data. I have been thinking a lot about what would be the most useful way to fix this. I think I will change it so it checks the timestamps on the data before writing it and if the timestamps are the same it won't write anything. This way way the csv will have a new line every time there is new data from one of the sensors and if there isnt new data from the other it will leave a blank. I feel like this will be a good middle ground that will always give useful information.
+ 
+I also looked into using an existing PID library and I have some ideas for what we can do with them. 
+
+\section*{Simon Ross (8 hours spent)}
+
+Project Wingfeather is successfully maturing. Sensor code and interfacing are being developed, milestones are being met, and parts are coming together for our scheduled prototype (2) build. Looking forward, our prototype PCB should arrive before Christmas break, meaning that we should be able to accomplish work on it over the break (even if that work is correcting mistakes and ordering again).
+
+This week was spent perfecting the PCB order so Dr. Kohl could send it out and working on our semester presentation.  As mentioned, good progress was made on both of these fronts, and the PCB will be shipped soon.
+
+The coming week will likely be a lighter week of work since it is Thanksgiving break. However, we will use this time to finish our presentation and work on our final report at least.
+
+
+\end{document}

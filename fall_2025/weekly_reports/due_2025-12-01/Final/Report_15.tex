@@ -1,0 +1,32 @@
+\documentclass[12pt, titlepage]{article}
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=magenta]{hyperref}
+
+\title{Feedback Controls Lab Weekly Report \\ \normalsize{Week 15}}
+\author{Aydan Vissing, Brady Schick, Gabriel Southwell, Simon Ross}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Aydan Vissing (3 hours spent)}
+
+Worked just on the final fall presentation this week. Lots of travel for thanksgiving. 
+
+\section*{Brady Schick (7 hours spent)}
+
+The time for this week was spent on implementing closed loop control of the updated simulation and on the upcoming presentation.
+
+\section*{Gabriel Southwell (7 hours spent)}
+
+I completed the telemetry\_aggregator and added several features. Now all the data collection and logging is parameterized for how man time of flight sensors we are using. This way when we add more, we only need to update one value and everything \textit{should} continue to work properly with more sensors. In the aggregator I added staleness checks so we can see if a sensor task is being starved the OS or if it silently failed. There also now is a check for duplicate data so data should hopefully only be printed once. 
+
+I also prepared and updated my part of the presentation.
+
+\section*{Simon Ross (4 hours spent)}
+
+I spent most of my time this week working on the presentation and communicating with the rest of the team. Not sure how much more we will be able to accomplish before the end of the semester, but Dr. Kohl said the PCB's will be arrive in about a week, so that is good news.
+
+The only thing we need to keep an eye on schedule-wise is the frontend development, which is scheduled for right now. Otherwise, the project is progressing as intended. This next week will also include work on the final report.
+
+
+\end{document}
