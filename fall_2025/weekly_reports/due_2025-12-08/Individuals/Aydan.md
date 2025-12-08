@@ -1,0 +1,2 @@
+Hours: 5
+We spent time on our presentation and listening to others, as well as our weekly meeting. After this, I spent time with the gyro test mount model from thingiverse to see if it would fit on our 3d printers. It is going to take some fancy editing to make it fit but I can make it fit. I am going to work on this over break. My next focus is going to be on the final report. 
