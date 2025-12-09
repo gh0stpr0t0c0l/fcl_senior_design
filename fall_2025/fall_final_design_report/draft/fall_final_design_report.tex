@@ -1,0 +1,275 @@
+\documentclass[12pt, titlepage]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+%\usepackage{hyperref}
+
+\title{Feedback Controls Lab Project Proposal \\ \normalsize{EGEE 4810 - Senior Design}}
+\author{Aydan Vissing, Brady Schick, Gabriel Southwell, Simon Ross}
+\date{\footnotesize{Due} \\ \normalsize{December 12, 2025}}
+
+
+%\setlength{\topmargin}{-.25in}
+%\setlength{\oddsidemargin}{.25in}
+%\setlength{\evensidemargin}{.25in}
+%\setlength{\textwidth}{6.0in}
+%\setlength{\textheight}{9.0in}
+%\renewcommand{\baselinestretch}{1.4}
+%\usepackage{indentfirst} %Maybe keep this maybe not
+
+\begin{document}
+\maketitle
+
+%FIXME remove comments
+
+%FIXME improve abstract
+\begin{abstract}
+This project proposal outlines our intent to reimaginine the Feedback Controls Laboratory experience at Cedarville University. The main goals of this project are to make the lab experience more engaging and relevant for students, simpler to work with, more reliable than previous solutions, and more cost-effective. To achieve these ends, we plan to design a cheap drone platform that is capable of communicating fundamental feedback controls concepts with a simple software user interface. We will start by selecting hardware components that meet our end goals, creating a hardware prototype. Once this prototype is complete, we will program, test, and modify it until we are satisfied with the platform. Finally, we will refine a final design and software solution including simple choices for the user that aid learning. If this is completed with time to spare, we will refine the experience, adding features and focusing the lab experience. Ultimately, we hope to transform the way students view Feedback Controls lab, relating classwork to concepts they are familiar with and making lab time enjoyable.
+\end{abstract}
+
+\newpage
+\tableofcontents
+%\listoffigures
+%\listoftables
+
+\newpage
+\section{Definition Statement}
+
+This project seeks to redefine the Cedarville Feedback Controls Laboratory experience by designing a quadcopter drone to use as an entertaining platform to teach classroom concepts.
+
+\section{Background}
+
+The current lab experience for EGME-4660 uses the Feedback Analogue Unit 33-110 and the Feedback Mechanical Unit 33-100. Although the labs using the equipment do cover the desired content, they are often tedious and perhaps confusing to new users, especially users unfamiliar with Feedback Controls concepts. The user interface to conduct the experiments is a circuit board with nodes and banana plug cords. The user can connect these nodes to create feedback circuits whose effect is then shown using the mechanical unit. As mentioned, understanding what is happening between the units (and even in the electrical circuits) can be challenging for students. This causes the applications of the class material to  seem boring and irrelevant, especially for mechanical engineering students who may not have extensive electronics background. In addition, the equipment is old and fragile - adjusting the power supply or wiring the power incorrectly can result in damage to the equipment, often requiring parts to be replaced. Since the equipment is quite expensive, the current repair method has been de-soldering and soldering components by hand. We plan to improve the lab experience by replacing the current equipment with cheap and robust drones that can be reprogrammed for the purposes of the lab with a user-friendly interface. In this way, the instructor can choose the complexity of the tasks given to students for the lab.
+
+\section{Objectives}
+\subsection{Marketing Requirements}
+
+The following requirements define the end user experience as desired by the customer:
+  \begin{itemize}
+    \item The final product must focus on autonomous actuation and control.
+    \item The laboratory experience must include the ability to implement a PID control design.
+    \item The final product must be able to physically and graphically display a step response.
+    \item The students must have the opportunity to measure a Bode plot in real life.
+    \item The laboratory experience must include the ability to see and correct the effects of physical and observable disturbances and noise.
+    \item The final product should showcase the results of controllers physically in real life and not just with numbers and data.
+    \item The final product must have the ability to log data to a neutral format independent of real time visualizations.
+    \item The software solution must include a widget to generate understandable plots of the data.
+    \item The final laboratory experience must include the capability to perform a tracking experiment.
+    \item The laboratory experience must take relevant safety precautions.
+    \item The final platform must be able to implement open loop control and log this response. 
+  \end{itemize}
+\subsection{Engineering Requirements}
+\subsubsection{Hardware Requirements}
+\begin{itemize}
+  \item[$\Rightarrow$] Hard Requirements:
+  \begin{itemize}
+    \item Microcontroller
+    \item 4 motors
+    \item Battery power supply
+    \item PCB to interconnect components
+    \item Bladeguards for safety
+    \item Positional and tracking sensors
+  \end{itemize}
+  \item[$\Rightarrow$] Soft Requirements:
+  \begin{itemize}
+    \item Sturdy frame
+    \item Conviently swappable and rechargable batteries
+  \end{itemize}
+\end{itemize}
+\subsubsection{Software Requirements}
+\begin{itemize}
+  \item[$\Rightarrow$] Hard Requirements:
+  \begin{itemize}
+    \item PID controller logic so drone can fly
+    \item Controller logic for open loop capabilities
+    \item Memory for data collection
+    \item User-friendly interface for programming
+    \item Method to input step functions and sinusoidal functions
+  \end{itemize}
+  \item[$\Rightarrow$] Soft Requirements:
+  \begin{itemize}
+    \item Wireless communication
+    \item Intuitive GUI
+    \item Software to plot collected data
+  \end{itemize}
+\end{itemize}
+\subsection{Constraints}
+\begin{itemize}
+  \item The laboratory experiments must be able to be conducted in ENS 145 at Cedarville University.
+  \item The total cost of design, test, and evaluation must not exceed \$600.
+  \item The final laboratory experience must not endanger the safety of the students.
+  \item The final laboratory solution must not not destroy Cedarville property.
+  \item The final laboratory experience must not use MATLAB.
+\end{itemize}
+
+\section{Officer Designations}
+To aid in the organization of this project, we have outlined four officer designations below (one for each member of the team). The goal of this is to delegate various essential tasks to individuals so that they are not overlooked and each member is not overloaded. The roles will likely be rather fluid since the team is small, but give general guidelines on where to look for work. These roles are as follows: \\
+
+\subsection[Chief Financial Officer]{CFO - Aydan Vissing} The Chief Financial Officer (CFO) role is in charge of managing finances for the project, heading up budgets, and making sure the project stays within the budget. This role will be deeply involved in the use of time and resources throughout the project. \\
+
+\subsection[Chief Technical Officer]{CTO - Brady Schick} The Chief Technical Officer (CTO) role will be responsible for managing the hardware side of the project, with an emphasis on keeping hardware planning and execution in perspective. This role will likely shift to a focus in software as the project matures. \\
+
+\subsection[Chief Software Officer]{CSO - Gabriel Southwell} The Chief Software Officer (CSO) will make sure that software development proceeds according to plan, ensuring that proper hardware is acquired for the software needs, software is organized and able to be flashed to the microcontroller, and UI developments are user-friendly and intuitive. \\
+
+\subsection[Chief Executive Officer]{CEO - Simon Ross} The Chief Executive Officer (CEO) is responsible for paperwork, organization, and keeping the big picture of the project in perspective. This role will make sure that the members act as a unified group and that timely progress is made towards the project milestones. \\
+
+Again, these roles simply provide a basic structure for the team so that essential duties are not forgotten - each member will likely have a large amount of overlap in their duties in the project.
+
+\section{Strategy}
+This project is very software heavy, but hardware is going to inform software decisions. All members will participate in the selection and planning of hardware and software, but the research will be led by the members who have the most experience and knowledge in those areas. The team aims to select parts that will allow the drone to sense its environment and produce repeatable results in a lab setting.
+
+\subsection{Hardware}
+\begin{enumerate}
+
+\item Microcontroller
+\begin{itemize}
+\item Very important component because other hardware and software selections depend on what microcontroller is chosen
+\item Needs to support a good amount of I/O for sensors and motors
+\item Needs to be fast to support multiple PID loops
+\item Could have onboard networking to support wireless telemetry
+\end{itemize}
+
+\item Custom PCB
+\begin{itemize}
+\item Needs to combine all important components into a simple, pre-assembled package
+\item Could be designed to also be drone frame
+\end{itemize}
+
+\item Inertial Measurement Unit (IMU)
+\begin{itemize}
+\item Needs to accurately sense rotation in 3 axes for calculating error
+\end{itemize}
+
+\item Sensors
+\begin{itemize}
+\item Needs to accurately sense distance in 3 axes
+\item Needs to be simple to get data from. IR and ultrasonic sensors are often good for this
+\end{itemize}
+
+\item Motors and Motor Controllers
+\begin{itemize}
+\item Need to be powerful but with few components
+\item If the drone kits are small enough, brushed motors would be a good choice
+\end{itemize}
+
+\item Battery
+\begin{itemize}
+\item Needs to be big enough for at least 5 minutes of flight
+\item Needs to be easily swappable
+\end{itemize}
+
+\item Frame
+\begin{itemize}
+\item Needs to hold the battery, motors, and PCB in a way to prevent them from damage
+\item Needs to be cheap to 3D print
+\end{itemize}
+ 
+
+\end{enumerate}
+
+
+\subsection{Software}
+\begin{enumerate}
+\item FreeRTOS
+\begin{itemize}
+\item FreeRTOS is a real time operating system that is built and optimized for microcontrollers. An RTOS is a framework for switching between many processes. This will allow the system to constantly check sensors, log data, and run the flight logic all at the same time
+\end{itemize}
+
+\item Desktop Application
+\begin{itemize}
+\item Needs to have interface for writing new configurations for the drones
+\item Needs to be user friendly
+\item Might include real time data visualization
+\end{itemize}
+
+\item Flight Telemetry 
+\begin{itemize}
+\item Whether the flight data is being logged onboard the drone or being streamed to a laptop, it needs to be saved in a neutral format like CSV
+\end{itemize}
+\end{enumerate}
+
+\section{Project Schedule}
+Figure 1 below proposes a notional schedule for the important project checkpoints, including the milestones discussed in the section below. Though likely not perfect, this schedule will keep the project focused, providing tasks and elements to consider weekly as the project progresses.
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=\textwidth]{../gantt/gantt.png}
+  \caption{Project Gantt Chart Schedule}
+  \label{fig:gantt}
+\end{figure}
+
+
+\section{Milestones}
+
+\subsection[October 3, 2025]{Milestone 1: October 3, 2025} Since this date is rapidly approaching, we aim to have selected and ordered all of the components needed to construct a prototype drone (using perfboard instead of a PCB) by this date. Additionally, we plan to spend this time researching open source software options for working with the selected components. \\
+
+\subsection[November 14, 2025]{Milestone 2: November 14, 2025} By this date, we plan to have all of the final hardware components selected for the drone design. This means we will have a hardware solution we believe will work for the final product including motors, batteries, a frame, a microcontroller, and a data storage solution interconnected in what we hope is the the final configuration. We will have a PCB draft ready for review. On the software side, this means we will have the ability to control the system in a way that displays that our requirements can be satisfied using the platform we have created.
+
+\section{Reporting Plan}
+Every Monday, weekly reports will be submitted with statements from each member of the team. This will keep a record of what has been accomplished each week and what we plan to accomplish in the future. Reports will include both group and individual accomplishments.
+  
+Every Friday at 11:00 AM, a weekly team meeting will be held with the project advisor/customer, Dr. Fredette. These meetings ensure that the project is continuing to progress in the desired direction.
+  
+On December 12th, a design report will be submitted to document the progress that has been made up to that point.
+  
+At the end of April, a final report will be submitted to document the entirety of the project.
+
+\section{Testing Plan}
+Since the end goal of this project is to create a lab environment for students, tests can be broken down into two sections: construction tests and lab tests. They will be executed approximately in listed order when the specified component is completed.
+
+\subsection{Construction Tests}
+These are system tests to check if the various drone subsystems are working together properly.
+
+\begin{enumerate}
+	\item \textit{Microcontroller PWM Verification} - Demonstrate the microcontroller generating proper PWM signals to drive the motors
+	\item \textit{Motor System} - Demonstrate the microcontroller driving multiple motors using a MOSFET circuit
+	\item \textit{Onboard Data Logging} - Demonstrate the logging of relevant data in a non-volatile memory format
+	\item \textit{Wireless Data Logging} - Demonstrate the transmission of relevant data to a nearby laptop
+	\item \textit{Distance Sensor Functionality} - Demonstrate the sensors accurately logging distance information
+	\item \textit{Distance Sensor Calibration} - Demonstrate the ability to calibrate the distance sensor readings with respect to real-world measurements
+	\item \textit{IMU} - Demonstrate the IMU logging rotation information for calculating error
+	\item \textit{PID Loop} - Demonstrate the PID loop functioning correctly by stable flight
+\end{enumerate}
+
+\subsection{Lab Tests}
+These tests are to verify that the drone and interconnected systems are able to fulfill the marketing requirements and function in the lab setting.
+
+\begin{enumerate}
+	\item \textit{Hold Altitude} - Demonstrate the drone holding at an arbitrary target altitude
+	\item \textit{Step Response} - Demonstrate the drone changing its target altitude and settling at the new one
+	\item \textit{Sinusoidal Response} - Demonstrate the drone changing its height corresponding to an input function
+	\item \textit{Constant Disturbance Response} - Demonstrate the drone maintaining a position while a constant disturbance like a fan is applied to it
+\end{enumerate}
+
+\section{Budget}
+The budget below describes how we intend to use funds in constructing a prototype. Under this paradigm, we will be far under our proposed budget of \$600. However, this budget does not account for mistakes in prototyping and drastic changes to the program. Instead, it serves as a theoretical cost for the test and evaluation of a single prototype drone, while more funds may be directed towards redundancy, error correction, and modifications to our initial plans.
+\begin{table}[h!]
+\centering
+\caption{Unit Budget for Feedback Controls Lab Prototype}
+\label{tab:budget}
+\begin{tabular}{||c|c|c|c||}
+\hline 
+\hline
+\textbf{Component/Expense} & \textbf{Price} & \textbf{Order Date} & \textbf{Comments} \\ 
+\hline 
+Prototype Microcontroller & \$0 & N/A & Dr. Kohl gave us one to borrow \\
+\hline 
+Perfboard & \$10 & 19-Sep & Large Perfboard for redundancy \\ 
+\hline 
+Motor Control Circuit & \$5 & 19-Sep & TBD \\ 
+\hline 
+Motors & \$40 & 19-Sep & 4 motors \\ 
+\hline 
+Body & \$0 & N/A & 3D printed \\ 
+\hline 
+Props & \$10 & 19-Sep & As many props as we can get \\ 
+\hline 
+Battery & \$10 & 19-Sep & $\sim$500mAh Lithium \\ 
+\hline 
+PCB(s) & \$75 & 15-Nov & 3 boards for redundancy \\ 
+\hline 
+\textbf{Total Cost} & \textbf{\$150} &  &  \\ 
+\hline 
+\hline
+\end{tabular} 
+\end{table}
+
+\end{document}
