@@ -151,29 +151,52 @@ address each subsystem as a textual subsection. Include schematic and/or flow di
 \item Needs to hold the battery, motors, and PCB in a way to prevent them from damage
 \item Needs to be cheap to 3D print
 \end{itemize}
- 
 
 \end{enumerate}
 
-
 \subsection{Software}
 \begin{enumerate}
-\item FreeRTOS
-\begin{itemize}
-\item FreeRTOS is a real time operating system that is built and optimized for microcontrollers. An RTOS is a framework for switching between many processes. This will allow the system to constantly check sensors, log data, and run the flight logic all at the same time
-\end{itemize}
-
-\item Desktop Application
-\begin{itemize}
-\item Needs to have interface for writing new configurations for the drones
-\item Needs to be user friendly
-\item Might include real time data visualization
-\end{itemize}
-
-\item Flight Telemetry 
-\begin{itemize}
-\item Whether the flight data is being logged onboard the drone or being streamed to a laptop, it needs to be saved in a neutral format like CSV
-\end{itemize}
+	\item Drone Firmware
+	\begin{itemize}
+		\item FreeRTOS
+		\begin{itemize}
+			\item Real Time Operating System that is built and optimized for microcontrollers. An RTOS is a system for switching between many processes. This will allow the system to constantly check sensor, log data, and run the flight logic all at the same time.
+		\end{itemize}
+		\item Wireless Telemetry
+		\begin{itemize}
+			\item Drones act as WiFI access points and send out UDP packets to all devices connected to the AP
+			\item Computers can connect to the AP and receive the packets with a simple listener program that converts the packets into CSV
+		\end{itemize}
+		\item Non-volatile telemetry
+		\begin{itemize}
+			\item Lines of CSV from the sensors are written to a RAM buffer. When the buffer is full, it gets flushed to a partition on the flash that was made using LittleFS. This is done to save write cycles on the flash since cheap flash storage has limited writes. The CSV can be retrieved by rebooting the drone, plugging it into a laptop, and running a flash dump script that outputs the full CSV.
+		\end{itemize}
+		\item Fight Configuration/Controls
+		\begin{itemize}
+			\item The drone will get its flight configuration and flight script from a script file that will be loaded into the LittleFS by the desktop app. 
+		\end{itemize}
+		\item PID Flight Loop
+		\begin{itemize}
+			\item Most of this part will be taken from an existing drone project like ESP-Drone or BetaFlight
+		\end{itemize}
+	\end{itemize}
+	\item Desktop Application
+	\begin{itemize}
+		\item Design
+		\begin{itemize}
+			\item The GUI will be made with QTDesigner which is a cross-platform WYSIWYG GUI editor
+			\item The back-end will be written in Python since it is supported by QTDesigner and all the desktop scripts that have been written are already in Python 
+		\end{itemize}
+		\item Scripting
+		\begin{itemize}
+			\item The app will have some method for creating configuration and flight script files. These files will be uploaded to the drone using ESPTool
+		\end{itemize}
+		\item Telemetry
+		\begin{itemize}
+			\item Will contain methods for receiving telemetry both wirelessly and from the LittleFS partition. 
+			\item Might also include some type of data visualization system
+		\end{itemize}
+	\end{itemize}
 \end{enumerate}
 
 \section{Project Schedule}
