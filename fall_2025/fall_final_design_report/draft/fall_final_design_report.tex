@@ -1,6 +1,8 @@
 \documentclass[12pt, titlepage]{article}
 \usepackage[margin=1in]{geometry}
 \usepackage{graphicx}
+\usepackage{float}
+
 %\usepackage{hyperref}
 
 \title{\Huge Feedback Controls Fall Final Design Report \\ \normalsize{EGEE 4810 - Senior Design}}
@@ -40,7 +42,7 @@ This project seeks to redefine the Cedarville Feedback Controls Laboratory exper
 
 \section{Introduction \& Background}
 
-The current lab experience for EGME-4660 uses the Feedback Analogue Unit 33-110 and the Feedback Mechanical Unit 33-100. Although the labs using the equipment do cover the desired content, they are often tedious and perhaps confusing to new users, especially users unfamiliar with Feedback Controls concepts. The user interface to conduct the experiments is a circuit board with nodes and banana plug cords. The user can connect these nodes to create feedback circuits whose effect is then shown using the mechanical unit. As mentioned, understanding what is happening between the units (and even in the electrical circuits) can be challenging for students. This causes the applications of the class material to  seem boring and irrelevant, especially for mechanical engineering students who may not have extensive electronics background. In addition, the equipment is old and fragile - adjusting the power supply or wiring the power incorrectly can result in damage to the equipment, often requiring parts to be replaced. Since the equipment is quite expensive, the current repair method has been de-soldering and soldering components by hand. We plan to improve the lab experience by replacing the current equipment with cheap and robust drones that can be reprogrammed for the purposes of the lab with a user-friendly interface. In this way, the instructor can choose the complexity of the tasks given to students for the lab.
+The current lab experience for EGME-4660 uses the Feedback Analogue Unit 33-110 and the Feedback Mechanical Unit 33-100. Although the labs using the equipment do cover the desired content, they are often tedious and perhaps confusing to new users, especially users unfamiliar with Feedback Controls concepts. The user interface to conduct the experiments is a circuit board with nodes and banana plug cords. The user can connect these nodes to create feedback circuits whose effect is then shown using the mechanical unit. As mentioned, understanding what is happening between the units (and even in the electrical circuits) can be challenging for students. This causes the applications of the class material to  seem boring and irrelevant, especially for mechanical engineering students who may not have extensive electronics background. In addition, the equipment is old and fragile - adjusting the power supply or wiring the power incorrectly can result in damage to the equipment, often requiring parts to be replaced. Since the equipment is out of production and thus quite expensive, the current repair method has been de-soldering and soldering components by hand. We plan to improve the lab experience by replacing the current equipment with cheap and robust drones that can be reprogrammed for the purposes of the lab with a user-friendly interface. In this way, the instructor can choose the complexity of the tasks given to students for the lab.
 
 \section{Objectives}
 \subsection{Marketing Requirements}
@@ -104,52 +106,92 @@ The following requirements define the end user experience as desired by the cust
 \end{itemize}
 
 \section{Engineering Design}
-address each subsystem as a textual subsection. Include schematic and/or flow diagrams for each subsystem as well as an overall block or system diagram. Discuss alternative design options that were considered and explain why you settled on the design you did. Explain how each of the objectives/requirements is being addressed by the appropriate subsystem.
+The sections below outline major design decisions that have been made over the past semester in the areas of software, hardware, and controls. Also included are some future plans for development in these areas.
 
 \subsection{Hardware}
 \begin{enumerate}
 
-\item Microcontroller
-\begin{itemize}
-\item Very important component because other hardware and software selections depend on what microcontroller is chosen
-\item Needs to support a good amount of I/O for sensors and motors
-\item Needs to be fast to support multiple PID loops
-\item Could have onboard networking to support wireless telemetry
-\end{itemize}
-
 \item Custom PCB
 \begin{itemize}
-\item Needs to combine all important components into a simple, pre-assembled package
-\item Could be designed to also be drone frame
+\item Successfully designed and ordered the first version of the PCB
+\item PCB provides support to drone frame, but the frame is not comprised by it
+\end{itemize}
+
+\item Microcontroller
+\begin{itemize}
+\item Model selected: ESP32\_WROOM\_32N8 
+\item Fast microcontroller with plenty of RAM
+\item 2 cores for supporting sensor I/O, motors, and multiple PID loops
+\item Has an integrated antenna for wireless data transfer - see software section below
+\item Buttons included to reset microcontroller and start script
 \end{itemize}
 
 \item Inertial Measurement Unit (IMU)
 \begin{itemize}
-\item Needs to accurately sense rotation in 3 axes for calculating error
+\item Model selected: MPU-6050
+\item Accurately senses rotation in 3 axes for calculating error
+\item Includes both MEMS gyroscope and accelerometer for 6 axis measurements
+\item Currently successfully receiving IMU data both wired and wirelessly.
+\end{itemize}
+
+\item Buzzer
+\begin{itemize}
+\item Model selected: FUET-8540-3.6V
+\item Added buzzer to design for auditory feedback
+\end{itemize}
+
+\item LEDs
+\begin{itemize}
+\item Added 3 LED array for visual feedback
+\end{itemize}
+
+\item Connector
+\begin{itemize}
+\item Decided to use USB-C for connection to lab computers
+\end{itemize}
+
+\item Power Regulator
+\begin{itemize}
+\item Model selected: TPS63070RNMR
+\item Decided to use buck/boost converter instead of a standard power regulator
+\item Input range of 2-16V
+\item Output voltage is 3.3V
 \end{itemize}
 
 \item Sensors
 \begin{itemize}
-\item Needs to accurately sense distance in 3 axes
-\item Needs to be simple to get data from. IR and ultrasonic sensors are often good for this
+\item Model selected: VL53L1
+\item Mounting these sensors on the main PCB proved to be expensive and complicated, so we decided to use smaller boards to be soldered on to the main board
+\item Range of 4 m, meaning we are able to see both the roof and floor at the same time. This will help with decision logic if the drone flies over an object
+\item Decided to mount sensors on the top and bottom of the drone and 3 on the sides. This allows for accurate altitude measurements and ranging from walls. Additionally, by placing 2 sensors on one side of the drone, a heading may be calculated
+\item Currently successfully receiving sensor data both wired and wirelessly.
 \end{itemize}
 
 \item Motors and Motor Controllers
 \begin{itemize}
-\item Need to be powerful but with few components
-\item If the drone kits are small enough, brushed motors would be a good choice
+\item 720 coreless DC motors selected
+\item Since the motors are brushed and only need to turn in one direction, MOSFETs are used instead of a full motor controller IC
+\end{itemize}
+
+\item Special Circuitry
+\begin{itemize}
+\item Diode circuit added to allow powering of the circuit by a battery, connected computer, or even both (without damage)
+\item ESD and reverse current protection circuits included
+\item Auto reset logic circuit included so the microcontroller enters the bootloader properly when a computer is connected
 \end{itemize}
 
 \item Battery
 \begin{itemize}
-\item Needs to be big enough for at least 5 minutes of flight
-\item Needs to be easily swappable
+\item 2 battery connector options included on the PCB - user may select which connector they are using and solder it on
+\item The power converter accepts a large range of battery voltages, allowing for the use of 1, 2, or 3 cell LiPo batteries
+\item Battery choices are flexible (helpful, considering needs may change). This way we can increase the voltage to the motors if needed.
+\item Planning to need some sort of charging array for the students to each receive multiple batteries per lab session
 \end{itemize}
 
 \item Frame
 \begin{itemize}
-\item Needs to hold the battery, motors, and PCB in a way to prevent them from damage
-\item Needs to be cheap to 3D print
+\item Cheap, light, strong 3D printed frame created that successfully holds the motors, battery, and printed circuit board
+\item Adjustments being made to the print integrity and sensor placement on the frame
 \end{itemize}
 
 \end{enumerate}
@@ -178,6 +220,10 @@ address each subsystem as a textual subsection. Include schematic and/or flow di
 		\item PID Flight Loop
 		\begin{itemize}
 			\item Most of this part will be taken from an existing drone project like ESP-Drone or BetaFlight
+		\end{itemize}
+		\item I$^2$C Sensor Communication
+		\begin{itemize}
+			\item Successfully implemented sensor readdressing code. This means that each sensor's data can be individually recorded. Communication with the IMU and the time of flight sensors has been established simultaneously.
 		\end{itemize}
 	\end{itemize}
 	\item Desktop Application
@@ -226,30 +272,32 @@ address each subsystem as a textual subsection. Include schematic and/or flow di
 \end{enumerate}
 
 \section{Project Schedule}
-Figure 1 below proposes a notional schedule for the important project checkpoints, including the milestones discussed in the section below. Though likely not perfect, this schedule will keep the project focused, providing tasks and elements to consider weekly as the project progresses.
-\begin{figure}[h!]
+Figure 2 below shows an up-to-date version of our project schedule. Dates over semester 1 are the events that have taken place while the second semester remains notional. Up to this point, the project has remained incredibly close to the proposed schedule, as can be seen by comparing this report with our proposal. 
+
+\begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{../gantt/gantt_2_0.png}
+  \includegraphics[width=5.7in]{../gantt/gantt_2_0.png}
   \caption{Project Gantt Chart Schedule}
   \label{fig:gantt}
 \end{figure}
 
 
 \section{Project Summary}
-In this final section of the report body, draw the paper to an orderly close. Highlight your results from your project so far. Also in this section give predictions and/or measures on performance, features you added that go beyond the minimum design specifications, explanation of expenses to date and estimations of final product cost, and an assessment of where you stand with regard to your design schedule.
+
+\subsection{Current Progress}
+
+As of now, we have a fully designed PCB, an almost fully designed drone frame, and the majority of the parts needed to assemble the quadcopter. A lot of the work has also been done in setting up the drone firmware and designing the flight controls. Moving forward, we plan to assemble the drone and finish up the firmware and controls. Then, we will be able to move on to controller tuning, lab design, and setting up the desktop application.
 
 \subsection{Milestones}
 
-\subsubsection[October 3, 2025]{Milestone 1: October 3, 2025} Since this date is rapidly approaching, we aim to have selected and ordered all of the components needed to construct a prototype drone (using perfboard instead of a PCB) by this date. Additionally, we plan to spend this time researching open source software options for working with the selected components. \\
+\subsubsection[October 3, 2025]{Milestone 1: October 3, 2025} By this date, we selected and ordered all of the components needed to construct a prototype drone (using perfboard instead of a PCB) by this date. Additionally, this time was spent researching open source software options for working with the selected components. 
 
-\subsubsection[November 14, 2025]{Milestone 2: November 14, 2025} By this date, we plan to have all of the final hardware components selected for the drone design. This means we will have a hardware solution we believe will work for the final product including motors, batteries, a frame, a microcontroller, and a data storage solution interconnected in what we hope is the the final configuration. We will have a PCB draft ready for review. On the software side, this means we will have the ability to control the system in a way that displays that our requirements can be satisfied using the platform we have created.
-
-\subsection{Current Progress}
-As of now, we have a fully designed PCB, an almost fully designed drone frame, and the majority of the parts needed to assemble the quad-copter. A lot of the work has also been done in setting up the drone firmware and designing the flight controls. Moving forward, we plan to assemble the drone and finish up the firmware and controls. Then, we will be able to move on to controller tuning, lab design, and setting up the desktop application.
+\subsubsection[November 14, 2025]{Milestone 2: November 14, 2025} This milestone was modified part of the way into the semester as recommended by Dr. Kohl and Dr. Fredette - instead of having a hardware prototype, we instead produced a fully designed PCB and ordered it. This way we can use winter break to debug the PCB for the beginning of next semester.
 
 \subsection{Budget}
-The budget below describes how we intend to use funds in constructing a prototype. Under this paradigm, we will be far under our proposed budget of \$600. However, this budget does not account for mistakes in prototyping and drastic changes to the program. Instead, it serves as a theoretical cost for the test and evaluation of a single prototype drone, while more funds may be directed towards redundancy, error correction, and modifications to our initial plans.
-\begin{table}[h!]
+The budget below describes how we intend to use funds in constructing a prototype. Under this paradigm, we will be far under our proposed budget of \$600. However, this budget does not account for mistakes in prototyping and drastic changes to the program. This budget is up to date with what we have spent on each component so far.
+
+\begin{table}[H]
 \centering
 \caption{Unit Budget for Feedback Controls Lab Prototype}
 \label{tab:budget}
