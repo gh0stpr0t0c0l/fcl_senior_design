@@ -1,6 +1,5 @@
 #include <inttypes.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,19 +8,15 @@
 #include "freertos/projdefs.h"
 #include "freertos/task.h"
 #include "driver/gpio.h"
-#include "esp_system.h"
 #include "esp_timer.h"
 #include "hal/gpio_types.h"
 #include "mpu6050.h"
-// #include "i2c_drv.h"
-// #include "i2cdev.h"
 #include "portmacro.h"
 #include "vl53l1_api.h"
 #include "vl53l1_core.h"
 #include "vl53l1x.h"
 
-#include "esp_littlefs.h"
-// #include "spi_flash_mmap.h"
+// #include "esp_littlefs.h"
 #include "esp_err.h"
 #include "esp_log.h"
 
@@ -32,9 +27,10 @@
 #include "esp_netif.h"
 
 #include <arpa/inet.h>
-// #include <errno.h>
 
 #include "board.h"
+#include "storage.h"
+#include "telemetry.h"
 
 // #define START_BUTTON_GPIO 0
 
@@ -60,8 +56,8 @@ static const I2cDef I2cConfig= {
 // #define BLINK_GPIO 2
 
 //littleFS defs
-#define BUFFER_SIZE 1024
-#define FILE_PATH "/littlefs/log.csv"
+// #define BUFFER_SIZE 1024
+// #define FILE_PATH "/littlefs/log.csv"
 
 //wifi defs
 #define WIFI_SSID "DRONE_WIFI"
@@ -74,27 +70,27 @@ static const I2cDef I2cConfig= {
 #define UNICAST_IP "192.168.4.2"
 
 //Telemetry defs
-#include "freertos/semphr.h"
-static char ram_buffer[BUFFER_SIZE];
-static size_t buffer_index = 0;
-static QueueHandle_t telemetry_queue = NULL;
+// #include "freertos/semphr.h"
+// static char ram_buffer[BUFFER_SIZE];
+// static size_t buffer_index = 0;
+// static QueueHandle_t telemetry_queue = NULL;
 
-typedef struct
-{
-    uint16_t len;
-    char buf[TELEMETRY_MAX_LEN];
-} telemetry_msg_t;
+// typedef struct
+// {
+//     uint16_t len;
+//     char buf[TELEMETRY_MAX_LEN];
+// } telemetry_msg_t;
 
-typedef struct
-{
-    //MPU data
-    int64_t mpu_timestamp_us;
-    float pitch;
-    float roll;
-    //vl53l1 data
-    int64_t tof_timestamp_us[TOF_COUNT];
-    int16_t ranges[TOF_COUNT];
-} telemetry_snapshot_t;
+// typedef struct
+// {
+//     //MPU data
+//     int64_t mpu_timestamp_us;
+//     float pitch;
+//     float roll;
+//     //vl53l1 data
+//     int64_t tof_timestamp_us[TOF_COUNT];
+//     int16_t ranges[TOF_COUNT];
+// } telemetry_snapshot_t;
 
 static telemetry_snapshot_t latest_snapshot;
 static SemaphoreHandle_t snapshot_mutex = NULL;
@@ -102,39 +98,39 @@ static TaskHandle_t telemetry_aggregator_handle = NULL;
 
 static const char *TAG = "Drone";
 
-void buffer_flush()
-{
-    if (buffer_index == 0) return; // nothing to flush
+// void buffer_flush()
+// {
+//     if (buffer_index == 0) return; // nothing to flush
 
-    FILE *f = fopen(FILE_PATH, "a"); // append mode
-    if (f == NULL) {
-        printf("Failed to open file for writing\n");
-        return;
-    }
+//     FILE *f = fopen(FILE_PATH, "a"); // append mode
+//     if (f == NULL) {
+//         printf("Failed to open file for writing\n");
+//         return;
+//     }
 
-    fwrite(ram_buffer, 1, buffer_index, f);
-    fclose(f);
+//     fwrite(ram_buffer, 1, buffer_index, f);
+//     fclose(f);
 
-    buffer_index = 0; // reset buffer
-}
+//     buffer_index = 0; // reset buffer
+// }
 
-void buffer_write(const char *csv_line)
-{
-    size_t len = strlen(csv_line);
+// void buffer_write(const char *csv_line)
+// {
+//     size_t len = strlen(csv_line);
 
-    // If line doesn't end with newline, add one
-    bool needs_newline = (len == 0 || csv_line[len - 1] != '\n');
+//     // If line doesn't end with newline, add one
+//     bool needs_newline = (len == 0 || csv_line[len - 1] != '\n');
 
-    size_t total_len = len + (needs_newline ? 1 : 0);
+//     size_t total_len = len + (needs_newline ? 1 : 0);
 
-    // If it won't fit, flush first
-    if (buffer_index + total_len >= BUFFER_SIZE) {
-        buffer_flush();
-    }
+//     // If it won't fit, flush first
+//     if (buffer_index + total_len >= BUFFER_SIZE) {
+//         buffer_flush();
+//     }
 
-    memcpy(&ram_buffer[buffer_index], csv_line, len);
-    buffer_index += len;
-}
+//     memcpy(&ram_buffer[buffer_index], csv_line, len);
+//     buffer_index += len;
+// }
 
 //init the udp broadcast
 void wifi_init(void) {
@@ -157,35 +153,35 @@ void wifi_init(void) {
     esp_wifi_start();
 }
 
-static void littleFS_init()
-{
-    esp_vfs_littlefs_conf_t conf = {
-            .base_path = "/littlefs",
-            .partition_label = "littlefs",
-            .format_if_mount_failed = true,
-            .read_only = false,
-    };
+// static void littleFS_init()
+// {
+//     esp_vfs_littlefs_conf_t conf = {
+//             .base_path = "/littlefs",
+//             .partition_label = "littlefs",
+//             .format_if_mount_failed = true,
+//             .read_only = false,
+//     };
 
-    esp_err_t ret = esp_vfs_littlefs_register(&conf);
-    if (ret != ESP_OK) {
-        printf("Failed to mount or format filesystem\n");
-        return;
-    }
-    //delete old log file
-    unlink(FILE_PATH);
+//     esp_err_t ret = esp_vfs_littlefs_register(&conf);
+//     if (ret != ESP_OK) {
+//         printf("Failed to mount or format filesystem\n");
+//         return;
+//     }
+//     //delete old log file
+//     unlink(FILE_PATH);
 
-    // Print header
-    char header[256];
-    size_t offset = 0;
-    offset += snprintf(header + offset, sizeof(header) - offset,
-        "log_time_s,mpu_time_s,pitch,roll");
-    for (uint8_t i = 0; i < TOF_COUNT && offset < sizeof(header); ++i){
-        offset += snprintf(header + offset, sizeof(header) - offset,
-            ",tof%d_time_s,tof%d_mm", i, i);
-    }
-    offset += snprintf(header + offset, sizeof(header) - offset, "\n");
-    buffer_write(header);
-}
+//     // Print header
+//     char header[256];
+//     size_t offset = 0;
+//     offset += snprintf(header + offset, sizeof(header) - offset,
+//         "log_time_s,mpu_time_s,pitch,roll");
+//     for (uint8_t i = 0; i < TOF_COUNT && offset < sizeof(header); ++i){
+//         offset += snprintf(header + offset, sizeof(header) - offset,
+//             ",tof%d_time_s,tof%d_mm", i, i);
+//     }
+//     offset += snprintf(header + offset, sizeof(header) - offset, "\n");
+//     buffer_write(header);
+// }
 
 void tof_logging(void *pvPerameter)
 {
@@ -409,6 +405,8 @@ void telemetry_broadcast(void *pvParameter)
 
     telemetry_msg_t msg;
 
+    QueueHandle_t telemetry_queue = telemetry_get_queue();
+
     //send loop
     while(1){
         //block task until message in queue
@@ -422,101 +420,101 @@ void telemetry_broadcast(void *pvParameter)
     }
 }
 
-void telemetry_aggregator(void *pvPerameter)
-{
-    const TickType_t agg_period = pdMS_TO_TICKS(50);
+// void telemetry_aggregator(void *pvPerameter)
+// {
+//     const TickType_t agg_period = pdMS_TO_TICKS(50);
 
-    telemetry_snapshot_t local;
-    telemetry_snapshot_t last_snap = {0};
+//     telemetry_snapshot_t local;
+//     telemetry_snapshot_t last_snap = {0};
 
-    const int64_t stale_mpu_time = 150000LL; // Will need adjust
-    const int64_t stale_tof_time = 150000LL; // Will need to adjust
+//     const int64_t stale_mpu_time = 150000LL; // Will need adjust
+//     const int64_t stale_tof_time = 150000LL; // Will need to adjust
 
 
-    // double mpu_time_s;
-    // double tof_time_s[TOF_COUNT];
-    bool mpu_stale;
-    bool tof_stale[TOF_COUNT];
+//     // double mpu_time_s;
+//     // double tof_time_s[TOF_COUNT];
+//     bool mpu_stale;
+//     bool tof_stale[TOF_COUNT];
 
-    char csv_line[512];
+//     char csv_line[512];
 
-    while(1){
-        vTaskDelay(agg_period);
+//     while(1){
+//         vTaskDelay(agg_period);
 
-        // Take mutex and copy data
-        if(xSemaphoreTake(snapshot_mutex, pdMS_TO_TICKS(10)) == pdTRUE){
-            local = latest_snapshot;
-            xSemaphoreGive(snapshot_mutex);
-        }
-        else {
-            continue;
-        }
+//         // Take mutex and copy data
+//         if(xSemaphoreTake(snapshot_mutex, pdMS_TO_TICKS(10)) == pdTRUE){
+//             local = latest_snapshot;
+//             xSemaphoreGive(snapshot_mutex);
+//         }
+//         else {
+//             continue;
+//         }
 
-        // Skip if no new data
-        bool any_changed = false;
-        if (local.mpu_timestamp_us != last_snap.mpu_timestamp_us) {
-            any_changed = true;
-        } else {
-            for (uint8_t i = 0; i < TOF_COUNT; ++i) {
-                if (local.tof_timestamp_us[i] != last_snap.tof_timestamp_us[i]) {
-                    any_changed = true;
-                    break;
-                }
-            }
-        }
-        if (!any_changed) {
-            continue;
-        }
+//         // Skip if no new data
+//         bool any_changed = false;
+//         if (local.mpu_timestamp_us != last_snap.mpu_timestamp_us) {
+//             any_changed = true;
+//         } else {
+//             for (uint8_t i = 0; i < TOF_COUNT; ++i) {
+//                 if (local.tof_timestamp_us[i] != last_snap.tof_timestamp_us[i]) {
+//                     any_changed = true;
+//                     break;
+//                 }
+//             }
+//         }
+//         if (!any_changed) {
+//             continue;
+//         }
 
-        // Check for stale data in case of silent failure
-        int64_t now = esp_timer_get_time();
-        mpu_stale = ((now - local.mpu_timestamp_us) > stale_mpu_time) ||
-                    (local.mpu_timestamp_us == 0);
-        for(uint8_t sensor = 0; sensor < TOF_COUNT; sensor++){
-            tof_stale[sensor] = ((now - local.tof_timestamp_us[sensor]) > stale_tof_time) ||
-                    (local.tof_timestamp_us[sensor] == 0);
-        }
+//         // Check for stale data in case of silent failure
+//         int64_t now = esp_timer_get_time();
+//         mpu_stale = ((now - local.mpu_timestamp_us) > stale_mpu_time) ||
+//                     (local.mpu_timestamp_us == 0);
+//         for(uint8_t sensor = 0; sensor < TOF_COUNT; sensor++){
+//             tof_stale[sensor] = ((now - local.tof_timestamp_us[sensor]) > stale_tof_time) ||
+//                     (local.tof_timestamp_us[sensor] == 0);
+//         }
 
-        // Make csv line
-        // log_time_s,mpu_time,pitch,roll,tof[i]_time,tof[i]_mm...
-        size_t offset = 0;
-        offset += snprintf(csv_line + offset, sizeof(csv_line) - offset,
-                            "%.3f,%.3f",
-                            now / 1e6,
-                            local.mpu_timestamp_us / 1e6);
-        if (mpu_stale) {
-            offset += snprintf(csv_line + offset, sizeof(csv_line) - offset, ",NaN,NaN");
-        }
-        else {
-            offset += snprintf(csv_line + offset, sizeof(csv_line) - offset,
-                ",%.3f,%.3f", local.pitch, local.roll);
-        }
-        // Append with howevermany tofs there are
-        for (uint8_t sensor = 0; sensor < TOF_COUNT && offset < sizeof(csv_line); sensor++){
-           offset += snprintf(csv_line + offset, sizeof(csv_line) - offset,
-               ",%.3f,%d",
-               local.tof_timestamp_us[sensor] / 1e6,
-               tof_stale[sensor] ? -1 : local.ranges[sensor]);
-        }
-        offset += snprintf(csv_line + offset, sizeof(csv_line) - offset, "\n");
+//         // Make csv line
+//         // log_time_s,mpu_time,pitch,roll,tof[i]_time,tof[i]_mm...
+//         size_t offset = 0;
+//         offset += snprintf(csv_line + offset, sizeof(csv_line) - offset,
+//                             "%.3f,%.3f",
+//                             now / 1e6,
+//                             local.mpu_timestamp_us / 1e6);
+//         if (mpu_stale) {
+//             offset += snprintf(csv_line + offset, sizeof(csv_line) - offset, ",NaN,NaN");
+//         }
+//         else {
+//             offset += snprintf(csv_line + offset, sizeof(csv_line) - offset,
+//                 ",%.3f,%.3f", local.pitch, local.roll);
+//         }
+//         // Append with howevermany tofs there are
+//         for (uint8_t sensor = 0; sensor < TOF_COUNT && offset < sizeof(csv_line); sensor++){
+//            offset += snprintf(csv_line + offset, sizeof(csv_line) - offset,
+//                ",%.3f,%d",
+//                local.tof_timestamp_us[sensor] / 1e6,
+//                tof_stale[sensor] ? -1 : local.ranges[sensor]);
+//         }
+//         offset += snprintf(csv_line + offset, sizeof(csv_line) - offset, "\n");
 
-        // Send to ram buffer
-        buffer_write(csv_line);
+//         // Send to ram buffer
+//         buffer_write(csv_line);
 
-        // Put into telemetry queue
-        if (telemetry_queue != NULL) {
-            telemetry_msg_t tm;
-            memset(&tm, 0, sizeof(tm));
-            tm.len = (uint16_t)snprintf(tm.buf, TELEMETRY_MAX_LEN, "%s", csv_line);
-            xQueueSend(telemetry_queue, &tm, 0);
-        }
-        last_snap = local;
-    }
-}
+//         // Put into telemetry queue
+//         if (telemetry_queue != NULL) {
+//             telemetry_msg_t tm;
+//             memset(&tm, 0, sizeof(tm));
+//             tm.len = (uint16_t)snprintf(tm.buf, TELEMETRY_MAX_LEN, "%s", csv_line);
+//             xQueueSend(telemetry_queue, &tm, 0);
+//         }
+//         last_snap = local;
+//     }
+// }
 
 void app_main()
 {
-    // init non volitile storage for wifi
+    // init non volatile storage for wifi
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         nvs_flash_erase();
@@ -531,11 +529,14 @@ void app_main()
     esp_netif_create_default_wifi_ap();
     wifi_init();
 
+    // Setup Telemetry
+    telemetry_init();
+
     // Setup semaphores
-    snapshot_mutex = xSemaphoreCreateMutex();
-    if(snapshot_mutex == NULL){
-        ESP_LOGE(TAG, "Semaphore creation failed");
-    }
+    // snapshot_mutex = xSemaphoreCreateMutex();
+    // if(snapshot_mutex == NULL){
+    //     ESP_LOGE(TAG, "Semaphore creation failed");
+    // }
 
     // vTaskDelay(pdMS_TO_TICKS(200));
 
@@ -546,7 +547,8 @@ void app_main()
     }
 
     // rest of initialization
-    littleFS_init();
+    // littleFS_init();
+    storage_init();
     // make sure the static instance is initialized
     memset(&i2c_bus_instance, 0, sizeof(i2c_bus_instance));
     i2c_bus_instance.def = &I2cConfig;
@@ -555,17 +557,18 @@ void app_main()
     vTaskDelay(pdMS_TO_TICKS(100));
 
     //create message queue for telemtery
-    telemetry_queue = xQueueCreate(TELEMETRY_QUEUE_LEN, sizeof(telemetry_msg_t));
-    if (telemetry_queue == NULL) {
-        ESP_LOGE(TAG, "Failed to create telemetry queue");
-    }
+    // telemetry_queue = xQueueCreate(TELEMETRY_QUEUE_LEN, sizeof(telemetry_msg_t));
+    // if (telemetry_queue == NULL) {
+    //     ESP_LOGE(TAG, "Failed to create telemetry queue");
+    // }
 
     // create tasks
-    xTaskCreate(&telemetry_aggregator, "tel_agg", 4096, NULL, 6, &telemetry_aggregator_handle);
+    telemetry_start_aggregator();
+    // xTaskCreate(&telemetry_aggregator, "tel_agg", 4096, NULL, 6, &telemetry_aggregator_handle);
     xTaskCreate(&blinky, "blinky", 2048, NULL, 5, NULL);
     xTaskCreate(&mpu_logging, "mpu", 4096, NULL, 5, NULL);
     xTaskCreate(&tof_logging, "tof", 4096, NULL, 5, NULL);
-    if (telemetry_queue != NULL) {
-        xTaskCreate(&telemetry_broadcast, "udp_bcast", 4096, NULL, 5, NULL);
-    }
+    xTaskCreate(&telemetry_broadcast, "udp_bcast", 4096, NULL, 5, NULL);
+    // if (telemetry_queue != NULL) {
+    // }
 }
