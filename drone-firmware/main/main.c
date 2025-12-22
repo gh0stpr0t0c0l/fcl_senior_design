@@ -16,7 +16,6 @@
 #include "vl53l1_core.h"
 #include "vl53l1x.h"
 
-// #include "esp_littlefs.h"
 #include "esp_err.h"
 #include "esp_log.h"
 
@@ -32,13 +31,7 @@
 #include "storage.h"
 #include "telemetry.h"
 
-// #define START_BUTTON_GPIO 0
-
 // i2c declarations
-// #define I2C_MASTER_SCL_IO           22
-// #define I2C_MASTER_SDA_IO           21
-// #define I2C_MASTER_NUM              I2C_NUM_0
-// #define I2C_MASTER_FREQ_HZ          400000
 static I2cDrv i2c_bus_instance;
 static I2cDrv *i2c_bus = &i2c_bus_instance;
 static const I2cDef I2cConfig= {
@@ -48,16 +41,6 @@ static const I2cDef I2cConfig= {
     .gpioSDAPin = I2C_MASTER_SDA_IO,
     .gpioPullup = GPIO_PULLUP_ENABLE
 };
-
-// time of flight decs
-// #define TOF_COUNT 2
-// static const uint8_t tof_xshut_pins[TOF_COUNT] = {18, 19};
-
-// #define BLINK_GPIO 2
-
-//littleFS defs
-// #define BUFFER_SIZE 1024
-// #define FILE_PATH "/littlefs/log.csv"
 
 //wifi defs
 #define WIFI_SSID "DRONE_WIFI"
@@ -98,40 +81,6 @@ static const I2cDef I2cConfig= {
 
 static const char *TAG = "Drone";
 
-// void buffer_flush()
-// {
-//     if (buffer_index == 0) return; // nothing to flush
-
-//     FILE *f = fopen(FILE_PATH, "a"); // append mode
-//     if (f == NULL) {
-//         printf("Failed to open file for writing\n");
-//         return;
-//     }
-
-//     fwrite(ram_buffer, 1, buffer_index, f);
-//     fclose(f);
-
-//     buffer_index = 0; // reset buffer
-// }
-
-// void buffer_write(const char *csv_line)
-// {
-//     size_t len = strlen(csv_line);
-
-//     // If line doesn't end with newline, add one
-//     bool needs_newline = (len == 0 || csv_line[len - 1] != '\n');
-
-//     size_t total_len = len + (needs_newline ? 1 : 0);
-
-//     // If it won't fit, flush first
-//     if (buffer_index + total_len >= BUFFER_SIZE) {
-//         buffer_flush();
-//     }
-
-//     memcpy(&ram_buffer[buffer_index], csv_line, len);
-//     buffer_index += len;
-// }
-
 //init the udp broadcast
 void wifi_init(void) {
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
@@ -152,36 +101,6 @@ void wifi_init(void) {
     esp_wifi_set_config(WIFI_IF_AP, &ap_config);
     esp_wifi_start();
 }
-
-// static void littleFS_init()
-// {
-//     esp_vfs_littlefs_conf_t conf = {
-//             .base_path = "/littlefs",
-//             .partition_label = "littlefs",
-//             .format_if_mount_failed = true,
-//             .read_only = false,
-//     };
-
-//     esp_err_t ret = esp_vfs_littlefs_register(&conf);
-//     if (ret != ESP_OK) {
-//         printf("Failed to mount or format filesystem\n");
-//         return;
-//     }
-//     //delete old log file
-//     unlink(FILE_PATH);
-
-//     // Print header
-//     char header[256];
-//     size_t offset = 0;
-//     offset += snprintf(header + offset, sizeof(header) - offset,
-//         "log_time_s,mpu_time_s,pitch,roll");
-//     for (uint8_t i = 0; i < TOF_COUNT && offset < sizeof(header); ++i){
-//         offset += snprintf(header + offset, sizeof(header) - offset,
-//             ",tof%d_time_s,tof%d_mm", i, i);
-//     }
-//     offset += snprintf(header + offset, sizeof(header) - offset, "\n");
-//     buffer_write(header);
-// }
 
 void tof_logging(void *pvPerameter)
 {
@@ -529,14 +448,6 @@ void app_main()
     // Setup Telemetry
     telemetry_init();
 
-    // Setup semaphores
-    // snapshot_mutex = xSemaphoreCreateMutex();
-    // if(snapshot_mutex == NULL){
-    //     ESP_LOGE(TAG, "Semaphore creation failed");
-    // }
-
-    // vTaskDelay(pdMS_TO_TICKS(200));
-
     //wait for button
     gpio_set_direction(START_BUTTON_GPIO, GPIO_MODE_INPUT);
     while (gpio_get_level(START_BUTTON_GPIO) == 1) {
@@ -544,7 +455,6 @@ void app_main()
     }
 
     // rest of initialization
-    // littleFS_init();
     storage_init();
     // make sure the static instance is initialized
     memset(&i2c_bus_instance, 0, sizeof(i2c_bus_instance));
@@ -552,12 +462,6 @@ void app_main()
     i2cdrvInit(i2c_bus);   // this calls i2cdrvInitBus(i2c)
 
     vTaskDelay(pdMS_TO_TICKS(100));
-
-    //create message queue for telemtery
-    // telemetry_queue = xQueueCreate(TELEMETRY_QUEUE_LEN, sizeof(telemetry_msg_t));
-    // if (telemetry_queue == NULL) {
-    //     ESP_LOGE(TAG, "Failed to create telemetry queue");
-    // }
 
     // create tasks
     telemetry_start_aggregator();
