@@ -34,13 +34,15 @@
 #include <arpa/inet.h>
 // #include <errno.h>
 
-#define START_BUTTON_GPIO 0
+#include "board.h"
+
+// #define START_BUTTON_GPIO 0
 
 // i2c declarations
-#define I2C_MASTER_SCL_IO           22
-#define I2C_MASTER_SDA_IO           21
-#define I2C_MASTER_NUM              I2C_NUM_0
-#define I2C_MASTER_FREQ_HZ          400000
+// #define I2C_MASTER_SCL_IO           22
+// #define I2C_MASTER_SDA_IO           21
+// #define I2C_MASTER_NUM              I2C_NUM_0
+// #define I2C_MASTER_FREQ_HZ          400000
 static I2cDrv i2c_bus_instance;
 static I2cDrv *i2c_bus = &i2c_bus_instance;
 static const I2cDef I2cConfig= {
@@ -52,10 +54,10 @@ static const I2cDef I2cConfig= {
 };
 
 // time of flight decs
-#define TOF_COUNT 2
-static const uint8_t tof_xshut_pins[TOF_COUNT] = {18, 19};
+// #define TOF_COUNT 2
+// static const uint8_t tof_xshut_pins[TOF_COUNT] = {18, 19};
 
-#define BLINK_GPIO 2
+// #define BLINK_GPIO 2
 
 //littleFS defs
 #define BUFFER_SIZE 1024
@@ -192,6 +194,7 @@ void tof_logging(void *pvPerameter)
     uint8_t dataReady = 0;
     uint16_t ranges[TOF_COUNT];
     VL53L1_Dev_t dev[TOF_COUNT];
+    const uint8_t *tof_xshut_pins = board_get_tof_pins();
 
     //init tof xshut pins
     for (uint8_t sensor = 0; sensor < TOF_COUNT; sensor++){
