@@ -25,22 +25,13 @@
 #include "storage.h"
 #include "telemetry.h"
 #include "wifi.h"
-
-// i2c declarations
-static I2cDrv i2c_bus_instance;
-static I2cDrv *i2c_bus = &i2c_bus_instance;
-static const I2cDef I2cConfig= {
-    .i2cPort = I2C_MASTER_NUM,
-    .i2cClockSpeed = I2C_MASTER_FREQ_HZ,
-    .gpioSCLPin = I2C_MASTER_SCL_IO,
-    .gpioSDAPin = I2C_MASTER_SDA_IO,
-    .gpioPullup = GPIO_PULLUP_ENABLE
-};
+#include "i2c_bus.h"
 
 static const char *TAG = "Drone";
 
 void tof_logging(void *pvPerameter)
 {
+    I2cDrv *i2c_bus = i2c_bus_get();
     VL53L1_Error status = VL53L1_ERROR_NONE;
     VL53L1_RangingMeasurementData_t rangingData[TOF_COUNT];
     uint8_t dataReady = 0;
@@ -125,6 +116,7 @@ void tof_logging(void *pvPerameter)
 
 void mpu_logging(void *pvPerameter)
 {
+    I2cDrv *i2c_bus = i2c_bus_get();
     //create mpu device
     mpu6050Init(i2c_bus);
     if (!mpu6050Test()) {
@@ -207,12 +199,6 @@ void blinky(void *pvParameter)
     }
 }
 
-// Currently uses unicast to my computer's ip addres
-// Apparently broadacst has problem on the esp32
-// I tried multicast and I couldnt get it to work
-// Works for now
-// TODO: Make this use multicast so multiple computers can connect
-
 void app_main()
 {
     // Setup Telemetry
@@ -228,10 +214,7 @@ void app_main()
 
     // rest of initialization
     storage_init();
-    // make sure the static instance is initialized
-    memset(&i2c_bus_instance, 0, sizeof(i2c_bus_instance));
-    i2c_bus_instance.def = &I2cConfig;
-    i2cdrvInit(i2c_bus);   // this calls i2cdrvInitBus(i2c)
+    i2c_bus_init();
 
     vTaskDelay(pdMS_TO_TICKS(100));
 
