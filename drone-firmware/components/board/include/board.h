@@ -52,6 +52,9 @@ Current Hardware Version: V1
 // Buzzer
 #define BUZZER_GPIO GPIO_NUM_17
 
+// Battery
+#define BATTERY_VOLTAGE_DIVIDER GPIO_NUM_35
+
 // Motors
 #define MOTOR_1_PIN GPIO_NUM_18
 #define MOTOR_2_PIN GPIO_NUM_19
@@ -62,6 +65,8 @@ Current Hardware Version: V1
 // /* ----------------------
 //    Timing/electrical defaults
 //    ---------------------- */
+
+
 // #define TOF_DEFAULT_TIMING_BUDGET_US 25000
 // #define MPU_UPDATE_HZ                50   /* used to size delays / tasks */
 // #define DEFAULT_PWM_MIN_US           1000
