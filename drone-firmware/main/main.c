@@ -13,6 +13,7 @@
 #include "i2c_bus.h"
 #include "mpu_mgr.h"
 #include "tof_mgr.h"
+#include "buzzer.h"
 
 // static const char *TAG = "Drone";
 
@@ -33,6 +34,9 @@ void blinky(void *pvParameter)
 
 void app_main()
 {
+    // Setup buzzer
+    buzzer_init();
+    buzzer_play(BUZZER_STARTUP);
     // Setup Telemetry
     telemetry_init();
     // Setup WiFi
@@ -43,6 +47,7 @@ void app_main()
     while (gpio_get_level(START_BUTTON_GPIO) == 1) {
         vTaskDelay(pdMS_TO_TICKS(50));
     }
+    buzzer_play(BUZZER_START_BUTTON);
 
     // rest of initialization
     storage_init();
