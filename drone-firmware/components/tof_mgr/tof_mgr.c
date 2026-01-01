@@ -15,7 +15,7 @@ void tof_logging(void *pvPerameter)
     I2cDrv *i2c_bus = i2c_bus_get();
     VL53L1_Error status = VL53L1_ERROR_NONE;
     VL53L1_RangingMeasurementData_t rangingData[TOF_COUNT];
-    uint8_t dataReady = 0;
+    uint8_t dataReady;
     uint16_t ranges[TOF_COUNT];
     VL53L1_Dev_t dev[TOF_COUNT];
     const uint8_t *tof_xshut_pins = board_get_tof_pins();
@@ -97,5 +97,5 @@ void tof_logging(void *pvPerameter)
 
 void tof_manager_start(void)
 {
-    xTaskCreate(&tof_logging, "tof", 4096, NULL, 5, NULL);
+    xTaskCreate(tof_logging, "tof", 8192, NULL, 5, NULL);
 }
