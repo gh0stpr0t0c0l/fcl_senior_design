@@ -5,6 +5,8 @@
 Contains abstractions for initializing the WiFi Access Point and
 broadcasting telemetry data.
 =============================== */
+// TODO: Add checks for connected devices
+// TODO: Finish wifi_stop
 
 #ifndef WIFI_H
 #define WIFI_H

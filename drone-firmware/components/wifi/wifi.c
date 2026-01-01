@@ -65,6 +65,7 @@ void udp_broadcast(void *pvParameter)
     int sock = -1;
     struct sockaddr_in serv_addr, unicast_addr;
 
+    // Maybe remove delay
     vTaskDelay(pdMS_TO_TICKS(500));
 
     //create socket
