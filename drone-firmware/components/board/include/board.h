@@ -3,7 +3,7 @@
 
 /* ===============================
 Contains definitions for the drone hardware along with getters for those defines
-Current Hardware Version: Breadboard
+Current Hardware Version: V1
 =============================== */
 
 #ifndef BOARD_CONFIG_H
@@ -13,11 +13,11 @@ Current Hardware Version: Breadboard
 #include "driver/gpio.h"
 
 // Board Identity
-#define BOARD_NAME "Breadboard Rig"
-#define BOARD_REV 0
+#define BOARD_NAME "WingFeather V1"
+#define BOARD_REV 1
 
 // Hardware Counts
-#define TOF_COUNT 2
+#define TOF_COUNT 5
 #define MOTOR_COUNT 4
 
 /* ------------------------------
@@ -30,27 +30,34 @@ Current Hardware Version: Breadboard
 #define I2C_MASTER_NUM     I2C_NUM_0
 #define I2C_MASTER_FREQ_HZ 400000
 
+// MPU6050
+#define MPU_INT_PIN GPIO_NUM_34
+
 // VL53l1x
-// extern const uint8_t tof_xshut_pins[TOF_COUNT]; // pins declared in board.c
-#define TOF_XSHUT_PIN_0 GPIO_NUM_18
-#define TOF_XSHUT_PIN_1 GPIO_NUM_19
-// Can be array indexed in this order with "tof_xshut_pins[i]"
-// #define TOP_XSHUT_PIN GPIO_NUM_33
-// #define INNER_XSHUT_PIN GPIO_NUM_25
-// #define SINGLE_XSHUT_PIN GPIO_NUM_26
-// #define OUTER_XSHUT_PIN GPIO_NUM_27
-// #define BOT_XSHUT_PIN GPIO_NUM_14
+// The following are for the breadboard
+// #define TOF_XSHUT_PIN_0 GPIO_NUM_18
+// #define TOF_XSHUT_PIN_1 GPIO_NUM_19
+// The following are for Wingfeather V1
+#define TOP_XSHUT_PIN    GPIO_NUM_33
+#define INNER_XSHUT_PIN  GPIO_NUM_25
+#define SINGLE_XSHUT_PIN GPIO_NUM_26
+#define OUTER_XSHUT_PIN  GPIO_NUM_27
+#define BOT_XSHUT_PIN    GPIO_NUM_14
+// An indexable array can be gotten with board_get_tof_pins();
 
 // Buttons and LEDs
-#define BLINK_GPIO GPIO_NUM_2
+#define BLINK_GPIO        GPIO_NUM_13
 #define START_BUTTON_GPIO GPIO_NUM_0
 
+// Buzzer
+#define BUZZER_GPIO GPIO_NUM_17
+
 // Motors
-// Can be array indexed in this order with "motor_pins[i]"
-// #define MOTOR_1_PIN GPIO_NUM_18
-// #define MOTOR_2_PIN GPIO_NUM_19
-// #define MOTOR_3_PIN GPIO_NUM_32
-// #define MOTOR_4_PIN GPIO_NUM_23
+#define MOTOR_1_PIN GPIO_NUM_18
+#define MOTOR_2_PIN GPIO_NUM_19
+#define MOTOR_3_PIN GPIO_NUM_32
+#define MOTOR_4_PIN GPIO_NUM_23
+// An indexable array can be gotten with board_get_motor_pins();
 
 // /* ----------------------
 //    Timing/electrical defaults
@@ -69,6 +76,6 @@ Current Hardware Version: Breadboard
  Functions
 ------------------------------ */
 const uint8_t *board_get_tof_pins(void);
-// TODO add one for motor pins
+const uint8_t *board_get_motor_pins(void);
 
 #endif // BOARD_CONFIG_H
