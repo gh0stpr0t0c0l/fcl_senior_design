@@ -48,7 +48,13 @@ static const buzzer_step_t start_button_pattern[] = {
 static const buzzer_step_t wifi_connected_pattern[] = {
     { true, 50 },
     { false, 50 },
-    { true, 50 },
+    { true, 200 },
+};
+
+static const buzzer_step_t wifi_disconnected_pattern[] = {
+    { true, 200 },
+    { false, 50 },
+    { true, 50},
 };
 
 // more here as needed
@@ -71,6 +77,11 @@ static const buzzer_pattern_def_t patterns[BUZZER_PATTERN_COUNT] = {
     [BUZZER_WIFI_CONNECTED] = {
         .steps  = wifi_connected_pattern,
         .length = sizeof(wifi_connected_pattern) / sizeof(buzzer_step_t),
+        .repeat = false,
+    },
+    [BUZZER_WIFI_DISCONNECTED] = {
+        .steps = wifi_disconnected_pattern,
+        .length = sizeof(wifi_disconnected_pattern) / sizeof(buzzer_step_t),
         .repeat = false,
     },
 };

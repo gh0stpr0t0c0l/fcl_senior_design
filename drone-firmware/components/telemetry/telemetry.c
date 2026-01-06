@@ -1,5 +1,6 @@
 #include "telemetry.h"
 #include "storage.h"
+#include "wifi.h"
 #include "freertos/projdefs.h"
 #include "freertos/semphr.h"
 #include "freertos/queue.h"
@@ -73,6 +74,7 @@ static void telemetry_aggregator_task(void *pvParameter)
     bool tof_stale[TOF_COUNT];
     char csv_line[512];
 
+    QueueHandle_t q = telemetry_get_queue();
     while(1){
         vTaskDelay(agg_period);
         local = telemetry_snapshot_get();
@@ -129,8 +131,8 @@ static void telemetry_aggregator_task(void *pvParameter)
         storage_buffer_write(csv_line);
 
         // Put into telemetry queue
-        QueueHandle_t q = telemetry_get_queue();
-        if (q != NULL) {
+        // QueueHandle_t q = telemetry_get_queue();
+        if (q != NULL && wifi_is_connected()) {
             telemetry_msg_t tm;
             memset(&tm, 0, sizeof(tm));
             tm.len = (uint16_t)snprintf(tm.buf, TELEMETRY_MAX_LEN, "%s", csv_line);

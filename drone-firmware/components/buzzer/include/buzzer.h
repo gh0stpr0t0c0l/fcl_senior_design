@@ -13,6 +13,7 @@ typedef enum {
     BUZZER_STARTUP,
     BUZZER_START_BUTTON,
     BUZZER_WIFI_CONNECTED,
+    BUZZER_WIFI_DISCONNECTED,
     // BUZZER_BATTERY_LOW,
     BUZZER_PATTERN_COUNT, // DO NOT USE Just for num of patterns
 } buzzer_pattern_t;
