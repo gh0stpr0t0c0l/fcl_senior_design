@@ -27,8 +27,8 @@ void wifi_init(void);
 
 void wifi_stop(void);
 
-void wifi_start_udp_broadcast(void);
-
 bool wifi_is_connected(void);
+
+void wifi_start_udp_broadcast(void);
 
 #endif /* WIFI_H */
