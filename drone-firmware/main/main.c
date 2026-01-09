@@ -55,7 +55,7 @@ void app_main()
     while (gpio_get_level(START_BUTTON_GPIO) == 1) {
         vTaskDelay(pdMS_TO_TICKS(50));
     }
-    buzzer_play(BUZZER_START_BUTTON);
+    // buzzer_play(BUZZER_START_BUTTON);
 
     //uart_listener_stop();
 
