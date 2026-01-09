@@ -167,7 +167,7 @@ void buzzer_init(void)
 
 void buzzer_play(buzzer_pattern_t pattern)
 {
-    if (pattern >= BUZZER_PATTERN_COUNT) {
+    if (pattern >= BUZZER_PATTERN_COUNT || QUIET_MODE) {
         return;
     }
     current_pattern = pattern;
