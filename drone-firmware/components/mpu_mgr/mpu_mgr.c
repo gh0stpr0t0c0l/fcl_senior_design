@@ -13,10 +13,14 @@ void mpu_logging(void *pvPerameter)
     I2cDrv *i2c_bus = i2c_bus_get();
     //create mpu device
     mpu6050Init(i2c_bus);
+    uint8_t attempts = 0;
     if (!mpu6050Test()) {
-            ESP_LOGE(TAG, "MPU6050 connection failed!");
+        ESP_LOGE(TAG, "MPU6050 connection failed!");
+        attempts++;
+        if (attempts >= 5) {
             vTaskDelete(NULL);
         }
+    }
     ESP_LOGI(TAG, "MPU6050 connected successfully");
 
     mpu6050SetDLPFMode(3);
