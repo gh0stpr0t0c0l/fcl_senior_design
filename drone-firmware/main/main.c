@@ -36,7 +36,7 @@ void app_main()
 {
     // Setup buzzer
     buzzer_init();
-    buzzer_play(BUZZER_STARTUP);
+    // buzzer_play(BUZZER_STARTUP);
     // Setup Telemetry
     telemetry_init();
     // Setup WiFi
@@ -47,7 +47,7 @@ void app_main()
     while (gpio_get_level(START_BUTTON_GPIO) == 1) {
         vTaskDelay(pdMS_TO_TICKS(50));
     }
-    buzzer_play(BUZZER_START_BUTTON);
+    // buzzer_play(BUZZER_START_BUTTON);
 
     // rest of initialization
     storage_init();
@@ -58,8 +58,8 @@ void app_main()
     // create tasks
     telemetry_start_aggregator();
     xTaskCreate(&blinky, "blinky", 2048, NULL, 5, NULL);
-    mpu_manager_start();
     tof_manager_start();
+    mpu_manager_start();
     wifi_start_udp_broadcast();
     // if (telemetry_queue != NULL) {
     // }
