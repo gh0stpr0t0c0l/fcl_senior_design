@@ -50,6 +50,7 @@ Current Hardware Version: V1
 #define START_BUTTON_GPIO GPIO_NUM_0
 
 // Buzzer
+#define QUIET_MODE 1 // TODO Get this val from config file
 #define BUZZER_GPIO GPIO_NUM_17
 
 // Battery
