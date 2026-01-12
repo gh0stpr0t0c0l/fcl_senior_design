@@ -1,0 +1,42 @@
+\documentclass[12pt, titlepage]{article}
+\usepackage{hyperref}
+
+\title{Feedback Controls Lab Weekly Report \\ \normalsize{Week 1}}
+\author{Aydan Vissing, Brady Schick, Gabriel Southwell, Simon Ross}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Aydan Vissing - CFO (9 hrs spent)}
+
+This week I had to complete the drone frame and then work on the test rig. The frame was designed to what we need to get the drone off the ground but I learned that the PETG printer is currently down. Dr. Kohl had me send him the stl files and said he might change one of the PLA printers to PETG temporarily to get it printed. I then moved on to trying to get the rig set up to print, but when I moved the files into fusion, it made it wildly larger than the print bed, I didn't realize that it was having a lot of scaling issues and tried to chop it up, only later realizing it was much larger than necessary. So I need to cut it up again but within the right scale, if I need to at all. My plan is to take tomorrow (Tuesday) to redo that and then start working on the front end for the rest of the week while we wait for the printer to be fixed.
+
+\section*{Brady Schick - CTO (7 hrs spent)}
+
+The majority of time this week was spent on updating the coordinate system (so that the z-direction points down) and 
+updating the equations and simulation to operate with this coordinate system. Also, linear dynamics equations were
+re-derived, this time using the voltage control and the updated coordinate system, and a linear simulation was built.
+This simulation seems to work well with yaw and elevation. Some of the time next week will be used to test translational
+x and y control.
+
+\section*{Gabriel Southwell - CSO (7.5 hrs spent)}
+
+Over break I worked a lot to take care of much tech debt that I had created. I made the code modular so and much easier to understand and expand. Then I also worked on updating everything to work on the new PCBs.
+
+This week I was not able to hit 9 hours due to being in a wedding. I worked on adding the time of flight sensors to the new PCB and a lot of trouble shooting related to that.
+
+Yesterday I started breaking down and opensource flight controller and trying to understand how it works. 
+
+
+\section*{Simon Ross - CEO (12 hrs spent)}
+
+This week was a lot of work for very little reward. In fact, I think I managed to take a few steps backward. However, the team is back, and the project is in a good place going forward. We just need to move quickly.
+
+The first and biggest setback this week was the fact that one of the power converters on our prototype boards quit. Since this was rather unexpected, I assumed I had done something wrong, but Dr. Kohl seemed convinced that everything I did was valid. Unfortunately, this means it is likely the component's fault, meaning we may need to choose another power converter for our next hardware rendition. So as not to get slowed down in the development process, I plan on replacing the old converter with a spliced-in version to allow us to continue testing. 
+
+Because of this, I was unable to complete the hardware testing I was planning to do. Instead, I worked on learning about what Gabe has been doing so that I can assist with the code. After a few hours of reading datasheets and documentation, I feel ready to write some PWM code or similar. Additionally, Gabe has completed much of the hardware testing successfully, with the exception of the motors and some continued work on the ToF sensors.
+
+We're working hard to complete a flying (or at least spinning) prototype, as this will define a lot of how the semester will look. Aydan's frame is almost in the final version, Brady has excellent models in the works, and Gabe has put a lot of time and effort into the code. With some external controller code and a little work on PWM code and controllers we should be on our way, even despite some frustrating setbacks.
+
+\end{document}
