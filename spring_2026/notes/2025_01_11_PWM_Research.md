@@ -1,0 +1,3 @@
+-  LEDC is correct module to use for PWM, not MCPWM. MCPWM is for dual-input motor controller type applications. LEDC has 16 channels, half of which may be used in fast mode, which is almost for sure what we want - instant response instead of waiting on the application.
+- Fade using software, not hardware from duty cycle to duty cycle (i.e. no `ledc_set_fade_with_time()`)
+- See Espressif provided LEDC example
