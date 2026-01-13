@@ -7,31 +7,10 @@
 #include "esp_log.h"
 
 static const char *TAG = "mpu";
+static bool initialized = false;
 
 void mpu_logging(void *pvPerameter)
 {
-    I2cDrv *i2c_bus = i2c_bus_get();
-    //create mpu device
-    mpu6050Init(i2c_bus);
-    uint8_t attempts = 0;
-    if (!mpu6050Test()) {
-        ESP_LOGE(TAG, "MPU6050 connection failed!");
-        attempts++;
-        if (attempts >= 5) {
-            vTaskDelete(NULL);
-        }
-    }
-    ESP_LOGI(TAG, "MPU6050 connected successfully");
-
-    mpu6050SetDLPFMode(3);
-    mpu6050SetFullScaleGyroRange(0);
-    mpu6050SetFullScaleAccelRange(0);
-
-    // wake up and select PLL X as clock source
-    mpu6050SetSleepEnabled(false);               // clear sleep bit
-    mpu6050SetClockSource(MPU6050_CLOCK_PLL_XGYRO); // choose a stable PLL source (if your header defines this)
-    vTaskDelay(pdMS_TO_TICKS(10)); // give it a moment
-
     //get conversion factors
     float accel_scale = mpu6050GetFullScaleAccelGPL();
     float gyro_scale = mpu6050GetFullScaleGyroDPL();
@@ -71,18 +50,43 @@ void mpu_logging(void *pvPerameter)
         ESP_LOGW(TAG, "%.3f,%2f,%2f\n", now_time / 1e6, pitch, roll);
 
         telemetry_publish_mpu(now_time, pitch, roll);
-        // if (xSemaphoreTake(snapshot_mutex, pdMS_TO_TICKS(10)) == pdTRUE) {
-        //     latest_snapshot.pitch = pitch;
-        //     latest_snapshot.roll  = roll;
-        //     latest_snapshot.mpu_timestamp_us = now_time;
-        //     xSemaphoreGive(snapshot_mutex);
-        // }
 
         vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
 
+void mpu_manager_init(void)
+{
+    I2cDrv *i2c_bus = i2c_bus_get();
+    //create mpu device
+    mpu6050Init(i2c_bus);
+    uint8_t attempts = 0;
+    while (!mpu6050Test()) {
+        ESP_LOGE(TAG, "MPU6050 connection failed!");
+        attempts++;
+        if (attempts >= 5) {
+            vTaskDelete(NULL);
+        }
+    }
+    ESP_LOGI(TAG, "MPU6050 connected successfully");
+
+    mpu6050SetDLPFMode(3);
+    mpu6050SetFullScaleGyroRange(0);
+    mpu6050SetFullScaleAccelRange(0);
+
+    // wake up and select PLL X as clock source
+    mpu6050SetSleepEnabled(false);
+    mpu6050SetClockSource(MPU6050_CLOCK_PLL_XGYRO);
+    vTaskDelay(pdMS_TO_TICKS(10));
+
+    initialized = true;
+}
+
 void mpu_manager_start(void)
 {
-    xTaskCreate(&mpu_logging, "mpu", 4096, NULL, 5, NULL);
+    if (initialized) {
+        xTaskCreate(&mpu_logging, "mpu", 4096, NULL, 5, NULL);
+        return;
+    }
+    ESP_LOGE(TAG, "Initialize before starting");
 }

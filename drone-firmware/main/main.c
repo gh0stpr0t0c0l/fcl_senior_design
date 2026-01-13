@@ -36,11 +36,15 @@ void app_main()
 {
     // Setup buzzer
     buzzer_init();
-    buzzer_play(BUZZER_STARTUP);
     // Setup Telemetry
     telemetry_init();
     // Setup WiFi
     wifi_init();
+    i2c_bus_init();
+    mpu_manager_init();
+    tof_manager_init();
+
+    buzzer_play(BUZZER_STARTUP);
 
     //wait for button
     gpio_set_direction(START_BUTTON_GPIO, GPIO_MODE_INPUT);
@@ -51,7 +55,6 @@ void app_main()
 
     // rest of initialization
     storage_init();
-    i2c_bus_init();
 
     vTaskDelay(pdMS_TO_TICKS(100));
 

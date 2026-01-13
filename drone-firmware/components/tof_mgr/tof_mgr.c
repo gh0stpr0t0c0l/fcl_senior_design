@@ -9,15 +9,56 @@
 #include "vl53l1x.h"
 
 static const char *TAG = "VL53L1x";
+static bool initialized = false;
+VL53L1_Dev_t dev[TOF_COUNT];
 
 void tof_logging(void *pvPerameter)
 {
-    I2cDrv *i2c_bus = i2c_bus_get();
-    VL53L1_Error status = VL53L1_ERROR_NONE;
     VL53L1_RangingMeasurementData_t rangingData[TOF_COUNT];
     uint8_t dataReady;
     uint16_t ranges[TOF_COUNT];
-    VL53L1_Dev_t dev[TOF_COUNT];
+
+    // Now all the sensors are activated with their xshut pins high
+    // and all have unique addresses    ESP_LOGI(TAG, "I2C scan after readdressing:");
+    // for (uint8_t addr = 1; addr < 127; ++addr) {
+    //     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+    //     i2c_master_start(cmd);
+    //     i2c_master_write_byte(cmd, (addr << 1) | I2C_MASTER_WRITE, true);
+    //     i2c_master_stop(cmd);
+    //     esp_err_t ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, pdMS_TO_TICKS(50));
+    //     i2c_cmd_link_delete(cmd);
+    //     if (ret == ESP_OK) {
+    //         ESP_LOGI(TAG, "I2C device found at 0x%02X", addr);
+    //     }
+    // }
+
+    while(1){
+        for(uint8_t sensor = 0; sensor < TOF_COUNT; sensor++){
+            VL53L1_StartMeasurement(&dev[sensor]);
+            while (dataReady == 0){
+                VL53L1_GetMeasurementDataReady(&dev[sensor], &dataReady);
+                vTaskDelay(pdMS_TO_TICKS(1));
+            }
+            dataReady = 0;
+            VL53L1_GetRangingMeasurementData(&dev[sensor], &rangingData[sensor]);
+            ranges[sensor] = rangingData[sensor].RangeMilliMeter;
+            VL53L1_StopMeasurement(&dev[sensor]);
+            VL53L1_clear_interrupt(&dev[sensor]);
+            VL53L1_StartMeasurement(&dev[sensor]);
+
+            // Put range into snapshot
+            telemetry_publish_tof(sensor, esp_timer_get_time(), ranges[sensor]);
+        }
+        ESP_LOGI(TAG, "Distance Left %d mm | Distance Right %d mm", ranges[1], ranges[0]);
+        vTaskDelay(pdMS_TO_TICKS(50));
+    }
+}
+
+void tof_manager_init(void)
+{
+    VL53L1_Error status = VL53L1_ERROR_NONE;
+    I2cDrv *i2c_bus = i2c_bus_get();
+
     const uint8_t *tof_xshut_pins = board_get_tof_pins();
 
     //init tof xshut pins
@@ -56,46 +97,16 @@ void tof_logging(void *pvPerameter)
         VL53L1_StopMeasurement(&dev[sensor]);
         VL53L1_SetDistanceMode(&dev[sensor], VL53L1_DISTANCEMODE_MEDIUM);
         VL53L1_SetMeasurementTimingBudgetMicroSeconds(&dev[sensor], 25000);
-        VL53L1_StartMeasurement(&dev[sensor]);
+        // VL53L1_StartMeasurement(&dev[sensor]);
     }
-
-    // Now all the sensors are activated with their xshut pins high
-    // and all have unique addresses    ESP_LOGI(TAG, "I2C scan after readdressing:");
-    // for (uint8_t addr = 1; addr < 127; ++addr) {
-    //     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
-    //     i2c_master_start(cmd);
-    //     i2c_master_write_byte(cmd, (addr << 1) | I2C_MASTER_WRITE, true);
-    //     i2c_master_stop(cmd);
-    //     esp_err_t ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, pdMS_TO_TICKS(50));
-    //     i2c_cmd_link_delete(cmd);
-    //     if (ret == ESP_OK) {
-    //         ESP_LOGI(TAG, "I2C device found at 0x%02X", addr);
-    //     }
-    // }
-
-    while(1){
-        for(uint8_t sensor = 0; sensor < TOF_COUNT; sensor++){
-            VL53L1_StartMeasurement(&dev[sensor]);
-            while (dataReady == 0){
-                VL53L1_GetMeasurementDataReady(&dev[sensor], &dataReady);
-                vTaskDelay(pdMS_TO_TICKS(1));
-            }
-            dataReady = 0;
-            VL53L1_GetRangingMeasurementData(&dev[sensor], &rangingData[sensor]);
-            ranges[sensor] = rangingData[sensor].RangeMilliMeter;
-            VL53L1_StopMeasurement(&dev[sensor]);
-            VL53L1_clear_interrupt(&dev[sensor]);
-            VL53L1_StartMeasurement(&dev[sensor]);
-
-            // Put range into snapshot
-            telemetry_publish_tof(sensor, esp_timer_get_time(), ranges[sensor]);
-        }
-        ESP_LOGI(TAG, "Distance Left %d mm | Distance Right %d mm", ranges[1], ranges[0]);
-        vTaskDelay(pdMS_TO_TICKS(50));
-    }
+    initialized = true;
 }
 
 void tof_manager_start(void)
 {
-    xTaskCreate(tof_logging, "tof", 8192, NULL, 5, NULL);
+    if (initialized) {
+        xTaskCreate(tof_logging, "tof", 8192, NULL, 5, NULL);
+        return;
+    }
+    ESP_LOGE(TAG, "Initialize before starting");
 }
