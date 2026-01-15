@@ -31,10 +31,10 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include "log.h"
-#include "param.h"
-#include "num.h"
-#include "platform.h"
+// #include "log.h"
+// #include "param.h"
+// #include "num.h"
+// #include "platform.h"
 #include "motors.h"
 #define DEBUG_MODULE "PWR_DIST"
 #include "debug_cf.h"
