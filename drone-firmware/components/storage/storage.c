@@ -41,6 +41,22 @@ void storage_init(void)
     storage_buffer_write(header);
 }
 
+void storage_buffer_flush(void)
+{
+    if (buffer_index == 0) return; // nothing to flush
+
+    FILE *f = fopen(FILE_PATH, "a"); // append mode
+    if (f == NULL) {
+        printf("Failed to open file for writing\n");
+        return;
+    }
+
+    fwrite(ram_buffer, 1, buffer_index, f);
+    fclose(f);
+
+    buffer_index = 0; // reset buffer
+}
+
 void storage_buffer_write(const char *line)
 {
     size_t len = strlen(line);
@@ -57,20 +73,4 @@ void storage_buffer_write(const char *line)
 
     memcpy(&ram_buffer[buffer_index], line, len);
     buffer_index += len;
-}
-
-void storage_buffer_flush(void)
-{
-    if (buffer_index == 0) return; // nothing to flush
-
-    FILE *f = fopen(FILE_PATH, "a"); // append mode
-    if (f == NULL) {
-        printf("Failed to open file for writing\n");
-        return;
-    }
-
-    fwrite(ram_buffer, 1, buffer_index, f);
-    fclose(f);
-
-    buffer_index = 0; // reset buffer
 }

@@ -5,6 +5,8 @@
 Contains abstractions for initializing the WiFi Access Point and
 broadcasting telemetry data.
 =============================== */
+// TODO: Add checks for connected devices
+// TODO: Finish wifi_stop
 
 #ifndef WIFI_H
 #define WIFI_H
@@ -25,8 +27,8 @@ void wifi_init(void);
 
 void wifi_stop(void);
 
-void wifi_start_udp_broadcast(void);
-
 bool wifi_is_connected(void);
+
+void wifi_start_udp_broadcast(void);
 
 #endif /* WIFI_H */

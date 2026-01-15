@@ -1,5 +1,6 @@
 #include "wifi.h"
 #include "telemetry.h"
+#include "buzzer.h"
 #include "esp_err.h"
 #include "esp_wifi.h"
 #include "lwip/sockets.h"
@@ -7,11 +8,41 @@
 #include "nvs_flash.h"
 #include "esp_netif.h"
 #include "esp_log.h"
+#include <stdint.h>
 
 static const char *TAG = "WiFi";
 static QueueHandle_t telemetry_queue = NULL;
 static TaskHandle_t udp_broadcast_task = NULL;
 static volatile bool udp_task_running = false;
+static bool wifi_started = false;
+static volatile uint8_t clients_connected = 0;
+
+static void wifi_event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
+{
+    if (event_base == WIFI_EVENT) {
+        switch (event_id) {
+            case WIFI_EVENT_AP_START:
+                wifi_started = true;
+                break;
+            case WIFI_EVENT_AP_STOP:
+                wifi_started = false;
+                break;
+            case WIFI_EVENT_AP_STACONNECTED:
+                clients_connected++;
+                ESP_LOGW(TAG, "Client Connected");
+                buzzer_play(BUZZER_WIFI_CONNECTED);
+                break;
+            case WIFI_EVENT_AP_STADISCONNECTED:
+                if (clients_connected > 0) {
+                    clients_connected--;
+                }
+                ESP_LOGE(TAG, "Client Disconnected");
+                buzzer_play(BUZZER_WIFI_DISCONNECTED);
+            default:
+                break;
+        }
+    }
+}
 
 void wifi_init(void)
 {
@@ -28,6 +59,16 @@ void wifi_init(void)
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
     esp_netif_create_default_wifi_ap();
+
+    ESP_ERROR_CHECK(
+        esp_event_handler_instance_register(
+            WIFI_EVENT,
+            ESP_EVENT_ANY_ID,
+            &wifi_event_handler,
+            NULL,
+            NULL
+        )
+    );
 
     wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
     esp_wifi_init(&cfg);
@@ -48,11 +89,17 @@ void wifi_init(void)
     esp_wifi_start();
 }
 
+// Stops unicast task and turns off AP. WiFi will need to be re-inited
 void wifi_stop(void)
 {
     ESP_LOGE(TAG, "Stopping");
     // TODO kill broadcast task
     esp_wifi_stop();
+}
+
+bool wifi_is_connected(void)
+{
+    return clients_connected > 0;
 }
 
 // Currently unicasts to the ip of the first connected device
@@ -65,6 +112,7 @@ void udp_broadcast(void *pvParameter)
     int sock = -1;
     struct sockaddr_in serv_addr, unicast_addr;
 
+    // Maybe remove delay
     vTaskDelay(pdMS_TO_TICKS(500));
 
     //create socket
@@ -105,8 +153,6 @@ void udp_broadcast(void *pvParameter)
     ESP_LOGI(TAG, "UDP broadcast task started, sending to %s:%d", UNICAST_IP, UDP_PORT);
 
     telemetry_msg_t msg;
-
-    // QueueHandle_t telemetry_queue = telemetry_get_queue();
 
     //send loop
     while(1){

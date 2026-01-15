@@ -16,6 +16,6 @@ TODO: Add script reading features
 
 void storage_init(void);
 void storage_buffer_write(const char *line);
-void storage_buffer_flush(void);
+// void storage_buffer_flush(void);
 
 #endif

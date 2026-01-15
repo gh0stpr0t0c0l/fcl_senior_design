@@ -7,6 +7,7 @@ Contains a task that gets data from the VL53L1 and updates the telemetry aggrega
 #ifndef TOF_MGR_H
 #define TOF_MGR_H
 
+void tof_manager_init(void);
 void tof_manager_start(void);
 
 #endif

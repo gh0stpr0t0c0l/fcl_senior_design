@@ -13,6 +13,7 @@
 #include "i2c_bus.h"
 #include "mpu_mgr.h"
 #include "tof_mgr.h"
+#include "buzzer.h"
 
 // static const char *TAG = "Drone";
 
@@ -33,28 +34,35 @@ void blinky(void *pvParameter)
 
 void app_main()
 {
+    // Setup buzzer
+    buzzer_init();
     // Setup Telemetry
     telemetry_init();
     // Setup WiFi
     wifi_init();
+    i2c_bus_init();
+    mpu_manager_init();
+    tof_manager_init();
+
+    buzzer_play(BUZZER_STARTUP);
 
     //wait for button
     gpio_set_direction(START_BUTTON_GPIO, GPIO_MODE_INPUT);
     while (gpio_get_level(START_BUTTON_GPIO) == 1) {
         vTaskDelay(pdMS_TO_TICKS(50));
     }
+    buzzer_play(BUZZER_START_BUTTON);
 
     // rest of initialization
     storage_init();
-    i2c_bus_init();
 
     vTaskDelay(pdMS_TO_TICKS(100));
 
     // create tasks
     telemetry_start_aggregator();
     xTaskCreate(&blinky, "blinky", 2048, NULL, 5, NULL);
-    mpu_manager_start();
     tof_manager_start();
+    mpu_manager_start();
     wifi_start_udp_broadcast();
     // if (telemetry_queue != NULL) {
     // }
