@@ -15,6 +15,8 @@
 #include "tof_mgr.h"
 #include "buzzer.h"
 
+#include "motors.h"
+
 // static const char *TAG = "Drone";
 
 void blinky(void *pvParameter)
@@ -32,8 +34,19 @@ void blinky(void *pvParameter)
     }
 }
 
+void motor_test(void *pvParameter)
+{
+    while(1) {
+        motors_set(1000, 1000, 1000, 1000);
+        vTaskDelay(pdMS_TO_TICKS(1000));
+        motors_stop();
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
+}
+
 void app_main()
 {
+    motors_init();
     // Setup buzzer
     buzzer_init();
     // Setup Telemetry
@@ -61,6 +74,7 @@ void app_main()
     // create tasks
     telemetry_start_aggregator();
     xTaskCreate(&blinky, "blinky", 2048, NULL, 5, NULL);
+    xTaskCreate(&motor_test, "motor test", 2048, NULL, 5, NULL);
     tof_manager_start();
     mpu_manager_start();
     wifi_start_udp_broadcast();
