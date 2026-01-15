@@ -10,12 +10,8 @@ Contains methods for motor control and initialization
 
 #include <stdint.h>
 
-typedef struct {
-    uint16_t pwm[4];  // 0–MAX_PWM
-} motor_cmd_t;
-
 void motors_init(void);
-void motors_set(const motor_cmd_t *cmd);
+void motors_set(uint8_t motor, uint16_t ratio);
 void motors_stop(void);
 
 #endif

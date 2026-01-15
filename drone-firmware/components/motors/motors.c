@@ -49,25 +49,17 @@ void motors_init(void)
     ESP_LOGI(TAG, "Motors initialized");
 }
 
-void motors_set(const motor_cmd_t *cmd)
+void motors_set(uint8_t motor, uint16_t ratio)
 {
-    if (!initialized || cmd == NULL) {
+    if (!initialized || motor >= MOTOR_COUNT) {
         return;
     }
 
-    for (int i = 0; i < MOTOR_COUNT; i++) {
-        uint32_t duty = cmd->pwm[i];
-        if (duty > MOTOR_PWM_MAX) {
-            duty = MOTOR_PWM_MAX;
-        }
-        if (duty > 0 && duty < MOTOR_PWM_MIN) {
-            duty = MOTOR_PWM_MIN;
-        }
-        ledc_set_duty(LEDC_HIGH_SPEED_MODE, motor_channel[i], duty);
-        ledc_update_duty(LEDC_HIGH_SPEED_MODE, motor_channel[i]);
-    }
-}
+    uint32_t duty = (ratio * MOTOR_PWM_MAX) >> 16;
 
+    ledc_set_duty(LEDC_HIGH_SPEED_MODE, motor_channel[motor], duty);
+    ledc_update_duty(LEDC_HIGH_SPEED_MODE, motor_channel[motor]);
+}
 
 void motors_stop(void)
 {

@@ -36,8 +36,13 @@ void blinky(void *pvParameter)
 
 void motor_test(void *pvParameter)
 {
+    // motor_cmd_t cmd = {.pwm = {500, 500, 500, 500}};
     while(1) {
-        motors_set(1000, 1000, 1000, 1000);
+        // motors_set(&cmd);
+        motors_set(0, 1500);
+        motors_set(1, 1500);
+        motors_set(2, 1500);
+        motors_set(3, 1500);
         vTaskDelay(pdMS_TO_TICKS(1000));
         motors_stop();
         vTaskDelay(pdMS_TO_TICKS(1000));
@@ -74,7 +79,7 @@ void app_main()
     // create tasks
     telemetry_start_aggregator();
     xTaskCreate(&blinky, "blinky", 2048, NULL, 5, NULL);
-    xTaskCreate(&motor_test, "motor test", 2048, NULL, 5, NULL);
+    xTaskCreate(&motor_test, "motor test", 4096, NULL, 5, NULL);
     tof_manager_start();
     mpu_manager_start();
     wifi_start_udp_broadcast();
