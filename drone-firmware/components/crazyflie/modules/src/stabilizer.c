@@ -26,34 +26,36 @@
 
 #include <math.h>
 #include <inttypes.h>
+#include <stdbool.h>
 
 #include "FreeRTOS.h"
 #include "task.h"
 
-#include "stm32_legacy.h"
+// #include "stm32_legacy.h"
 #include "system.h"
-#include "log.h"
-#include "param.h"
+// #include "log.h"
+// #include "param.h"
 #include "motors.h"
-#include "pm_esplane.h"
+#include "board.h"
+// #include "pm_esplane.h"
 #include "esp_timer.h"
 #include "stabilizer.h"
 #include "sensors.h"
-#include "commander.h"
-#include "crtp_localization_service.h"
-#include "sitaw.h"
+// #include "commander.h"
+// #include "crtp_localization_service.h"
+// #include "sitaw.h"
 #include "controller.h"
 #include "power_distribution.h"
 //#include "collision_avoidance.h"
 
 #include "estimator.h"
 //#include "usddeck.h" //usddeckLoggingMode_e
-#include "quatcompress.h"
-#include "statsCnt.h"
+// #include "quatcompress.h"
+// #include "statsCnt.h"
 #define DEBUG_MODULE "STAB"
-#include "debug_cf.h"
+// #include "debug_cf.h"
 #include "static_mem.h"
-#include "rateSupervisor.h"
+// #include "rateSupervisor.h"
 
 static bool isInit;
 static bool emergencyStop = false;
@@ -122,9 +124,9 @@ static struct {
   int16_t az;
 } setpointCompressed;
 
-static float accVarX[NBR_OF_MOTORS];
-static float accVarY[NBR_OF_MOTORS];
-static float accVarZ[NBR_OF_MOTORS];
+static float accVarX[MOTOR_COUNT];
+static float accVarY[MOTOR_COUNT];
+static float accVarZ[MOTOR_COUNT];
 // Bit field indicating if the motors passed the motor test.
 // Bit 0 - 1 = M1 passed
 // Bit 1 - 1 = M2 passed
