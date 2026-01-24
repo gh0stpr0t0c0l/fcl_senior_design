@@ -33,6 +33,9 @@ Current Hardware Version: V1
 // MPU6050
 #define MPU_INT_PIN GPIO_NUM_34
 
+//Battery ADC
+#define BATT_ADC_CHAN ADC_CHANNEL_7 //FIXME this might need help
+
 // VL53l1x
 // The following are for the breadboard
 // #define TOF_XSHUT_PIN_0 GPIO_NUM_18
