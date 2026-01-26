@@ -39,7 +39,7 @@ void batt_logging(void *pvParameters)
       else if (err != ESP_OK)
       {
          ESP_LOGE(TAG, "Battery check ADC error");
-         vTaskDelete(NULL); //FIXME send a fault
+         vTaskDelete(NULL); //TODO send a fault?
       }
 
       if (raw_voltage != -1){
