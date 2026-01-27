@@ -81,7 +81,7 @@ void adc_cal_init(void)
    ESP_ERROR_CHECK(adc_cali_create_scheme_line_fitting(&cal_config, &adc_cal_handle));
 }
 
-void batt_adc_start(void)
+void battery_adc_start(void)
 {
    batt_adc_init();
    adc_cal_init();
