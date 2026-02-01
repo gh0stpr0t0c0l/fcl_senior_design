@@ -47,7 +47,7 @@ static bool latestTofMeasurement(tofMeasurement_t* tofMeasurement);
 
 // Measurements of TOF from laser sensor
 #define TOF_QUEUE_LENGTH (1)
-static xQueueHandle tofDataQueue;
+static QueueHandle_t tofDataQueue;
 STATIC_MEM_QUEUE_ALLOC(tofDataQueue, TOF_QUEUE_LENGTH, sizeof(tofMeasurement_t));
 
 
@@ -105,7 +105,7 @@ static bool latestTofMeasurement(tofMeasurement_t* tofMeasurement) {
   return xQueuePeek(tofDataQueue, tofMeasurement, 0) == pdTRUE;
 }
 
-static bool overwriteMeasurement(xQueueHandle queue, void *measurement)
+static bool overwriteMeasurement(QueueHandle_t queue, void *measurement)
 {
   portBASE_TYPE result;
   bool isInInterrupt = false;//(SCB->ICSR & SCB_ICSR_VECTACTIVE_Msk) != 0;

@@ -97,8 +97,9 @@
  * As well as by the following internal functions and datatypes
  */
 
+// TODO a lot of stuff with tofs
 // Distance-to-point measurements
-static xQueueHandle distDataQueue;
+static QueueHandle_t distDataQueue;
 STATIC_MEM_QUEUE_ALLOC(distDataQueue, 10, sizeof(distanceMeasurement_t));
 
 static inline bool stateEstimatorHasDistanceMeasurement(distanceMeasurement_t *dist) {
@@ -106,7 +107,7 @@ static inline bool stateEstimatorHasDistanceMeasurement(distanceMeasurement_t *d
 }
 
 // Direct measurements of Crazyflie position
-static xQueueHandle posDataQueue;
+static QueueHandle_t posDataQueue;
 STATIC_MEM_QUEUE_ALLOC(posDataQueue, 10, sizeof(positionMeasurement_t));
 
 static inline bool stateEstimatorHasPositionMeasurement(positionMeasurement_t *pos) {
@@ -114,7 +115,7 @@ static inline bool stateEstimatorHasPositionMeasurement(positionMeasurement_t *p
 }
 
 // Direct measurements of Crazyflie pose
-static xQueueHandle poseDataQueue;
+static QueueHandle_t poseDataQueue;
 STATIC_MEM_QUEUE_ALLOC(poseDataQueue, 10, sizeof(poseMeasurement_t));
 
 static inline bool stateEstimatorHasPoseMeasurement(poseMeasurement_t *pose) {
@@ -122,7 +123,7 @@ static inline bool stateEstimatorHasPoseMeasurement(poseMeasurement_t *pose) {
 }
 
 // Measurements of a UWB Tx/Rx
-static xQueueHandle tdoaDataQueue;
+static QueueHandle_t tdoaDataQueue;
 STATIC_MEM_QUEUE_ALLOC(tdoaDataQueue, 10, sizeof(tdoaMeasurement_t));
 
 static inline bool stateEstimatorHasTDOAPacket(tdoaMeasurement_t *uwb) {
@@ -130,7 +131,7 @@ static inline bool stateEstimatorHasTDOAPacket(tdoaMeasurement_t *uwb) {
 }
 
 // Measurements of flow (dnx, dny)
-static xQueueHandle flowDataQueue;
+static QueueHandle_t flowDataQueue;
 STATIC_MEM_QUEUE_ALLOC(flowDataQueue, 10, sizeof(flowMeasurement_t));
 
 static inline bool stateEstimatorHasFlowPacket(flowMeasurement_t *flow) {
@@ -138,7 +139,7 @@ static inline bool stateEstimatorHasFlowPacket(flowMeasurement_t *flow) {
 }
 
 // Measurements of TOF from laser sensor
-static xQueueHandle tofDataQueue;
+static QueueHandle_t tofDataQueue;
 STATIC_MEM_QUEUE_ALLOC(tofDataQueue, 10, sizeof(tofMeasurement_t));
 
 static inline bool stateEstimatorHasTOFPacket(tofMeasurement_t *tof) {
@@ -146,7 +147,7 @@ static inline bool stateEstimatorHasTOFPacket(tofMeasurement_t *tof) {
 }
 
 // Absolute height measurement along the room Z
-static xQueueHandle heightDataQueue;
+static QueueHandle_t heightDataQueue;
 STATIC_MEM_QUEUE_ALLOC(heightDataQueue, 10, sizeof(heightMeasurement_t));
 
 static inline bool stateEstimatorHasHeightPacket(heightMeasurement_t *height) {
@@ -154,7 +155,7 @@ static inline bool stateEstimatorHasHeightPacket(heightMeasurement_t *height) {
 }
 
 
-static xQueueHandle yawErrorDataQueue;
+static QueueHandle_t yawErrorDataQueue;
 STATIC_MEM_QUEUE_ALLOC(yawErrorDataQueue, 10, sizeof(yawErrorMeasurement_t));
 
 static inline bool stateEstimatorHasYawErrorPacket(yawErrorMeasurement_t *error)
@@ -607,7 +608,7 @@ void estimatorKalmanInit(void) {
   kalmanCoreInit(&coreData);
 }
 
-static bool appendMeasurement(xQueueHandle queue, void *measurement)
+static bool appendMeasurement(QueueHandle_t queue, void *measurement)
 {
   portBASE_TYPE result;
   bool isInInterrupt = 0; //TODO:= (SCB->ICSR & SCB_ICSR_VECTACTIVE_Msk) != 0;

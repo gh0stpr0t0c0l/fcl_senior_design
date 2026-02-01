@@ -44,8 +44,8 @@
 #include "log.h"
 
 #include "imu.h"
-#include "nvicconf.h"
-#include "ledseq.h"
+// #include "nvicconf.h"
+// #include "ledseq.h"
 #include "sound.h"
 #include "filter.h"
 #include "config.h"
@@ -54,13 +54,13 @@
 #include "i2cdev.h"
 // #include "lps25h.h"
 #include "mpu6050.h"
-#include "hmc5883l.h"
-#include "ms5611.h"
+// #include "hmc5883l.h" // compass
+// #include "ms5611.h"
 // #include "ak8963.h"
-#include "zranger.h"
-#include "zranger2.h"
+// #include "zranger.h"
+// #include "zranger2.h"
 #include "vl53l1x.h"
-#include "flowdeck_v1v2.h"
+// #include "flowdeck_v1v2.h"
 #define DEBUG_MODULE "SENSORS"
 #include "debug_cf.h"
 #include "static_mem.h"
@@ -77,13 +77,14 @@
 #define MAG_GAUSS_PER_LSB 666.7f
 
 /**
- * Enable sensors on board 
+ * Enable sensors on board
  */
 // #define SENSORS_ENABLE_MAG_HM5883L
 // #define SENSORS_ENABLE_PRESSURE_MS5611
 //#define SENSORS_ENABLE_RANGE_VL53L0X
-#define SENSORS_ENABLE_RANGE_VL53L1X
-#define SENSORS_ENABLE_FLOW_PMW3901
+// TODO maybe readd tofs
+// #define SENSORS_ENABLE_RANGE_VL53L1X
+// #define SENSORS_ENABLE_FLOW_PMW3901
 
 #define SENSORS_GYRO_FS_CFG MPU6050_GYRO_FS_2000
 #define SENSORS_DEG_PER_LSB_CFG MPU6050_DEG_PER_LSB_2000
@@ -102,8 +103,8 @@
 #define GPIO_INTA_MPU6050_IO CONFIG_MPU_PIN_INT
 #define SENSORS_MPU6050_BUFF_LEN 14
 #define SENSORS_MAG_BUFF_LEN 8
-#define SENSORS_BARO_BUFF_S_P_LEN MS5611_D1D2_SIZE
-#define SENSORS_BARO_BUFF_T_LEN MS5611_D1D2_SIZE
+// #define SENSORS_BARO_BUFF_S_P_LEN MS5611_D1D2_SIZE
+// #define SENSORS_BARO_BUFF_T_LEN MS5611_D1D2_SIZE
 #define SENSORS_BARO_BUFF_LEN (SENSORS_BARO_BUFF_S_P_LEN + SENSORS_BARO_BUFF_T_LEN)
 
 #define GYRO_NBR_OF_AXES 3
@@ -130,17 +131,17 @@ typedef struct {
     Axis3i16 buffer[SENSORS_NBR_OF_BIAS_SAMPLES];
 } BiasObj;
 
-static xQueueHandle accelerometerDataQueue;
+static QueueHandle_t accelerometerDataQueue;
 STATIC_MEM_QUEUE_ALLOC(accelerometerDataQueue, 1, sizeof(Axis3f));
-static xQueueHandle gyroDataQueue;
+static QueueHandle_t gyroDataQueue;
 STATIC_MEM_QUEUE_ALLOC(gyroDataQueue, 1, sizeof(Axis3f));
-static xQueueHandle magnetometerDataQueue;
+static QueueHandle_t magnetometerDataQueue;
 STATIC_MEM_QUEUE_ALLOC(magnetometerDataQueue, 1, sizeof(Axis3f));
-static xQueueHandle barometerDataQueue;
+static QueueHandle_t barometerDataQueue;
 STATIC_MEM_QUEUE_ALLOC(barometerDataQueue, 1, sizeof(baro_t));
 
-static xSemaphoreHandle sensorsDataReady;
-static xSemaphoreHandle dataReady;
+static SemaphoreHandle_t sensorsDataReady;
+static SemaphoreHandle_t dataReady;
 
 static bool isInit = false;
 static sensorData_t sensorData;
@@ -321,20 +322,20 @@ void processBarometerMeasurements(const uint8_t *buffer)
 
 void processMagnetometerMeasurements(const uint8_t *buffer)
 {
-    //TODO: replace it to hmc5883l
-    if (buffer[7] & (1 << HMC5883L_STATUS_READY_BIT)) {
-        int16_t headingx = (((int16_t)buffer[2]) << 8) | buffer[1]; //hmc5883 different from
-        int16_t headingz = (((int16_t)buffer[4]) << 8) | buffer[3];
-        int16_t headingy = (((int16_t)buffer[6]) << 8) | buffer[5];
+    //TODO: Is this needed?
+    // if (buffer[7] & (1 << HMC5883L_STATUS_READY_BIT)) {
+    //     int16_t headingx = (((int16_t)buffer[2]) << 8) | buffer[1]; //hmc5883 different from
+    //     int16_t headingz = (((int16_t)buffer[4]) << 8) | buffer[3];
+    //     int16_t headingy = (((int16_t)buffer[6]) << 8) | buffer[5];
 
-        sensorData.mag.x = (float)headingx / MAG_GAUSS_PER_LSB; //to gauss
-        sensorData.mag.y = (float)headingy / MAG_GAUSS_PER_LSB;
-        sensorData.mag.z = (float)headingz / MAG_GAUSS_PER_LSB;
-        DEBUG_PRINTI("hmc5883l DATA ready");
-    } else {
+    //     sensorData.mag.x = (float)headingx / MAG_GAUSS_PER_LSB; //to gauss
+    //     sensorData.mag.y = (float)headingy / MAG_GAUSS_PER_LSB;
+    //     sensorData.mag.z = (float)headingz / MAG_GAUSS_PER_LSB;
+    //     DEBUG_PRINTI("hmc5883l DATA ready");
+    // } else {
 
-        DEBUG_PRINTW("hmc5883l DATA not ready");
-    }
+    //     DEBUG_PRINTW("hmc5883l DATA not ready");
+    // }
 }
 
 void processAccGyroMeasurements(const uint8_t *buffer)
@@ -388,7 +389,7 @@ void processAccGyroMeasurements(const uint8_t *buffer)
 #ifdef CONFIG_TARGET_ESPLANE_V1
     accScaled.x = (accelRaw.x) * SENSORS_G_PER_LSB_CFG / accScale;
 #else
-    accScaled.x = -(accelRaw.x) * SENSORS_G_PER_LSB_CFG / accScale;   
+    accScaled.x = -(accelRaw.x) * SENSORS_G_PER_LSB_CFG / accScale;
 #endif
 
     accScaled.y = (accelRaw.y) * SENSORS_G_PER_LSB_CFG / accScale;
@@ -416,7 +417,7 @@ static void sensorsDeviceInit(void)
     } else {
         DEBUG_PRINTE("MPU6050 I2C connection [FAIL].\n");
         DEBUG_PRINTE("Please power off and power on the device.\n");
-        while (1) 
+        while (1)
         {
             vTaskDelay(M2T(100));
         }
@@ -812,7 +813,7 @@ static bool processGyroBias(int16_t gx, int16_t gy, int16_t gz, Axis3f *gyroBias
         if (gyroBiasRunning.isBiasValueFound) {
             //TODO:
             soundSetEffect(SND_CALIB);
-            ledseqRun(&seq_calibrated);
+            // ledseqRun(&seq_calibrated);
             DEBUG_PRINTI("isBiasValueFound!");
         }
     }

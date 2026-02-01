@@ -36,7 +36,7 @@
 #include "config.h"
 #include "param.h"
 #include "log.h"
-#include "ledseq.h"
+// #include "ledseq.h"
 #include "adc_esp32.h"
 #include "pm_esplane.h"
 #include "config.h"
@@ -89,7 +89,7 @@ static bool isInit;
 STATIC_MEM_TASK_ALLOC(systemTask, SYSTEM_TASK_STACKSIZE);
 
 /* System wide synchronisation */
-xSemaphoreHandle canStartMutex;
+SemaphoreHandle_t canStartMutex;
 static StaticSemaphore_t canStartMutexBuffer;
 
 /* Private functions */
@@ -138,7 +138,7 @@ void systemInit(void)
   //storageInit();
   workerInit();
   adcInit();
-  ledseqInit();
+  // ledseqInit(); TODO replace with our led abstraction
   pmInit();
   buzzerInit();
 //  peerLocalizationInit();
@@ -154,7 +154,7 @@ bool systemTest()
 {
   bool pass=isInit;
 
-  pass &= ledseqTest();
+  // pass &= ledseqTest();
   pass &= pmTest();
   DEBUG_PRINTI("pmTest = %d", pass);
   pass &= workerTest();
@@ -169,8 +169,8 @@ void systemTask(void *arg)
 {
   bool pass = true;
 
-  ledInit();
-  ledSet(CHG_LED, 1);
+  // ledInit();
+  // ledSet(CHG_LED, 1);
   wifiInit();
   vTaskDelay(M2T(500));
 
@@ -238,8 +238,8 @@ void systemTask(void *arg)
     systemStart();
     DEBUG_PRINTI("systemStart ! selftestPassed = %d", selftestPassed);
     soundSetEffect(SND_STARTUP);
-    ledseqRun(&seq_alive);
-    ledseqRun(&seq_testPassed);
+    // ledseqRun(&seq_alive);
+    // ledseqRun(&seq_testPassed);
   }
   else
   {
@@ -248,7 +248,7 @@ void systemTask(void *arg)
     {
       while(1)
       {
-        ledseqRun(&seq_testFailed);
+        // ledseqRun(&seq_testFailed);
         vTaskDelay(M2T(2000));
         // System can be forced to start by setting the param to 1 from the cfclient
         if (selftestPassed)
@@ -261,8 +261,8 @@ void systemTask(void *arg)
     }
     else
     {
-      ledInit();
-      ledSet(SYS_LED, true);
+      // ledInit();
+      // ledSet(SYS_LED, true);
     }
   }
   DEBUG_PRINT("Free heap: %"PRIu32" bytes\n", xPortGetFreeHeapSize());
