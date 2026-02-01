@@ -102,7 +102,7 @@ static struct piecewise_traj trajectory;
 static struct piecewise_traj_compressed  compressed_trajectory;
 
 // makes sure that we don't evaluate the trajectory while it is being changed
-static xSemaphoreHandle lockTraj;
+static SemaphoreHandle_t lockTraj;
 static StaticSemaphore_t lockTrajBuffer;
 
 // safe default settings for takeoff and landing velocity

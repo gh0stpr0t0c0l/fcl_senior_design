@@ -6,8 +6,8 @@
  *  ||  ||    /_____/_/\__/\___/_/   \__,_/ /___/\___/
 *
  * ESP-Drone Firmware
- * 
- * Copyright 2019-2020  Espressif Systems (Shanghai) 
+ *
+ * Copyright 2019-2020  Espressif Systems (Shanghai)
  * Copyright (C) 2011-2012 Bitcraze AB
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@
 #include <stdint.h>
 #include "FreeRTOS.h"
 #include "cfassert.h"
-#include "led.h"
+// #include "led.h"
 #include "power_distribution.h"
 #include "debug_cf.h"
 
@@ -82,8 +82,9 @@ void assertFail(char *exp, char *file, int line)
   storeAssertFileData(file, line);
   DEBUG_PRINTE("Assert failed %s:%d\n", file, line);
 
-  ledClearAll();
-  ledSet(ERR_LED1, 1);
+  // TODO replace with out led abstraction
+  // ledClearAll();
+  // ledSet(ERR_LED1, 1);
   //ledSet(ERR_LED2, 1);
   powerStop();
 
