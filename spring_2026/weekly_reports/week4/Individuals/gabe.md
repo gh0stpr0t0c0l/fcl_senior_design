@@ -1,1 +1,5 @@
-Hours Worked:
+Hours Worked: 14.5 Hours
+
+This week I continued to work on the crazyflie firmware adaptation. I have somewhat changed my efforts from trying to full adapt it to just making it compile. That way when I try to compile it, I can see what still needs an abstraction and what needs to be stubbed out. 
+I also have been encountering a lot of problems with using a newer version of gcc and esp_idf. gcc has gotten a lot stricter about using pointers to the first index of an array and implicitly trusting it is an array since esp-drone was written 6 years ago. Esp_idf also has depreciated and replaced a lot of task management functions for better memory safety so those needed replaced too. In hindsight, I would have just downgraded Esp-idf versions, but I have replaced all of them now. 
+Currently the only remaining compiler errors are about missing drivers for hardware we are not using. The only thing the esp-drone version of crazyflie needs to hover is the MPU6050, but it does a lot of sensor fusion stuff first. I think I can just feed the stabalized the values straight from the mpu but I am still working understanding what all it does with the data stream.
