@@ -37,11 +37,13 @@
 #include "freertos/task.h"
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
-#include "esp_log.h"
 
+#include "stm32_legacy.h"
 #include "i2c_drv.h"
-// #include "config.h"
-#define TAG "I2CDRV"
+#include "config.h"
+#include "board.h"
+#define DEBUG_MODULE "I2CDRV"
+#include "debug_cf.h"
 
 // Definitions of sensors I2C bus
 #define I2C_DEFAULT_SENSORS_CLOCK_SPEED             400000
@@ -51,6 +53,31 @@
 
 static bool isinit_i2cPort[2] = {0, 0};
 
+// Cost definitions of busses
+static const I2cDef sensorBusDef = {
+    .i2cPort            = I2C_NUM_0,
+    .i2cClockSpeed      = I2C_DEFAULT_SENSORS_CLOCK_SPEED,
+    .gpioSCLPin         = I2C_MASTER_SCL_IO,
+    .gpioSDAPin         = I2C_MASTER_SDA_IO,
+    .gpioPullup         = GPIO_PULLUP_DISABLE,
+};
+
+I2cDrv sensorsBus = {
+    .def                = &sensorBusDef,
+};
+
+// static const I2cDef deckBusDef = {
+//     .i2cPort            = I2C_NUM_1,
+//     .i2cClockSpeed      = I2C_DEFAULT_DECK_CLOCK_SPEED,
+//     .gpioSCLPin         = I2C_MASTER_SCL_IO,
+//     .gpioSDAPin         = I2C_MASTER_SDA_IO,
+//     .gpioPullup         = GPIO_PULLUP_ENABLE,
+// };
+
+I2cDrv deckBus = {
+    .def = NULL,
+    // .def                = &deckBusDef,
+};
 
 static void i2cdrvInitBus(I2cDrv *i2c)
 {
@@ -71,7 +98,7 @@ static void i2cdrvInitBus(I2cDrv *i2c)
         err = i2c_driver_install(i2c->def->i2cPort, conf.mode, 0, 0, 0);
     }
 
-    ESP_LOGI(TAG," i2c %d driver install return = %d", i2c->def->i2cPort, err);
+    DEBUG_PRINTI(" i2c %d driver install return = %d", i2c->def->i2cPort, err);
     i2c->isBusFreeMutex = xSemaphoreCreateMutex();
     isinit_i2cPort[i2c->def->i2cPort] = true;
 }
@@ -84,7 +111,7 @@ void i2cdrvInit(I2cDrv *i2c)
     i2cdrvInitBus(i2c);
 }
 
-static void i2cdrvTryToRestartBus(I2cDrv *i2c)
+void i2cdrvTryToRestartBus(I2cDrv *i2c)
 {
     i2cdrvInitBus(i2c);
 }
