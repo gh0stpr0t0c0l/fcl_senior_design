@@ -6,14 +6,14 @@
 #include "freertos/task.h"
 #include "driver/gpio.h"
 
-// #include "board.h"
+#include "board.h"
 // #include "storage.h"
 // #include "telemetry.h"
 // #include "wifi.h"
 // #include "i2c_bus.h"
 // #include "mpu_mgr.h"
 // #include "tof_mgr.h"
-// #include "buzzer.h"
+#include "buzzer.h"
 
 // #include "motors.h"
 

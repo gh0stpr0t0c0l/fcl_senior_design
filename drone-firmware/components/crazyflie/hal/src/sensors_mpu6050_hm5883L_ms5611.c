@@ -100,12 +100,13 @@
 #define SENSORS_GYRO_BIAS_CALCULATE_STDDEV
 
 // Buffer length for MPU9250 slave reads
+#define CONFIG_MPU_PIN_INT 19
 #define GPIO_INTA_MPU6050_IO CONFIG_MPU_PIN_INT
 #define SENSORS_MPU6050_BUFF_LEN 14
 #define SENSORS_MAG_BUFF_LEN 8
 // #define SENSORS_BARO_BUFF_S_P_LEN MS5611_D1D2_SIZE
 // #define SENSORS_BARO_BUFF_T_LEN MS5611_D1D2_SIZE
-#define SENSORS_BARO_BUFF_LEN (SENSORS_BARO_BUFF_S_P_LEN + SENSORS_BARO_BUFF_T_LEN)
+// #define SENSORS_BARO_BUFF_LEN (SENSORS_BARO_BUFF_S_P_LEN + SENSORS_BARO_BUFF_T_LEN)
 
 #define GYRO_NBR_OF_AXES 3
 #define GYRO_MIN_BIAS_TIMEOUT_MS M2T(1 * 1000)
@@ -118,6 +119,8 @@
 #define GYRO_VARIANCE_THRESHOLD_Z (GYRO_VARIANCE_BASE)
 #define ESP_INTR_FLAG_DEFAULT 0
 
+#define CONFIG_PITCH_CALIB 0 // TODO remove and replace with menuconfig
+#define CONFIG_ROLL_CALIB 0 // TODO remove and replace with menuconfig
 #define PITCH_CALIB (CONFIG_PITCH_CALIB*1.0/100)
 #define ROLL_CALIB (CONFIG_ROLL_CALIB*1.0/100)
 
@@ -191,6 +194,8 @@ float cosRoll;
 float sinRoll;
 
 // This buffer needs to hold data from all sensors
+// #define SENSORS_MAG_BUFF_LEN 3
+#define SENSORS_BARO_BUFF_LEN 3 //TODO replace with config
 static uint8_t buffer[SENSORS_MPU6050_BUFF_LEN + SENSORS_MAG_BUFF_LEN + SENSORS_BARO_BUFF_LEN] = {0};
 
 static void processAccGyroMeasurements(const uint8_t *buffer);
@@ -1059,6 +1064,6 @@ PARAM_GROUP_STOP(imu_sensors)
 PARAM_GROUP_START(imu_tests)
 PARAM_ADD(PARAM_UINT8 | PARAM_RONLY, mpu6050, &isMpu6050TestPassed)
 PARAM_ADD(PARAM_UINT8 | PARAM_RONLY, HMC5883L, &isMagnetometerPresent)
-PARAM_ADD(PARAM_UINT8 | PARAM_RONLY, pmw3901, &isPmw3901Present)
+// PARAM_ADD(PARAM_UINT8 | PARAM_RONLY, pmw3901, &isPmw3901Present)
 PARAM_ADD(PARAM_UINT8 | PARAM_RONLY, MS5611, &isBarometerPresent) // TODO: Rename MS5611 to LPS25H. Client needs to be updated at the same time.
 PARAM_GROUP_STOP(imu_tests)
