@@ -15,7 +15,9 @@ typedef enum {
     BUZZER_WIFI_CONNECTED,
     BUZZER_WIFI_DISCONNECTED,
     BUZZER_MOTORS_TEST,
-    // BUZZER_BATTERY_LOW,
+    // BUZZER_BAT_GOOD,
+    BUZZER_BAT_LOW,
+    BUZZER_MPU_CALIBRATED,
     BUZZER_PATTERN_COUNT, // DO NOT USE Just for num of patterns
 } buzzer_pattern_t;
 

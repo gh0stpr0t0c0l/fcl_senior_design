@@ -60,7 +60,7 @@
 //#include "watchdog.h"
 #include "queuemonitor.h"
 #include "buzzer.h"
-#include "sound.h"
+// #include "sound.h"
 #include "sysload.h"
 #include "estimator_kalman.h"
 //#include "deck.h"
@@ -70,8 +70,9 @@
 #define DEBUG_MODULE "SYS"
 #include "debug_cf.h"
 #include "static_mem.h"
-//#include "peer_localization.h"
 #include "cfassert.h"
+
+// #include "buzzer.h"
 
 #ifndef START_DISARMED
 #define ARM_INIT true
@@ -125,7 +126,7 @@ void systemInit(void)
   adcInit();
   // ledseqInit(); TODO replace with our led abstraction
   pmInit();
-  buzzerInit();
+  // buzzer_init();
 //  peerLocalizationInit();
 
 #ifdef APP_ENABLED
@@ -144,7 +145,7 @@ bool systemTest()
   DEBUG_PRINTI("pmTest = %d", pass);
   pass &= workerTest();
   DEBUG_PRINTI("workerTest = %d", pass);
-  pass &= buzzerTest();
+  // pass &= buzzerTest();
   return pass;
 }
 
@@ -177,19 +178,14 @@ void systemTask(void *arg)
 
   StateEstimatorType estimator = anyEstimator;
   estimatorKalmanTaskInit();
-  //deckInit();
   //estimator = deckGetRequiredEstimator();
   stabilizerInit(estimator);
   //if (deckGetRequiredLowInterferenceRadioMode() && platformConfigPhysicalLayoutAntennasAreClose())
   //{
   //  platformSetLowInterferenceRadioMode();
   //}
-  soundInit();
+  // soundInit();
   memInit();
-
-#ifdef PROXIMITY_ENABLED
-  proximityInit();
-#endif
 
 	/* Test each modules */
   pass &= wifiTest();
@@ -208,8 +204,8 @@ void systemTask(void *arg)
   pass &= estimatorKalmanTaskTest();
   DEBUG_PRINTI("estimatorKalmanTaskTest = %d ", pass);
   //pass &= deckTest();
-  pass &= soundTest();
-  DEBUG_PRINTI("soundTest = %d ", pass);
+  // pass &= soundTest();
+  // DEBUG_PRINTI("soundTest = %d ", pass);
   pass &= memTest();
   DEBUG_PRINTI("memTest = %d ", pass);
   //pass &= watchdogNormalStartTest();
@@ -222,7 +218,8 @@ void systemTask(void *arg)
     selftestPassed = 1;
     systemStart();
     DEBUG_PRINTI("systemStart ! selftestPassed = %d", selftestPassed);
-    soundSetEffect(SND_STARTUP);
+    // soundSetEffect(SND_STARTUP);
+    buzzer_play(BUZZER_STARTUP);
     // ledseqRun(&seq_alive);
     // ledseqRun(&seq_testPassed);
   }
