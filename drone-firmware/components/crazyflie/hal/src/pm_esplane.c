@@ -48,6 +48,8 @@
 #include "debug_cf.h"
 #include "static_mem.h"
 
+#include "board.h"
+
 typedef struct _PmSyslinkInfo
 {
   union
@@ -97,35 +99,46 @@ static uint8_t batteryLevel;
 
 static void pmSetBatteryVoltage(float voltage);
 
-const static float bat671723HS25C[10] =
+// const static float bat671723HS25C[10] =
+// {
+//   3.00, // 00%
+//   3.78, // 10%
+//   3.83, // 20%
+//   3.87, // 30%
+//   3.89, // 40%
+//   3.92, // 50%
+//   3.96, // 60%
+//   4.00, // 70%
+//   4.04, // 80%
+//   4.10  // 90%
+// };
+const static float bat2S[10] =
 {
-  3.00, // 00%
-  3.78, // 10%
-  3.83, // 20%
-  3.87, // 30%
-  3.89, // 40%
-  3.92, // 50%
-  3.96, // 60%
-  4.00, // 70%
-  4.04, // 80%
-  4.10  // 90%
+  6.00, // 00%
+  7.56, // 10%
+  7.66, // 20%
+  7.74, // 30%
+  7.78, // 40%
+  7.84, // 50%
+  7.92, // 60%
+  8.00, // 70%
+  8.08, // 80%
+  8.20  // 90%
 };
 
 STATIC_MEM_TASK_ALLOC(pmTask, PM_TASK_STACKSIZE);
 
-// TODO taken from sdkconfig and wrong for our board
-#define CONFIG_ADC1_PIN 35
 void pmInit(void)
 {
   if(isInit) {
     return;
   }
 
-    pmEnableExtBatteryVoltMeasuring(CONFIG_ADC1_PIN, 2); // ADC1 PIN is fixed to ADC channel
+    pmEnableExtBatteryVoltMeasuring(BATTERY_VOLTAGE_DIVIDER, 2); // ADC1 PIN is fixed to ADC channel
 
     pmSyslinkInfo.pgood = false;
     pmSyslinkInfo.chg = false;
-    pmSyslinkInfo.vBat = 3.7f;
+    pmSyslinkInfo.vBat = 7.4f;
     pmSetBatteryVoltage(pmSyslinkInfo.vBat);
 
     STATIC_MEM_TASK_CREATE(pmTask, pmTask, PM_TASK_NAME, NULL, PM_TASK_PRI);
@@ -173,15 +186,15 @@ static int32_t pmBatteryChargeFromVoltage(float voltage)
 {
   int charge = 0;
 
-  if (voltage < bat671723HS25C[0])
+  if (voltage < bat2S[0])
   {
     return 0;
   }
-  if (voltage > bat671723HS25C[9])
+  if (voltage > bat2S[9])
   {
     return 9;
   }
-  while (voltage >  bat671723HS25C[charge])
+  while (voltage >  bat2S[charge])
   {
     charge++;
   }
