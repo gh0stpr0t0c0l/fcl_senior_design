@@ -53,7 +53,7 @@ idf_component_register(SRCS "./hal/src/buzzer.c"
                 "./utils/src/abort.c"
                 "./utils/src/cfassert.c"
                 "./utils/src/clockCorrectionEngine.c"
-                # "./utils/src/configblockeeprom.c"
+                "./utils/src/configblockeeprom.c"
                 "./utils/src/cpuid.c"
                 "./utils/src/crc_bosch.c"
                 "./utils/src/crc.c"
@@ -67,7 +67,7 @@ idf_component_register(SRCS "./hal/src/buzzer.c"
                 "./utils/src/version.c"
                 "./utils/src/rateSupervisor.c"
                 INCLUDE_DIRS "./hal/interface" "./modules/interface" "./utils/interface"
-                REQUIRES adc motors config i2c_bus mpu6050 vl53l1 dsp_lib motors wifi esp_timer platform )
+                REQUIRES adc motors config i2c_bus mpu6050 vl53l1 dsp_lib motors wifi esp_timer platform nvs_flash)
 
 idf_component_get_property( FREERTOS_ORIG_INCLUDE_PATH freertos ORIG_INCLUDE_PATH)
 target_include_directories(${COMPONENT_TARGET} PUBLIC

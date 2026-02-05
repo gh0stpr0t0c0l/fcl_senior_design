@@ -1,14 +1,15 @@
 /**
- *    ||          ____  _ __                           
- * +------+      / __ )(_) /_______________ _____  ___ 
+ *    ||          ____  _ __
+ * +------+      / __ )(_) /_______________ _____  ___
  * | 0xBC |     / __  / / __/ ___/ ___/ __ `/_  / / _ \
  * +------+    / /_/ / / /_/ /__/ /  / /_/ / / /_/  __/
  *  ||  ||    /_____/_/\__/\___/_/   \__,_/ /___/\___/
 *
  * ESP-Drone Firmware
- * 
- * Copyright 2019-2020  Espressif Systems (Shanghai) 
+ *
+ * Copyright 2019-2020  Espressif Systems (Shanghai)
  * Copyright (C) 2011-2012 Bitcraze AB
+ * Modified by Cedarville University 2025-2026
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,10 +34,15 @@
 
 #include "config.h"
 #include "debug_cf.h"
-#include "i2cdev.h"
+// #include "i2cdev.h"
 #include "configblock.h"
-#include "eeprom.h"
+// #include "eeprom.h"
+#include "nvs_flash.h"
+#include "nvs.h"
+#include "esp_err.h"
 
+#define NVS_NAMESPACE "cf_cfg"
+#define NVS_KEY       "configblock"
 
 /* Internal format of the config block */
 #define MAGIC 0x43427830
@@ -111,95 +117,66 @@ static uint8_t calculate_cksum(void* data, size_t len)
   unsigned char* c = data;
   int i;
   unsigned char cksum=0;
-  
+
   for (i=0; i<len; i++)
     cksum += *(c++);
 
   return cksum;
 }
 
+static nvs_handle_t nvs;
+
+static void configblockResetToDefaults(configblock_t *cb)
+{
+    memcpy(cb, &configblockDefault, sizeof(*cb));
+}
+
+static bool configblockValidate(configblock_t *cb)
+{
+    return true;
+}
+
 int configblockInit(void)
 {
-  if(isInit)
+    if(isInit)
+        return 0;
+
+    esp_err_t err;
+    size_t size = sizeof(configblock);
+
+    err = nvs_flash_init();
+    if (err == ESP_ERR_NVS_NO_FREE_PAGES ||
+        err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        nvs_flash_erase();
+        nvs_flash_init();
+    }
+
+    err = nvs_open(NVS_NAMESPACE, NVS_READWRITE, &nvs);
+    if (err != ESP_OK) {
+        // Force defaults if NVS is unavailable
+        configblockResetToDefaults(&configblock);
+        return -1;
+    }
+
+    err = nvs_get_blob(nvs, NVS_KEY, &configblock, &size);
+
+    if (err != ESP_OK || size != sizeof(configblock)) {
+        configblockResetToDefaults(&configblock);
+        configblockWrite(&configblock);
+        return -1;
+    }
+
+    if (!configblockValidate(&configblock)) {
+        configblockResetToDefaults(&configblock);
+        configblockWrite(&configblock);
+    }
+    isInit = true;
     return 0;
-
-  i2cdevInit(I2C1_DEV);
-  eepromInit(I2C1_DEV);
-
-  // Because of strange behavior from I2C device during expansion port test
-  // the first read needs to be discarded
-  eepromTestConnection();
-
-  if (eepromTestConnection())
-  {
-    if (eepromReadBuffer((uint8_t *)&configblock, 0, sizeof(configblock)))
-    {
-      //Verify the config block
-      if (configblockCheckMagic(&configblock))
-      {
-        if (configblockCheckVersion(&configblock))
-        {
-          if (configblockCheckChecksum(&configblock))
-          {
-            // Everything is fine
-            DEBUG_PRINTD("v%d, verification [OK]\n", configblock.version);
-            cb_ok = true;
-          }
-          else
-          {
-            DEBUG_PRINTD("Verification [FAIL]\n");
-            cb_ok = false;
-          }
-        }
-        else // configblockCheckVersion
-        {
-          // Check data integrity of old version data
-          if (configblock.version <= VERSION &&
-              configblockCheckDataIntegrity((uint8_t *)&configblock, configblock.version))
-          {
-            // Not the same version, try to upgrade
-            if (configblockCopyToNewVersion(&configblock, &configblockDefault))
-            {
-              // Write updated config block to eeprom
-              if (configblockWrite(&configblock))
-              {
-                cb_ok = true;
-              }
-            }
-          }
-          else
-          {
-            // Can't copy old version due to bad data.
-            cb_ok = false;
-          }
-        }
-      }
-    }
-  }
-
-  if (cb_ok == false)
-  {
-    // Copy default data to used structure.
-    memcpy((uint8_t *)&configblock, (uint8_t *)&configblockDefault, sizeof(configblock));
-    // Write default configuration to eeprom
-    if (configblockWrite(&configblockDefault))
-    {
-      cb_ok = true;
-    }
-    else
-    {
-      return -1;
-    }
-  }
-
-  isInit = true;
-
-  return 0;
 }
 
 bool configblockTest(void)
 {
-  return eepromTest();
+  return true;
 }
 
 static bool configblockCheckMagic(configblock_t *configblock)
@@ -237,14 +214,29 @@ static bool configblockCheckDataIntegrity(uint8_t *data, uint8_t version)
 
 static bool configblockWrite(configblock_t *configblock)
 {
-  // Write default configuration to eeprom
-  configblock->cksum = calculate_cksum(configblock, sizeof(configblock_t) - 1);
-  if (!eepromWriteBuffer((uint8_t *)configblock, 0, sizeof(configblock_t)))
-  {
-    return false;
-  }
+    esp_err_t err;
 
-  return true;
+    err = nvs_set_blob(
+        nvs,
+        "block",
+        configblock,
+        sizeof(configblock_t)
+    );
+
+    if (err != ESP_OK)
+        return false;
+
+    nvs_commit(nvs);
+    return true;
+
+  // // Write default configuration to eeprom
+  // configblock->cksum = calculate_cksum(configblock, sizeof(configblock_t) - 1);
+  // if (!eepromWriteBuffer((uint8_t *)configblock, 0, sizeof(configblock_t)))
+  // {
+  //   return false;
+  // }
+
+  // return true;
 }
 
 static bool configblockCopyToNewVersion(configblock_t *configblockSaved, configblock_t *configblockNew)
