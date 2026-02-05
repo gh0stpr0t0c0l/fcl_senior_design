@@ -314,11 +314,11 @@ bool pmIsBatteryLow(void) {
 }
 
 bool pmIsChargerConnected(void) {
-  return (pmState == charging) || (pmState == charged);
+  return false;
 }
 
 bool pmIsCharging(void) {
-  return (pmState == charging);
+  return false;
 }
 // return true if battery discharging
 bool pmIsDischarging(void)
