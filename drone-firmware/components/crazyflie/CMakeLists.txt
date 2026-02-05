@@ -1,4 +1,5 @@
-idf_component_register(SRCS "./hal/src/buzzer.c"
+idf_component_register(SRCS
+                # "./hal/src/buzzer.c"
                 "./hal/src/freeRTOSdebug.c"
                 "./hal/src/pm_esplane.c"
                 "./hal/src/sensors_mpu6050_hm5883L_ms5611.c"
@@ -44,7 +45,7 @@ idf_component_register(SRCS "./hal/src/buzzer.c"
                 "./modules/src/range.c"
                 "./modules/src/sensfusion6.c"
                 "./modules/src/sitaw.c"
-                "./modules/src/sound_cf2.c"
+                # "./modules/src/sound_cf2.c"
                 "./modules/src/stabilizer.c"
                 "./modules/src/sysload.c"
                 "./modules/src/system.c"
@@ -67,7 +68,7 @@ idf_component_register(SRCS "./hal/src/buzzer.c"
                 "./utils/src/version.c"
                 "./utils/src/rateSupervisor.c"
                 INCLUDE_DIRS "./hal/interface" "./modules/interface" "./utils/interface"
-                REQUIRES adc motors config i2c_bus mpu6050 vl53l1 dsp_lib motors wifi esp_timer platform nvs_flash)
+                REQUIRES adc buzzer motors config i2c_bus mpu6050 vl53l1 dsp_lib motors wifi esp_timer platform nvs_flash)
 
 idf_component_get_property( FREERTOS_ORIG_INCLUDE_PATH freertos ORIG_INCLUDE_PATH)
 target_include_directories(${COMPONENT_TARGET} PUBLIC

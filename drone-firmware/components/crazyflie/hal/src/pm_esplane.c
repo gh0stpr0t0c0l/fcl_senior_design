@@ -41,7 +41,7 @@
 #include "log.h"
 // #include "ledseq.h"
 #include "commander.h"
-#include "sound.h"
+// #include "sound.h"
 #include "stm32_legacy.h"
 //#include "deck.h"
 #define DEBUG_MODULE "PM"
@@ -49,6 +49,7 @@
 #include "static_mem.h"
 
 #include "board.h"
+#include "buzzer.h"
 
 typedef struct _PmSyslinkInfo
 {
@@ -373,29 +374,33 @@ void pmTask(void *param)
       // Actions on state change
       switch (pmState)
       {
+          //TODO add led controls here
         case charged:
           //ledseqStop(&seq_charging);
           //ledseqRunBlocking(&seq_charged);
-          soundSetEffect(SND_BAT_FULL);
+          // soundSetEffect(SND_BAT_FULL);
+          // buzzer_play(BUZZER_BAT_GOOD);
           systemSetCanFly(false);
           break;
         case charging:
           //ledseqStop(&seq_lowbat);
           //ledseqStop(&seq_charged);
           // ledseqRunBlocking(&seq_charging);
-          soundSetEffect(SND_USB_CONN);
+          // soundSetEffect(SND_USB_CONN);
           systemSetCanFly(false);
           break;
 
         case lowPower:
           // ledseqRunBlocking(&seq_lowbat);
-          soundSetEffect(SND_BAT_LOW);
+          // soundSetEffect(SND_BAT_LOW);
+          buzzer_play(BUZZER_BAT_LOW);
           systemSetCanFly(true);
           break;
         case battery:
           //ledseqRunBlocking(&seq_charging);
           //ledseqRun(&seq_charged);
-          soundSetEffect(SND_USB_DISC);
+          // soundSetEffect(SND_USB_DISC);
+          // TODO maybe no sound here
           systemSetCanFly(true);
           break;
         default:
