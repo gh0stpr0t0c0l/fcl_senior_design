@@ -1,12 +1,12 @@
 #include <inttypes.h>
 #include <stdint.h>
 #include <unistd.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/projdefs.h"
-#include "freertos/task.h"
-#include "driver/gpio.h"
+// #include "freertos/FreeRTOS.h"
+// #include "freertos/projdefs.h"
+// #include "freertos/task.h"
+// #include "driver/gpio.h"
 
-#include "board.h"
+// #include "board.h"
 // #include "storage.h"
 // #include "telemetry.h"
 // #include "wifi.h"
