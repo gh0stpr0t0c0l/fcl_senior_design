@@ -192,9 +192,8 @@ void systemTask(void *arg)
   DEBUG_PRINTI("wifilinkTest = %d ", pass);
   pass &= systemTest();
   DEBUG_PRINTI("systemTest = %d ", pass);
-  // pass &= configblockTest();
-  // DEBUG_PRINTI("configblockTest = %d ", pass);
-  //pass &= storageTest();
+  pass &= configblockTest();
+  DEBUG_PRINTI("configblockTest = %d ", pass);
   pass &= commTest();
   DEBUG_PRINTI("commTest = %d ", pass);
   pass &= commanderTest();
