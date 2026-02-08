@@ -32,6 +32,9 @@ typedef struct
     //vl53l1 data
     int64_t tof_timestamp_us[TOF_COUNT];
     int16_t ranges[TOF_COUNT];
+    //battery data
+    int64_t batt_timestamp_us;
+    int32_t batt_voltage_mv;
 } telemetry_snapshot_t;
 
 // init telemetry system
@@ -45,6 +48,7 @@ telemetry_snapshot_t telemetry_snapshot_get(void);
 // Should these be moved to mpu and tof components?
 void telemetry_publish_mpu(int64_t timestamp_us, float pitch, float roll);
 void telemetry_publish_tof(uint8_t sensor, int64_t timestamp_us, int16_t mm);
+void telemetry_publish_batt(int64_t timestamp_us, int32_t voltage_mv);
 
 QueueHandle_t telemetry_get_queue(void);
 void telemetry_start_aggregator(void);

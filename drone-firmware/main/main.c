@@ -14,6 +14,7 @@
 #include "mpu_mgr.h"
 #include "tof_mgr.h"
 #include "buzzer.h"
+#include "batt_adc.h"
 
 // static const char *TAG = "Drone";
 
@@ -64,6 +65,7 @@ void app_main()
     tof_manager_start();
     mpu_manager_start();
     wifi_start_udp_broadcast();
+    battery_adc_start();
     // if (telemetry_queue != NULL) {
     // }
 }
