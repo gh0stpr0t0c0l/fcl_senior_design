@@ -11,15 +11,16 @@
 #include "batt_adc.h"
 #include "board.h"
 
+static bool isInit = false;
 static const char *TAG = "batt_adc";
 static adc_oneshot_unit_handle_t batt_adc_handle = NULL;
 static adc_cali_handle_t adc_cal_handle = NULL;
-static const int8_t V_DIVIDER_SCALE = 3; //multiply measurements by factor accounting for V divider
+static const int8_t V_DIVIDER_SCALE = 2; //multiply measurements by factor accounting for V divider //TODO this will be 3
 
 void convert_raw(int raw_value, int* voltage)
 {
+   //ESP_LOGW(TAG, "raw: %d\n", raw_value);
    ESP_ERROR_CHECK(adc_cali_raw_to_voltage(adc_cal_handle, raw_value, voltage));
-   //ESP_LOGI(TAG, "ADC%d Channel[%d] Cali Voltage: %d mV", ADC_UNIT_1 + 1, EXAMPLE_ADC1_CHAN0, voltage[0][0]);
    return;
 }
 
@@ -47,7 +48,7 @@ void batt_logging(void *pvParameters)
          prev_raw = raw_voltage;
          convert_raw(raw_voltage, &voltage_mv);
          voltage_mv = V_DIVIDER_SCALE*voltage_mv;
-         ESP_LOGW(TAG, "%.3f,%d mV\n", now_time / 1e6, voltage_mv);
+         ESP_LOGW(TAG, "%.3f, %d mV\n", now_time / 1e6, voltage_mv);
 
          telemetry_publish_batt(now_time, (int32_t)voltage_mv);
       }
@@ -58,6 +59,9 @@ void batt_logging(void *pvParameters)
 
 void batt_adc_init(void)
 {
+   if (isInit) {
+      return;
+   }
    adc_oneshot_unit_init_cfg_t init_config = {
       .unit_id = ADC_UNIT_1,
       .ulp_mode = ADC_ULP_MODE_DISABLE,
@@ -70,6 +74,8 @@ void batt_adc_init(void)
 
    ESP_ERROR_CHECK(adc_oneshot_new_unit(&init_config, &batt_adc_handle));
    ESP_ERROR_CHECK(adc_oneshot_config_channel(batt_adc_handle, BATT_ADC_CHAN, &config));
+
+   isInit = true;
    return;
 }
 
@@ -88,6 +94,6 @@ void battery_adc_start(void)
 {
    batt_adc_init();
    adc_cal_init();
-   xTaskCreate(&batt_logging, "batt", 2048, NULL, 1, NULL); //FIXME needs memory - start with 2048 and then try 4096 if that fails -GS
+   xTaskCreate(&batt_logging, "batt", 4096, NULL, 1, NULL);
    return;
 }
