@@ -1,2 +1,0 @@
-- Switch orientation of bottom ToF pins so that we can flip it and make it fit the frame
-- lm11173.3
