@@ -1,1 +1,2 @@
-Hours Worked:
+Hours Worked: 9
+I wasn't able to put quite as much work in this week since I was sick. However, I was able to mostly assemble the rig, there being a piece I have to reprint since it broke during the assembly process, but that won't be long. I did research on how to use QT design studio rather than Designer and am continuing development on the front end application. 
