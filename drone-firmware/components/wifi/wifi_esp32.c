@@ -40,6 +40,8 @@ static uint8_t WIFI_CH = CONFIG_WIFI_CHANNEL;
 // TODO Get this value from config
 #define CONFIG_WIFI_MAX_STA_CONN 3
 #define WIFI_MAX_STA_CONN CONFIG_WIFI_MAX_STA_CONN
+// TODO Get these vals from config
+#define CONFIG_WIFI_BASE_SSID "Drone_WiFi"
 
 #ifndef MAC2STR
 #define MAC2STR(a) (a)[0], (a)[1], (a)[2], (a)[3], (a)[4], (a)[5]
@@ -254,8 +256,6 @@ static void udp_server_tx_task(void *pvParameters)
 //     }
 // }
 
-// TODO Get these vals from config
-#define CONFIG_WIFI_BASE_SSID "Drone_WiFi"
 void wifiInit(void)
 {
     if (isInit) {
