@@ -1,54 +1,51 @@
-import logging
 import time
 
 import cflib.crtp
 from cflib.crazyflie import Crazyflie
 from cflib.crazyflie.log import LogConfig
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
-from cflib.crazyflie.syncLogger import SyncLogger
 
-# URI to the Crazyflie to connect to
-uri = "udp://192.168.43.42:2390"
-
-# Only output errors from the logging framework
-logging.basicConfig(level=logging.ERROR)
+URI = "udp://192.168.43.42:2390"
 
 
-def param_stab_est_callback(name, value):
-    print("The crazyflie has parameter " + name + " set at number: " + value)
-
-
-def simple_param_async(scf, groupstr, namestr):
-    cf = scf.cf
-    full_name = groupstr + "." + namestr
-
-    cf.param.add_update_callback(
-        group=groupstr, name=namestr, cb=param_stab_est_callback
+def log_callback(timestamp, data, logconf):
+    print(
+        f"{timestamp} | "
+        f"roll: {data['stabilizer.roll']:.2f}, "
+        f"pitch: {data['stabilizer.pitch']:.2f}, "
+        f"thrust: {data['stabilizer.thrust']:.2f}"
     )
-    time.sleep(1)
-    cf.param.set_value(full_name, 2)
-    time.sleep(1)
-    cf.param.set_value(full_name, 1)
-    time.sleep(1)
 
 
-def log_stab_callback(timestamp, data, logconf): ...
-def simple_log_async(scf, logconf): ...
-def simple_log(scf, logconf): ...
-def simple_connect(): ...
+def main():
+    cflib.crtp.init_drivers()
+
+    with SyncCrazyflie(URI, cf=Crazyflie(rw_cache="./cache")) as scf:
+        cf = scf.cf
+
+        log_config = LogConfig(name="Stab", period_in_ms=100)
+        log_config.add_variable("stabilizer.roll", "float")
+        log_config.add_variable("stabilizer.pitch", "float")
+        log_config.add_variable("stabilizer.thrust", "float")
+
+        cf.log.add_config(log_config)
+
+        if not log_config.valid:
+            print("Log configuration invalid")
+            return
+
+        log_config.data_received_cb.add_callback(log_callback)
+        log_config.start()
+
+        print("Logging... Press Ctrl+C to stop.")
+
+        try:
+            while True:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            print("Stopping log...")
+            log_config.stop()
 
 
 if __name__ == "__main__":
-    # Initialize the low-level drivers
-    cflib.crtp.init_drivers()
-
-    lg_stab = LogConfig(name="Stabilizer", period_in_ms=10)
-    lg_stab.add_variable("stabilizer.roll", "float")
-    lg_stab.add_variable("stabilizer.pitch", "float")
-    lg_stab.add_variable("stabilizer.yaw", "float")
-
-    group = "stabilizer"
-    name = "estimator"
-
-    with SyncCrazyflie(uri, cf=Crazyflie(rw_cache="./cache")) as scf:
-        simple_param_async(scf, group, name)
+    main()
