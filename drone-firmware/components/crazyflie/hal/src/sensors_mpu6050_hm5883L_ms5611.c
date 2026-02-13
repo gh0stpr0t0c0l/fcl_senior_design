@@ -65,6 +65,8 @@
 #include "static_mem.h"
 #include "crtp_commander.h"
 
+#include "board.h"
+
 /**
  * Enable 250Hz digital LPF mode. However does not work with
  * multiple slave reading through MPU9250 (MAG and BARO), only single for some reason.
@@ -99,7 +101,7 @@
 #define SENSORS_GYRO_BIAS_CALCULATE_STDDEV
 
 // Buffer length for MPU9250 slave reads
-#define CONFIG_MPU_PIN_INT 19
+#define CONFIG_MPU_PIN_INT MPU_INT_PIN
 #define GPIO_INTA_MPU6050_IO CONFIG_MPU_PIN_INT
 #define SENSORS_MPU6050_BUFF_LEN 14
 #define SENSORS_MAG_BUFF_LEN 8
@@ -260,7 +262,6 @@ static void sensorsTask(void *param)
     DEBUG_PRINTD("xTaskCreate sensorsTask SetupSlave done");
 
     while (1) {
-
         /* mpu6050 interrupt trigger: data is ready to be read */
         if (pdTRUE == xSemaphoreTake(sensorsDataReady, portMAX_DELAY)) {
             sensorData.interruptTimestamp = imuIntTimestamp;
