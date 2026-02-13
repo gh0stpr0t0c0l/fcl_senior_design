@@ -257,50 +257,53 @@ static void sensorsTask(void *param)
     //TODO:
     systemWaitStart();
     vTaskDelay(M2T(200));
-    DEBUG_PRINTD("xTaskCreate sensorsTask IN");
-    sensorsSetupSlaveRead(); //
-    DEBUG_PRINTD("xTaskCreate sensorsTask SetupSlave done");
+    DEBUG_PRINTD("xTaskCreate sensorsTask polling");
+    // sensorsSetupSlaveRead(); //
+    // DEBUG_PRINTD("xTaskCreate sensorsTask SetupSlave done");
+
+    TickType_t lastWakeTime = xTaskGetTickCount();
+    const TickType_t period = pdMS_TO_TICKS(4);   // 250 Hz
 
     while (1) {
         /* mpu6050 interrupt trigger: data is ready to be read */
-        if (pdTRUE == xSemaphoreTake(sensorsDataReady, portMAX_DELAY)) {
-            sensorData.interruptTimestamp = imuIntTimestamp;
+        // if (pdTRUE == xSemaphoreTake(sensorsDataReady, portMAX_DELAY)) {
+        vTaskDelayUntil(&lastWakeTime, period);
+        sensorData.interruptTimestamp = imuIntTimestamp;
 
-            /* sensors step 1-read data from I2C */
-            uint8_t dataLen = (uint8_t)(SENSORS_MPU6050_BUFF_LEN +
-                                        (isMagnetometerPresent ? SENSORS_MAG_BUFF_LEN : 0) +
-                                        (isBarometerPresent ? SENSORS_BARO_BUFF_LEN : 0));
-            i2cdevReadReg8(I2C0_DEV, MPU6050_ADDRESS_AD0_LOW, MPU6050_RA_ACCEL_XOUT_H, dataLen, buffer);
+        /* sensors step 1-read data from I2C */
+        uint8_t dataLen = (uint8_t)(SENSORS_MPU6050_BUFF_LEN +
+                                    (isMagnetometerPresent ? SENSORS_MAG_BUFF_LEN : 0) +
+                                    (isBarometerPresent ? SENSORS_BARO_BUFF_LEN : 0));
+        i2cdevReadReg8(I2C0_DEV, MPU6050_ADDRESS_AD0_LOW, MPU6050_RA_ACCEL_XOUT_H, dataLen, buffer);
 
-            /* sensors step 2-process the respective data */
-            processAccGyroMeasurements(&(buffer[0]));
+        /* sensors step 2-process the respective data */
+        processAccGyroMeasurements(&(buffer[0]));
 
-            if (isMagnetometerPresent) {
-                processMagnetometerMeasurements(&(buffer[SENSORS_MPU6050_BUFF_LEN]));
-            }
-
-            if (isBarometerPresent) {
-                processBarometerMeasurements(&(buffer[isMagnetometerPresent ? SENSORS_MPU6050_BUFF_LEN + SENSORS_MAG_BUFF_LEN : SENSORS_MPU6050_BUFF_LEN]));
-            }
-
-            /* sensors step 3- queue sensors data  on the output queues */
-            xQueueOverwrite(accelerometerDataQueue, &sensorData.acc);
-            xQueueOverwrite(gyroDataQueue, &sensorData.gyro);
-
-            if (isMagnetometerPresent) {
-                xQueueOverwrite(magnetometerDataQueue, &sensorData.mag);
-            }
-
-            if (isBarometerPresent) {
-                xQueueOverwrite(barometerDataQueue, &sensorData.baro);
-            }
-
-            /* sensors step 4- Unlock stabilizer task */
-            xSemaphoreGive(dataReady);
-#ifdef DEBUG_EP2
-            DEBUG_PRINT_LOCAL("ax = %f,  ay = %f,  az = %f,  gx = %f,  gy = %f,  gz = %f , hx = %f , hy = %f, hz =%f \n", sensorData.acc.x, sensorData.acc.y, sensorData.acc.z, sensorData.gyro.x, sensorData.gyro.y, sensorData.gyro.z, sensorData.mag.x, sensorData.mag.y, sensorData.mag.z);
-#endif
+        if (isMagnetometerPresent) {
+            processMagnetometerMeasurements(&(buffer[SENSORS_MPU6050_BUFF_LEN]));
         }
+
+        if (isBarometerPresent) {
+            processBarometerMeasurements(&(buffer[isMagnetometerPresent ? SENSORS_MPU6050_BUFF_LEN + SENSORS_MAG_BUFF_LEN : SENSORS_MPU6050_BUFF_LEN]));
+        }
+
+        /* sensors step 3- queue sensors data  on the output queues */
+        xQueueOverwrite(accelerometerDataQueue, &sensorData.acc);
+        xQueueOverwrite(gyroDataQueue, &sensorData.gyro);
+
+        if (isMagnetometerPresent) {
+            xQueueOverwrite(magnetometerDataQueue, &sensorData.mag);
+        }
+
+        if (isBarometerPresent) {
+            xQueueOverwrite(barometerDataQueue, &sensorData.baro);
+        }
+
+        /* sensors step 4- Unlock stabilizer task */
+        xSemaphoreGive(dataReady);
+#ifdef DEBUG_EP2
+        DEBUG_PRINT_LOCAL("ax = %f,  ay = %f,  az = %f,  gx = %f,  gy = %f,  gz = %f , hx = %f , hy = %f, hz =%f \n", sensorData.acc.x, sensorData.acc.y, sensorData.acc.z, sensorData.gyro.x, sensorData.gyro.y, sensorData.gyro.z, sensorData.mag.x, sensorData.mag.y, sensorData.mag.z);
+#endif
     }
 }
 
