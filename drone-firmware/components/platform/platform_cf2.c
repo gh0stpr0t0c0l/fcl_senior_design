@@ -45,7 +45,13 @@ static platformConfig_t configs[] = {
         .physicalLayoutAntennasAreClose = false,
         .motorMap = motorMapDefaultBrushed,
     },
-
+    {
+        .deviceType = "0;EP20",
+        .deviceTypeName = "Wingfeather V1",
+        .sensorImplementation = SensorImplementation_mpu6050_HMC5883L_MS5611,
+        .physicalLayoutAntennasAreClose = false,
+        .motorMap = motorMapDefaultBrushed,
+    },
 };
 
 const platformConfig_t *platformGetListOfConfigurations(int *nrOfConfigs)
