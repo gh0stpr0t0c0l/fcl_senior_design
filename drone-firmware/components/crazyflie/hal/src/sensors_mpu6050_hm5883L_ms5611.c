@@ -661,7 +661,7 @@ static void sensorsInterruptInit(void)
         //disable pull-down mode
         .pull_down_en = 0,
         //enable pull-up mode
-        .pull_up_en = 1,
+        .pull_up_en = 0,
     };
     sensorsDataReady = xSemaphoreCreateBinary();
     dataReady = xSemaphoreCreateBinary();
