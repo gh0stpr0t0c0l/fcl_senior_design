@@ -63,14 +63,14 @@ ledc_channel_config_t motors_channel[NBR_OF_MOTORS] = {
     {
         .channel = MOT_PWM_CH2,
         .duty = 0,
-        .gpio_num = MOTOR2_GPIO,
+        .gpio_num = MOTOR3_GPIO,
         .speed_mode = LEDC_LOW_SPEED_MODE,
         .timer_sel = LEDC_TIMER_0
     },
     {
         .channel = MOT_PWM_CH3,
         .duty = 0,
-        .gpio_num = MOTOR3_GPIO,
+        .gpio_num = MOTOR2_GPIO,
         .speed_mode = LEDC_LOW_SPEED_MODE,
         .timer_sel = LEDC_TIMER_0
     },
@@ -224,11 +224,11 @@ void motorsBeep(int id, bool enable, uint16_t frequency, uint16_t ratio)
     if (ratio != 0) {
         ratio = (uint16_t)(0.05*(1<<16));
     }
-    
+
     if (enable) {
         freq_hz = frequency;
     }
-    
+
     ledc_set_freq(LEDC_LOW_SPEED_MODE,LEDC_TIMER_0,freq_hz);
     ledc_set_duty(motors_channel[id].speed_mode, motors_channel[id].channel, (uint32_t)motorsConv16ToBits(ratio));
     ledc_update_duty(motors_channel[id].speed_mode, motors_channel[id].channel);
