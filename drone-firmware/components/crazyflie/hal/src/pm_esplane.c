@@ -135,7 +135,7 @@ void pmInit(void)
     return;
   }
 
-    pmEnableExtBatteryVoltMeasuring(BATTERY_VOLTAGE_DIVIDER, 2); // ADC1 PIN is fixed to ADC channel
+    pmEnableExtBatteryVoltMeasuring(BATTERY_VOLTAGE_DIVIDER, 3); // ADC1 PIN is fixed to ADC channel
 
     pmSyslinkInfo.pgood = false;
     pmSyslinkInfo.chg = false;
