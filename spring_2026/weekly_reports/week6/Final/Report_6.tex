@@ -1,0 +1,32 @@
+\documentclass[12pt, titlepage]{article}
+\usepackage{hyperref}
+
+\title{Feedback Controls Lab Weekly Report \\ \normalsize{Week 6}}
+\author{Aydan Vissing, Brady Schick, Gabriel Southwell, Simon Ross}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Aydan Vissing - CFO (12 hrs spent)}
+
+Not a lot of development this week, continuing GUI work, I was able to get it reading files in, however, values aren't being dealt with correctly so I am going to troubleshoot that. I was also able to finish assembly on the rig so it is right for test flights now.
+
+\section*{Brady Schick - CTO (6 hrs spent)}
+
+This week was pretty busy, and I got sick halfway through the week. I just got started on a new simulation that should better reflect our actual controls. I didn't get much done, but I will probably try to finish that up this week.
+
+\section*{Gabriel Southwell - CSO (12.5 hrs spent)}
+
+This week I continued to work on the crazyflie firmware. The build now runs without crashing on our board and can receive data and send commands over WiFi. 
+
+One thing that was crashing it was some kind of busy wait exception with the mpu. In crazyflie the mpu uses interrupts to get measurements at a much higher rate than with polling. But on our hardware it seemed to fail. I asked ChatGPT about it and it said that this problem would likely be solved by upgrading to the newest i2c driver. That seemed like a lot of work since I can just switch to polling for the mpu. We are now just polling at 250Hz. If this ends up not being okay then we can go back to interrupts and figure out whats actually wrong.
+
+Right now the drone seems to have some kind of jitter when turning on the motors, but I am not sure where that is coming from. I will do more this week.
+
+
+\section*{Simon Ross - CEO (6.25 hrs spent)}
+
+I've been rather swamped this week. Hoping to get ahead soon, but it may take Spring Break to get there. Thankfully, the project is moving along well---Gabe has made excellent progress on the coding side, and I was even able to make some steps on the scripting side of the drone. I modeled some window and feature ideas up and am working on deciding how to communicate them with the drone. Testing and parameter tuning is close. I'll be in communication with Aydan about the app features.
+
+\end{document}

@@ -1,1 +1,3 @@
-Hours Worked:
+Hours Worked: 6.25
+
+I've been rather swamped this week. Hoping to get ahead soon, but it may take Spring Break to get there. Thankfully, the project is moving along well---Gabe has made excellent progress on the coding side, and I was even able to make some steps on the scripting side of the drone. I modelled some window and feature ideas up and am working on deciding how to communicate them with the drone. Testing and parameter tuning is close. I'll be in communicataion with Aydan about the app features.
