@@ -252,6 +252,17 @@ bool sensorsMpu6050Hmc5883lMs5611AreCalibrated()
     return gyroBiasFound;
 }
 
+#define SQRT2_OVER_2 0.70710678f
+
+static inline void rotate45(float *x, float *y)
+{
+    float x_old = *x;
+    float y_old = *y;
+
+    *x =  SQRT2_OVER_2 * x_old - SQRT2_OVER_2 * y_old;
+    *y =  SQRT2_OVER_2 * x_old + SQRT2_OVER_2 * y_old;
+}
+
 static void sensorsTask(void *param)
 {
     //TODO:
@@ -286,6 +297,10 @@ static void sensorsTask(void *param)
         if (isBarometerPresent) {
             processBarometerMeasurements(&(buffer[isMagnetometerPresent ? SENSORS_MPU6050_BUFF_LEN + SENSORS_MAG_BUFF_LEN : SENSORS_MPU6050_BUFF_LEN]));
         }
+
+        /* sensors step 2.5 - rotate pitch and roll 45 deg */
+        rotate45(&sensorData.acc.x, &sensorData.acc.y);
+        rotate45(&sensorData.gyro.x, &sensorData.gyro.y);
 
         /* sensors step 3- queue sensors data  on the output queues */
         xQueueOverwrite(accelerometerDataQueue, &sensorData.acc);
