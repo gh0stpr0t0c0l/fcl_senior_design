@@ -1,12 +1,12 @@
 #include <inttypes.h>
 #include <stdint.h>
 #include <unistd.h>
-// #include "freertos/FreeRTOS.h"
-// #include "freertos/projdefs.h"
-// #include "freertos/task.h"
-// #include "driver/gpio.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/projdefs.h"
+#include "freertos/task.h"
+#include "driver/gpio.h"
 
-// #include "board.h"
+#include "board.h"
 // #include "storage.h"
 // #include "telemetry.h"
 // #include "wifi.h"
@@ -15,6 +15,7 @@
 // #include "tof_mgr.h"
 #include "buzzer.h"
 #include "platform.h"
+#include "esp_log.h"
 
 // #include "motors.h"
 
@@ -50,7 +51,7 @@
 //         vTaskDelay(pdMS_TO_TICKS(1000));
 //     }
 // }
-
+#include "esp_system.h"
 void app_main()
 {
     // motors_init();
@@ -67,10 +68,6 @@ void app_main()
     buzzer_play(BUZZER_STARTUP);
 
     //wait for button
-    // gpio_set_direction(START_BUTTON_GPIO, GPIO_MODE_INPUT);
-    // while (gpio_get_level(START_BUTTON_GPIO) == 1) {
-    //     vTaskDelay(pdMS_TO_TICKS(50));
-    // }
     buzzer_play(BUZZER_START_BUTTON);
 
     esp_err_t ret = nvs_flash_init();
@@ -91,6 +88,12 @@ void app_main()
     systemLaunch();
     // rest of initialization
     // storage_init();
+    esp_reset_reason_t reason = esp_reset_reason();
+    gpio_set_direction(START_BUTTON_GPIO, GPIO_MODE_INPUT);
+    while (gpio_get_level(START_BUTTON_GPIO) == 1) {
+        vTaskDelay(pdMS_TO_TICKS(50));
+    }
+    ESP_LOGE("dasfs","Reset reason: %d\n", reason);
 
     // vTaskDelay(pdMS_TO_TICKS(100));
 
