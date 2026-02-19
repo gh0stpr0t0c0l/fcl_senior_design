@@ -190,7 +190,10 @@ def run_spin_test(cf):
     try:
         while True:
             # zero roll, pitch, yaw-rate, constant thrust
-            cf.commander.send_setpoint(0, 0, 0, HOVER_THRUST)
+            if JUST_LOG:
+                cf.commander.send_setpoint(0, 0, 0, 0)
+            else:
+                cf.commander.send_setpoint(0, 0, 0, HOVER_THRUST)
             time.sleep(dt)
 
     except KeyboardInterrupt:
