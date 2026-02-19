@@ -259,8 +259,8 @@ static inline void rotate45(float *x, float *y)
     float x_old = *x;
     float y_old = *y;
 
-    *x =  SQRT2_OVER_2 * x_old - SQRT2_OVER_2 * y_old;
-    *y =  SQRT2_OVER_2 * x_old + SQRT2_OVER_2 * y_old;
+    *x =  SQRT2_OVER_2 * x_old + SQRT2_OVER_2 * y_old;
+    *y =  -SQRT2_OVER_2 * x_old + SQRT2_OVER_2 * y_old;
 }
 
 static void sensorsTask(void *param)
