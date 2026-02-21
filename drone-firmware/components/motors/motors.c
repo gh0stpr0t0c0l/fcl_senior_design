@@ -56,28 +56,28 @@ ledc_channel_config_t motors_channel[NBR_OF_MOTORS] = {
     {
         .channel = MOT_PWM_CH1,
         .duty = 0,
-        .gpio_num = MOTOR1_GPIO,
+        .gpio_num = MOTOR4_GPIO,
         .speed_mode = LEDC_LOW_SPEED_MODE,
         .timer_sel = LEDC_TIMER_0
     },
     {
         .channel = MOT_PWM_CH2,
         .duty = 0,
-        .gpio_num = MOTOR3_GPIO,
+        .gpio_num = MOTOR1_GPIO,
         .speed_mode = LEDC_LOW_SPEED_MODE,
         .timer_sel = LEDC_TIMER_0
     },
     {
         .channel = MOT_PWM_CH3,
         .duty = 0,
-        .gpio_num = MOTOR2_GPIO,
+        .gpio_num = MOTOR3_GPIO,
         .speed_mode = LEDC_LOW_SPEED_MODE,
         .timer_sel = LEDC_TIMER_0
     },
     {
         .channel = MOT_PWM_CH4,
         .duty = 0,
-        .gpio_num = MOTOR4_GPIO,
+        .gpio_num = MOTOR2_GPIO,
         .speed_mode = LEDC_LOW_SPEED_MODE,
         .timer_sel = LEDC_TIMER_0
     },
