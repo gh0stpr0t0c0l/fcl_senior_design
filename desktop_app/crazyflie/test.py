@@ -1,5 +1,6 @@
 import sys
 import time
+from calendar import JULY
 
 import cflib.crtp
 from cflib.crazyflie import Crazyflie
@@ -13,8 +14,9 @@ uri = uri_helper.uri_from_env(default="udp://192.168.43.42:2390")
 HOVER_THRUST = 25000  # Adjust as needed
 COMMAND_RATE_HZ = 50  # Setpoint update rate
 LOG_RATE_MS = 50  # 20 ms = 50 Hz logging
-LOG_TYPE = 2  # 0=motors; 1=attitude rates; 2=stateEstimator
-JUST_LOG = 1
+LOG_TYPE = 1  # 0=motors; 1=attitude rates; 2=stateEstimator
+JUST_LOG = 0
+FLIGHT_TYPE = 1  # 0=gimbal; 1=altitude
 
 
 def log_callback(timestamp, data, logconf):
@@ -57,8 +59,8 @@ def log_callback(timestamp, data, logconf):
         )
 
 
-def run_spin_test(cf):
-    print("Motors spinning. Press Ctrl+C to stop.")
+def flight_test(cf):
+    print("Starting. Press Ctrl+C to stop.")
 
     dt = 1.0 / COMMAND_RATE_HZ
 
@@ -66,19 +68,50 @@ def run_spin_test(cf):
         cf.commander.send_setpoint(0, 0, 0, 0)
         time.sleep(0.02)
 
-    try:
-        while True:
-            # zero roll, pitch, yaw-rate, constant thrust
-            if JUST_LOG:
-                cf.commander.send_setpoint(0, 0, 0, 0)
-            else:
-                cf.commander.send_setpoint(0, 0, 0, HOVER_THRUST)
-            time.sleep(dt)
+    if FLIGHT_TYPE == 0:
+        try:
+            while True:
+                # zero roll, pitch, yaw-rate, constant thrust
+                if JUST_LOG:
+                    cf.commander.send_setpoint(0, 0, 0, 0)
+                else:
+                    cf.commander.send_setpoint(0, 0, 0, HOVER_THRUST)
+                time.sleep(dt)
 
-    except KeyboardInterrupt:
-        print("\nStopping motors...")
-        cf.commander.send_setpoint(0, 0, 0, 0)
-        time.sleep(0.1)
+        except KeyboardInterrupt:
+            print("\nStopping...")
+            cf.commander.send_setpoint(0, 0, 0, 0)
+            time.sleep(0.1)
+
+    elif FLIGHT_TYPE == 1:
+        try:
+            while True:
+                if JUST_LOG:
+                    cf.commander.send_setpoint(0, 0, 0, 0)
+                else:
+                    cf.commander.send_position_setpoint(0.0, 0.0, 0.3, 0.0)
+                time.sleep(dt)
+
+        except KeyboardInterrupt:
+            print("\nStopping...")
+            cf.commander.send_setpoint(0, 0, 0, 0)
+            time.sleep(0.1)
+
+        # elif FLIGHT_TYPE == 1:
+    #     try:
+    #         hlc = cf.high_level_commander
+    #         time.sleep(1)
+    #         hlc.takeoff(0.3, 2.0)
+    #         time.sleep(5)
+    #         hlc.land(0.0, 2.0)
+    #         time.sleep(2)
+    #         hlc.stop()
+    #         print("Done")
+
+    #     except KeyboardInterrupt:
+    #         print("\nStopping...")
+    #         cf.commander.send_setpoint(0, 0, 0, 0)
+    #         time.sleep(0.1)
 
 
 if __name__ == "__main__":
@@ -124,7 +157,7 @@ if __name__ == "__main__":
         log_config.start()
 
         # ---- Run motors continuously ----
-        run_spin_test(cf)
+        flight_test(cf)
 
         # Stop logging before exit
         log_config.stop()
