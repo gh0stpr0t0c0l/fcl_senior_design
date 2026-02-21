@@ -37,21 +37,21 @@
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "esp_log.h"
 
 #include "i2cdev.h"
 #include "vl53l1x.h"
+#define DEBUG_MODULE "VLX1"
+#include "debug_cf.h"
 
-#include "freertos/portmacro.h"
-
-#define TAG "VL53X1_lib"
-
-#define VL53L1_get_register_name(a,b)
-
+#ifdef PAL_EXTENDED
+	#include "vl53l1_register_strings.h"
+#else
+	#define VL53L1_get_register_name(a,b)
+#endif
 
 // Set the start address 8 step after the VL53L0 dynamic addresses
-static int nextI2CAddress = VL53L1X_DEFAULT_ADDRESS+8;
-static portMUX_TYPE vl53l1_mux = portMUX_INITIALIZER_UNLOCKED;
+//static int nextI2CAddress = VL53L1X_DEFAULT_ADDRESS+8;
+
 
 bool vl53l1xInit(VL53L1_Dev_t *pdev, I2C_Dev *I2cHandle)
 {
@@ -62,22 +62,22 @@ bool vl53l1xInit(VL53L1_Dev_t *pdev, I2C_Dev *I2cHandle)
   i2cdevInit(pdev->I2Cx);
 
   /* Move initialized sensor to a new I2C address */
-  int newAddress;
+  //int newAddress;
 
-  taskENTER_CRITICAL(&vl53l1_mux);
-  newAddress = nextI2CAddress++;
-  taskEXIT_CRITICAL(&vl53l1_mux);
+  //taskENTER_CRITICAL();
+  //newAddress = nextI2CAddress++;
+  //taskEXIT_CRITICAL();
 
-  vl53l1xSetI2CAddress(pdev, newAddress);
+  //vl53l1xSetI2CAddress(pdev, newAddress);
 
   uint8_t byteData;
   uint16_t wordData;
   VL53L1_RdByte(pdev, 0x010F, &byteData);
-  ESP_LOGI(TAG,"VL53L1X Model_ID: %02X", byteData);
+  DEBUG_PRINT( "VL53L1X Model_ID: %02X\n\r", byteData);
   VL53L1_RdByte(pdev, 0x0110, &byteData);
-  ESP_LOGI(TAG,"VL53L1X Module_Type: %02X", byteData);
+  DEBUG_PRINT( "VL53L1X Module_Type: %02X\n\r", byteData);
   VL53L1_RdWord(pdev, 0x010F, &wordData);
-  ESP_LOGI(TAG,"VL53L1X: %02X", wordData);
+  DEBUG_PRINT( "VL53L1X: %02X\n\r", wordData);
 
   status = VL53L1_WaitDeviceBooted(pdev);
   if (status == VL53L1_ERROR_NONE)
@@ -102,20 +102,20 @@ bool vl53l1xInit(VL53L1_Dev_t *pdev, I2C_Dev *I2cHandle)
 	//VL53L1_StopMeasurement(pdev);
 	//status = VL53L1_SetDistanceMode(pdev,VL53L1_DISTANCEMODE_LONG);
 	//status = VL53L1_SetMeasurementTimingBudgetMicroSeconds(pdev, 160000);
-	//status = VL53L1_SetInterMeasurementPeriodMilliSeconds(pdev, 200);
+	//status = VL53L1_SetInterMeasurementPeriodMilliSeconds(pdev, 200);  
 	//status = VL53L1_StartMeasurement(pdev);
 
   return status == VL53L1_ERROR_NONE;
 }
 
-VL53L1_Error vl53l1xTestConnection(VL53L1_Dev_t* pdev)
+bool vl53l1xTestConnection(VL53L1_Dev_t* pdev)
 {
   VL53L1_DeviceInfo_t info;
   VL53L1_Error status = VL53L1_ERROR_NONE;
 
   status = VL53L1_GetDeviceInfo(pdev, &info);
 
-  return status; //== VL53L1_ERROR_NONE;
+  return status == VL53L1_ERROR_NONE;
 }
 
 /** Set I2C address
@@ -127,7 +127,7 @@ VL53L1_Error vl53l1xSetI2CAddress(VL53L1_Dev_t* pdev, uint8_t address)
 {
   VL53L1_Error status = VL53L1_ERROR_NONE;
 
-  status = VL53L1_SetDeviceAddress(pdev, (address << 1));
+  status = VL53L1_SetDeviceAddress(pdev, address);
   pdev->I2cDevAddr = address;
   return  status;
 }
@@ -287,7 +287,7 @@ VL53L1_Error VL53L1_WaitUs(
 	  delay_ms = 1;
 	}
 
-	vTaskDelay(pdMS_TO_TICKS(delay_ms));
+	vTaskDelay(M2T(delay_ms));
 
 	return status;
 }
@@ -297,7 +297,7 @@ VL53L1_Error VL53L1_WaitMs(
 	VL53L1_Dev_t *pdev,
 	int32_t       wait_ms)
 {
-  vTaskDelay(pdMS_TO_TICKS(wait_ms));
+  vTaskDelay(M2T(wait_ms));
 
   return VL53L1_ERROR_NONE;
 }
@@ -404,3 +404,4 @@ VL53L1_Error VL53L1_WaitValueMaskEx(
 
 	return status;
 }
+
