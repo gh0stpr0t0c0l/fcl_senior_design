@@ -32,7 +32,7 @@
 #define I2CDEV_NO_MEM_ADDR  0xFF
 
 typedef I2cDrv    I2C_Dev;
-#define I2C1_DEV  &deckBus
+#define I2C1_DEV  &sensorsBus
 #define I2C0_DEV  &sensorsBus
 
 // For compatibility
