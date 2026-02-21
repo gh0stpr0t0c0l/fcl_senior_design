@@ -9,9 +9,9 @@ from cflib.utils import uri_helper
 # Change to your URI
 uri = uri_helper.uri_from_env(default="udp://192.168.43.42:2390")
 
-HOVER_THRUST = 15000  # You may need to tune this
+HOVER_THRUST = 1000  # You may need to tune this
 RAMP_TIME = 2.0  # seconds
-HOVER_TIME = 10.0  # seconds
+HOVER_TIME = 15.0  # seconds
 
 
 def run_hover(cf):

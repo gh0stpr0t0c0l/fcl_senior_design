@@ -10,10 +10,10 @@ from cflib.utils import uri_helper
 # Change if needed
 uri = uri_helper.uri_from_env(default="udp://192.168.43.42:2390")
 
-HOVER_THRUST = 30000  # Adjust as needed
+HOVER_THRUST = 25000  # Adjust as needed
 COMMAND_RATE_HZ = 50  # Setpoint update rate
 LOG_RATE_MS = 50  # 20 ms = 50 Hz logging
-MOTOR_LOG = 1
+MOTOR_LOG = 0
 JUST_LOG = 0
 
 
@@ -35,9 +35,17 @@ def log_callback(timestamp, data, logconf):
     else:
         print(
             f"{timestamp} | "
-            f"roll: {data['stabilizer.roll']:.2f}, "
-            f"pitch: {data['stabilizer.pitch']:.2f}, "
-            f"thrust: {data['stabilizer.thrust']:.2f}"
+            # f"roll: {data['stabilizer.roll']:.2f}, "
+            # f"pitch: {data['stabilizer.pitch']:.2f}, "
+            # f"yaw: {data['stabilizer.yaw']:.2f}, "
+            f"ROLL: "
+            f"PRoll: {data['pid_rate.roll_outP']:.2f}, "
+            f"IRoll: {data['pid_rate.roll_outI']:.2f}, "
+            f"DRoll: {data['pid_rate.roll_outD']:.2f}, "
+            f"PPitch: {data['pid_rate.pitch_outP']:.2f}, "
+            f"IPitch: {data['pid_rate.pitch_outI']:.2f}, "
+            f"DPitch: {data['pid_rate.pitch_outD']:.2f}, "
+            # f"thrust: {data['stabilizer.thrust']:.2f}"
         )
 
 
@@ -74,10 +82,16 @@ if __name__ == "__main__":
         # ---- Logging Setup ----
         log_config = LogConfig(name="Stab", period_in_ms=LOG_RATE_MS)
         if not MOTOR_LOG:
-            log_config.add_variable("stabilizer.roll", "float")
-            log_config.add_variable("stabilizer.pitch", "float")
-            # log_config.add_variable("stabalizer.yaw, float")
-            log_config.add_variable("stabilizer.thrust", "float")
+            # log_config.add_variable("stabilizer.roll", "float")
+            # log_config.add_variable("stabilizer.pitch", "float")
+            # log_config.add_variable("stabilizer.yaw", "float")
+            log_config.add_variable("pid_rate.roll_outP", "float")
+            log_config.add_variable("pid_rate.roll_outI", "float")
+            log_config.add_variable("pid_rate.roll_outD", "float")
+            log_config.add_variable("pid_rate.pitch_outP", "float")
+            log_config.add_variable("pid_rate.pitch_outI", "float")
+            log_config.add_variable("pid_rate.pitch_outD", "float")
+            # log_config.add_variable("stabilizer.thrust", "float")
         else:
             log_config.add_variable("motor.m1", "uint16_t")
             log_config.add_variable("motor.m2", "uint16_t")
