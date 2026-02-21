@@ -98,7 +98,7 @@
 
   #define DEFAULT_PID_INTEGRATION_LIMIT 5000.0
   #define DEFAULT_PID_OUTPUT_LIMIT      0.0
-#endif 
+#endif
 
 typedef struct
 {
