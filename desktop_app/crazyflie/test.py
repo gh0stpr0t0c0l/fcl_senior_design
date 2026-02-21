@@ -13,12 +13,12 @@ uri = uri_helper.uri_from_env(default="udp://192.168.43.42:2390")
 HOVER_THRUST = 25000  # Adjust as needed
 COMMAND_RATE_HZ = 50  # Setpoint update rate
 LOG_RATE_MS = 50  # 20 ms = 50 Hz logging
-MOTOR_LOG = 0
-JUST_LOG = 0
+LOG_TYPE = 2  # 0=motors; 1=attitude rates; 2=stateEstimator
+JUST_LOG = 1
 
 
 def log_callback(timestamp, data, logconf):
-    if MOTOR_LOG:
+    if LOG_TYPE == 0:
         print(
             f"{timestamp} | "
             f"MOTOR: "
@@ -32,7 +32,7 @@ def log_callback(timestamp, data, logconf):
             f"{data['pwm.m3_pwm']:5d} "
             f"{data['pwm.m4_pwm']:5d}"
         )
-    else:
+    elif LOG_TYPE == 1:
         print(
             f"{timestamp} | "
             # f"roll: {data['stabilizer.roll']:.2f}, "
@@ -46,6 +46,14 @@ def log_callback(timestamp, data, logconf):
             f"IPitch: {data['pid_rate.pitch_outI']:.2f}, "
             f"DPitch: {data['pid_rate.pitch_outD']:.2f}, "
             # f"thrust: {data['stabilizer.thrust']:.2f}"
+        )
+    elif LOG_TYPE == 2:
+        print(
+            f"{timestamp} | "
+            f"State Estimate: "
+            f"X: {data['stateEstimate.x']:.2f}, "
+            f"Y: {data['stateEstimate.y']:.2f}, "
+            f"Z: {data['stateEstimate.z']:.2f}"
         )
 
 
@@ -81,7 +89,7 @@ if __name__ == "__main__":
 
         # ---- Logging Setup ----
         log_config = LogConfig(name="Stab", period_in_ms=LOG_RATE_MS)
-        if not MOTOR_LOG:
+        if LOG_TYPE == 1:
             # log_config.add_variable("stabilizer.roll", "float")
             # log_config.add_variable("stabilizer.pitch", "float")
             # log_config.add_variable("stabilizer.yaw", "float")
@@ -92,7 +100,7 @@ if __name__ == "__main__":
             log_config.add_variable("pid_rate.pitch_outI", "float")
             log_config.add_variable("pid_rate.pitch_outD", "float")
             # log_config.add_variable("stabilizer.thrust", "float")
-        else:
+        elif LOG_TYPE == 0:
             log_config.add_variable("motor.m1", "uint16_t")
             log_config.add_variable("motor.m2", "uint16_t")
             log_config.add_variable("motor.m3", "uint16_t")
@@ -101,6 +109,10 @@ if __name__ == "__main__":
             log_config.add_variable("pwm.m2_pwm", "uint16_t")
             log_config.add_variable("pwm.m3_pwm", "uint16_t")
             log_config.add_variable("pwm.m4_pwm", "uint16_t")
+        elif LOG_TYPE == 2:
+            log_config.add_variable("stateEstimate.x", "float")
+            log_config.add_variable("stateEstimate.y", "float")
+            log_config.add_variable("stateEstimate.z", "float")
 
         cf.log.add_config(log_config)
 
