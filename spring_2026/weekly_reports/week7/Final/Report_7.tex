@@ -1,0 +1,41 @@
+\documentclass[12pt, titlepage]{article}
+\usepackage{hyperref}
+
+\title{Feedback Controls Lab Weekly Report \\ \normalsize{Week 7}}
+\author{Aydan Vissing, Brady Schick, Gabriel Southwell, Simon Ross}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Aydan Vissing - CFO (12 hrs spent)}
+
+Lots of reading libraries this week. I am continuing development on the application, now almost getting it to read CSV files correctly. Hopefully this library will make it work properly. 
+
+\section*{Brady Schick - CTO (14 hrs spent)}
+
+The time for this week was split between updating the simulation and assisting Gabe with getting the drone in the air.
+
+Issue: Implementing nested PID controls on the rates/velocities is not as simple as it is with the actual drone, specifically with the D term. It requires us to know the accelerations of the drone. On the actual drone, this is just measured, but with the simulation, this is calculated based on the results of the PID controls, which we can't get without knowing the acceleration now. One possible solution to this is that I can try to write out big/scary equations with an acceleration term on both sides. However, with 4 actuators, I worry that this might not be possible. Even if it is possible, it won't be accurate due to saturations (on the voltages and PID outputs). Another solution that might be more usable is to retain the previous acceleration for use in the next call. I've tried retaining variables with ode45 before, but I don't have any reliable evidence that this consistently works.
+
+This coming week will be extremely busy for me, and I'm not sure if I can get this worked out before the milestone date. If I don't, I will plan to get it done over the break assuming I have time.
+
+\section*{Gabriel Southwell - CSO (16 hrs spent)}
+
+This week I made a lot of tangible progress on the drone. 
+
+One problem with the gyro was that it was reporting angle in radians instead of degrees for some reason. Crazyflie assumes that the default is degrees and does not explicitly select degrees. Ours picked radians for some reason. 
+
+Another problem was that our imu is rotated 45 degrees relative to the motors. It took a few tries to get the axis correct but I got it straightened out. 
+
+I readded the bottom tof so that the state estimator has accurate z coordinates. After that, Brady and I felt comfortable enough to take it off the gimbal and try it on the ground. It is having problems with stabilizing quickly enough so Brady and I have started working on tuning the PID values. 
+
+Something that is problem from time to time is the esp having brownouts when connected to the benchtop power supply. This is unfortunate because it is really difficult to use the gimbal and the battery at the same time. When the drone first boots, it needs to be perfectly level, otherwise it trips some sort of safety in the stabilizer. Working with the gimbal is finicky and I hope we wont have to do it much longer. 
+
+\section*{Simon Ross - CEO (12 hrs spent)}
+
+We're hitting the point in the project where we need to prioritize lab design and GUI design a bit more on top of all of the exciting developments. Thankfully, we already have Aydan working on the GUI, and lab design isn't the most mission-essential part of the project (and has been a consideration all along). 
+
+This week, I worked on getting the scripting from the host computer to the drone, and have made a lot of progress on it. So far, the drone can recieve transmission from the computer, but cannot yet save or interpret it. I'll hopefully have the rest done by Thursday.
+
+\end{document}

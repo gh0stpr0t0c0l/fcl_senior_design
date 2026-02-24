@@ -1,21 +1,7 @@
 Hours Worked: 14
 
-The time for this week was split between updating the simulation and assisting 
-Gabe with getting the drone in the air.
+The time for this week was split between updating the simulation and assisting Gabe with getting the drone in the air.
 
-Issue: Implementing nested PID controls on the rates/velocities is not as simple 
-as it is with the actual drone, specifically with the D term. It requires us to
-know the accelerations of the drone. On the actual drone, this is just measured,
-but with the simulation, this is calculated based on the results of the PID 
-controls, which we can't get without knowing the acceleration now. One possible 
-solution to this is that I can try to write out big/scary equations with an 
-acceleration term on both sides. However, with 4 actuators, I worry that this 
-might not be possible. Even if it is possible, it won't be accurate due to 
-saturations (on the voltages and PID outputs). Another solution that might
-be more usable is to retain the previous acceleration for use in the next
-call. I've tried retaining variables with ode45 before, but I don't have 
-any reliable evidence that this consistently works.
+Issue: Implementing nested PID controls on the rates/velocities is not as simple as it is with the actual drone, specifically with the D term. It requires us to know the accelerations of the drone. On the actual drone, this is just measured, but with the simulation, this is calculated based on the results of the PID controls, which we can't get without knowing the acceleration now. One possible solution to this is that I can try to write out big/scary equations with an acceleration term on both sides. However, with 4 actuators, I worry that this might not be possible. Even if it is possible, it won't be accurate due to saturations (on the voltages and PID outputs). Another solution that might be more usable is to retain the previous acceleration for use in the next call. I've tried retaining variables with ode45 before, but I don't have any reliable evidence that this consistently works.
 
-This coming week will be extremely busy for me, and I'm not sure if I can
-get this worked out before the milestone date. If I don't, I will plan to get it
-done over the break assuming I have time.
+This coming week will be extremely busy for me, and I'm not sure if I can get this worked out before the milestone date. If I don't, I will plan to get it done over the break assuming I have time.
