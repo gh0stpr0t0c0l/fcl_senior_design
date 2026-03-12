@@ -20,6 +20,9 @@ FLIGHT_TYPE = 0  # 0=gimbal; 1=altitude
 
 def log_callback(timestamp, data, logconf):
     with open("flightDump.csv", "a") as log:
+        log.write(
+            f"{timestamp}",
+        )
         if LOG_TYPE == 0:
             print(
                 f"{timestamp} | "
@@ -153,6 +156,7 @@ if __name__ == "__main__":
         log_config = LogConfig(name="Stab", period_in_ms=LOG_RATE_MS)
 
         with open("flightDump.csv", "w") as f:
+            f.write("Time(us),")
             if LOG_TYPE == 1:
                 # log_config.add_variable("stabilizer.roll", "float")
                 # log_config.add_variable("stabilizer.pitch", "float")
