@@ -13,8 +13,8 @@ uri = uri_helper.uri_from_env(default="udp://192.168.43.42:2390")
 HOVER_THRUST = 25000  # Adjust as needed
 COMMAND_RATE_HZ = 50  # Setpoint update rate
 LOG_RATE_MS = 50  # 20 ms = 50 Hz logging
-LOG_TYPE = 1  # 0=motors; 1=attitude rates; 2=stateEstimator
-JUST_LOG = 1
+LOG_TYPE = 1  # 0=motors; 1=attitude rates; 2=stateEstimator; 3=motor pwms
+JUST_LOG = 0
 FLIGHT_TYPE = 0  # 0=gimbal; 1=altitude
 
 
@@ -61,6 +61,8 @@ def log_callback(timestamp, data, logconf):
                 f"PPitch: {data['pid_rate.pitch_outP']:.2f}, "
                 f"IPitch: {data['pid_rate.pitch_outI']:.2f}, "
                 f"DPitch: {data['pid_rate.pitch_outD']:.2f}, "
+                #f"Roll: {data['stabilizer.roll']:.2f}, "
+                #f"Pitch: {data['stabilizer.pitch']:.2f}, "
                 # f"thrust: {data['stabilizer.thrust']:.2f}"
             )
             log.write(
@@ -73,6 +75,8 @@ def log_callback(timestamp, data, logconf):
                 f"{data['pid_rate.pitch_outP']:.2f},"
                 f"{data['pid_rate.pitch_outI']:.2f},"
                 f"{data['pid_rate.pitch_outD']:.2f},\n"
+                #f"{data['stabilizer.roll']:.2f},\n"
+                #f"{data['stabilizer.pitch']:.2f}\n"
                 # f"thrust: {data['stabilizer.thrust']:.2f}"
             )
 
@@ -89,6 +93,7 @@ def log_callback(timestamp, data, logconf):
                 f"{data['stateEstimate.y']:.2f},"
                 f"{data['stateEstimate.z']:.2f},\n"
             )
+
 
 
 def flight_test(cf):
@@ -167,9 +172,11 @@ if __name__ == "__main__":
                 log_config.add_variable("pid_rate.pitch_outP", "float")
                 log_config.add_variable("pid_rate.pitch_outI", "float")
                 log_config.add_variable("pid_rate.pitch_outD", "float")
+                #log_config.add_variable("stabilizer.roll", "float")
+                #log_config.add_variable("stabilizer.pitch", "float")
 
                 f.write(
-                    "Roll P rate,Roll I rate,Roll D rate,Pitch P rate,Pitch I rate, Pitch D rate,\n"
+                    "Roll P rate,Roll I rate,Roll D rate,Pitch P rate,Pitch D rate,Pitch I rate\n"
                 )
                 # log_config.add_variable("stabilizer.thrust", "float")
             elif LOG_TYPE == 0:
@@ -182,13 +189,13 @@ if __name__ == "__main__":
                 log_config.add_variable("pwm.m3_pwm", "uint16_t")
                 log_config.add_variable("pwm.m4_pwm", "uint16_t")
 
-                f.write("m1,m2,m3,m4,pwm1,pwm2,pwm3,pwm4,\n")
+                f.write("m1,m2,m3,m4,pwm1,pwm2,pwm3,pwm4\n")
             elif LOG_TYPE == 2:
                 log_config.add_variable("stateEstimate.x", "float")
                 log_config.add_variable("stateEstimate.y", "float")
                 log_config.add_variable("stateEstimate.z", "float")
 
-                f.write("x estimate,y estimate,z estimate,\n")
+                f.write("x estimate,y estimate,z estimate\n")
 
         cf.log.add_config(log_config)
 
