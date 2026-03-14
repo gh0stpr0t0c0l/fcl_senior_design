@@ -5,11 +5,13 @@
 #include "include/storage.h"
 #include <stdio.h>
 #include <string.h>
+#include <sys/syslimits.h> //TODO waz this?
 #include <unistd.h>
 #include <stdbool.h>
 
 static char ram_buffer[BUFFER_SIZE];
 static size_t buffer_index = 0;
+static FILE* flightpath = NULL;
 
 void storage_init(void)
 {
@@ -75,21 +77,36 @@ void storage_buffer_write(const char *line)
     buffer_index += len;
 }
 
-//TODO need to stream [fwrite() chunks] into file without reopening...
-void write_file(const char *filename,
-                const uint8_t *buffer,
-                size_t len)
-{
+void open_flightpath(const char *filename) {
     char path[128];
 
-    snprintf(path, sizeof(path), "/littlefs/%s", filename);
-
-    FILE *f = fopen(path, "ab");   // append mode //TODO this is an issue for sending the config again.
-    if (!f) {
-        printf("Failed to open %s\n", path);
-        return;
+    if (flightpath) {
+        fclose(flightpath);
     }
 
-    fwrite(buffer, 1, len, f);
-    fclose(f);
+    snprintf(path, sizeof(path), "/littlefs/%s", filename);
+    flightpath = fopen(path, "ab");
+
+    if (!flightpath) {
+        //printf("Failed to open %s\n", path); TODO
+        return;
+    }
+}
+
+void write_flightpath(const uint8_t *buffer,
+                      size_t nbyte)
+{
+    if (!flightpath) {
+        //("Failed to open %s\n", path); TODO
+        return;
+    }
+    fwrite(buffer, 1, nbyte, flightpath);
+    fflush(flightpath);
+}
+
+void close_flightpath(void) {
+    if (flightpath) {
+        fclose(flightpath);
+        flightpath = NULL;
+    }
 }
