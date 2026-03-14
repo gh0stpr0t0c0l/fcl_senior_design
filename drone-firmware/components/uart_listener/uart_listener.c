@@ -33,11 +33,9 @@ int read_bytes(uint8_t* buf, int nbyte) {
    return total;
 }
 
-void drain_input(void) {
+void drain_rxbuf(void) {
    uint8_t buf[1024];
-   while (read(0, buf, sizeof(buf)) > 0) {
-     //vTaskDelay(pdMS_TO_TICKS(1)); //TODO vTaskDelays too extra??
-   }
+   while (read(0, buf, sizeof(buf)) > 0);
 }
 
 void listener_task(void *pvParameter) //TODO this is a massive blocking task...
@@ -46,7 +44,7 @@ void listener_task(void *pvParameter) //TODO this is a massive blocking task...
    uint8_t buf[BUF_SIZE];
    uint16_t filename_len;
    uint32_t file_size;
-   drain_input();
+   drain_rxbuf();
    
    write(1, "READY\n", 6);
    while (memcmp(status_buf, "START\n", 6)!=0) { //TODO this is bad and assumes perfect alignment...read a byte at a time? running buffer??
@@ -72,10 +70,6 @@ void listener_task(void *pvParameter) //TODO this is a massive blocking task...
       } 
       write_flightpath(buf, len); //TODO need a command to first parse the input and see what file is to be written
       write(1, "ACK\n", 4);
-
-      char debug[32]; //TODO remove
-      int n = snprintf(debug, sizeof(debug), "%lu\n", (unsigned long)len);
-      write(1, debug, n);
 
       total_bytes+=len;
    }
