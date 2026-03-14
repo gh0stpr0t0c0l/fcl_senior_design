@@ -46,7 +46,7 @@ void pidInit(PidObject* pid, const float desired, const float kp,
   pid->iLimit        = DEFAULT_PID_INTEGRATION_LIMIT;
   pid->outputLimit   = DEFAULT_PID_OUTPUT_LIMIT;
   pid->dt            = dt;
-  pid->enableDFilter = enableDFilter;
+  pid->enableDFilter = true;//enableDFilter;
   if (pid->enableDFilter)
   {
     lpf2pInit(&pid->dFilter, samplingRate, cutoffFreq);
