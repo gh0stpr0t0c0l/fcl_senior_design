@@ -1,0 +1,27 @@
+\documentclass[12pt, titlepage]{article}
+\usepackage{hyperref}
+
+\title{Feedback Controls Lab Weekly Report \\ \normalsize{Week 9}}
+\author{Aydan Vissing, Brady Schick, Gabriel Southwell, Simon Ross}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Aydan Vissing - CFO (12 hrs spent)}
+
+I found some props for the drone and continued work on the GUI, which I have been able to make display multiple plots at once now.  However, I am still working on making it so it reads the real CSV files properly, because right now it crashes when it attempts to read the real data instead of the made up data. 
+
+\section*{Brady Schick - CTO (13 hrs spent)}
+
+Got set up to tune the drone and made/organized plots that will help with the tuning process. Got a start on tuning pitch, but further tuning is needed. By the end of the next week, I should at a minimum have pitch and roll tuned on the gimble, and will hopefully be moving on to a stable hover by the end of the week in order to meet the milestone.
+
+\section*{Gabriel Southwell - CSO (13 hrs spent)}
+
+I have Brady fully setup to work on tuning the drone controller. I also took the time to improve the scripting setup to log the data into a CSV. Since Brady will not be needing my ongoing help with tuning, I have moved on to working in the sensors again. This week I worked on adding the other TOFs back into the drone. Once they are working I will be try to get the Kalman filter to use the range data for x and y estimates. Right now I am struggling to get more than one working at a time. I know I was able to fix it before so I will figure it out again.
+
+\section*{Simon Ross - CEO (12 hrs spent)}
+
+This week, we continued to press through integration. The GUI is progressing, and I should have the entire flashing script complete (putting the drone firmware and necessities on the drone and then imputting the flight path file) in the next day or two. After this, I'll continue working on getting the commands that we put in the file to the commander script and completing that whole process. That will probably take a lot of work, but I should be able to get it done in time for Brady and Gabe to use it and for Aydan to get to the point where we can integrate it into the app. Additionally, I plan to work on documenting a few things this upcoming week.
+
+\end{document}
