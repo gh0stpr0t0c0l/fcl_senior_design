@@ -4,6 +4,7 @@
 #include "freertos/task.h"
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 #include <sys/_intsup.h>
 #include <sys/_types.h>
 #include <unistd.h>
@@ -14,8 +15,9 @@
 #include "uart_listener.h"
 #include "esp_log_level.h"
 
+#define COMMANDER_FILE_NAME "commands.txt"
+
 static const unsigned int BUF_SIZE = 32; //starts to have odd uart problems with larger numbers
-static const unsigned int MAX_FILENAME_SIZE = 64; 
 static const unsigned int MAX_UART_RETRIES = 1000;
 static const char *TAG = "uart_listener";
 static TaskHandle_t listener_handle = NULL;
@@ -57,20 +59,15 @@ void drain_rxbuf(void) {
 void listener_task(void *pvParameter)
 {
    uint8_t buf[BUF_SIZE];
-   uint16_t filename_len;
    uint32_t file_size;
    drain_rxbuf();
    read_until((uint8_t*)"READY\n",6);
+   esp_log_level_set("*", ESP_LOG_NONE);
    write(1, "READY\n", 6);
    read_until((uint8_t*)"START\n",6);
-   read_bytes((uint8_t*)&filename_len, 2);
-   if (filename_len > MAX_FILENAME_SIZE) return; //TODO use an error statement for the ESP
-   char filename[MAX_FILENAME_SIZE+1]; //make sure the python checks your filename len if you use it
-   read_bytes((uint8_t*)filename, filename_len);
-   filename[filename_len] = '\0';
    read_bytes((uint8_t*)&file_size, 4);
 
-   open_flightpath("commands.txt"); //TODO use or lose filename
+   open_flightpath(COMMANDER_FILE_NAME);
 
    uint32_t total_bytes = 0;
    while (total_bytes < file_size) {
@@ -88,15 +85,14 @@ void listener_task(void *pvParameter)
       total_bytes+=len;
    }
    close_flightpath();
-   while(1) { //FIXME FIXME need to delete this and return, but currently causes crashing...maybe delay then return??
+   while(1) { //TODO should delete task and return, but currently causes crashing
       vTaskDelay(pdMS_TO_TICKS(10));
    }
 }
 
 void uart_listener_start(void)
 {
-   esp_log_level_set("*", ESP_LOG_NONE);
-   unlink("/littlefs/commands.txt");
+   unlink("/littlefs/" COMMANDER_FILE_NAME);
    xTaskCreate(&listener_task, "uart_listener", 12288, NULL, 5, &listener_handle); //TODO make sure to kill task, fix stack size
 }
 
