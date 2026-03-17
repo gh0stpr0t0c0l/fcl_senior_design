@@ -56,7 +56,7 @@ int read_until(uint8_t* search_term, size_t len) {
       vTaskDelay(pdMS_TO_TICKS(10));
    }
 
-   while (memcmp(buf_window, search_term, len)!=0) {
+   while (memcmp(buf_window, search_term, len)!=0) { //TODO this might crash idk
          memmove(buf_window, buf_window+1, len-1);
          read_bytes(buf_window+(len-1),1);
          vTaskDelay(pdMS_TO_TICKS(10)); //needed so we don't starve while waiting for input
@@ -108,6 +108,17 @@ void listener_task(void *pvParameter)
          abort();
    }
 
+   read_until((uint8_t*)"READY\n",6); 
+   //esp_log_level_set("*", ESP_LOG_NONE); //TODO this?
+   write(1, "READY\n", 6);
+   read_until((uint8_t*)"START\n",6);
+
+   if (read_file(CONFIG_FILE_NAME)!=0) {
+      esp_log_level_set("*", ESP_LOG_INFO); //TODO bad place for this
+         ESP_LOGE(TAG, "Error receiving file"); //TODO more specific?
+         abort();
+   }
+
    while(1) { //TODO should delete task and return, but currently causes crashing
       vTaskDelay(pdMS_TO_TICKS(10));
    }
@@ -128,7 +139,7 @@ void uart_listener_stop(void)
    }
    
 
-   FILE *f = fopen("/littlefs/script.txt", "rb"); //TODO remove this chunk after making sure file naming works
+   FILE *f = fopen("/littlefs/config.txt", "rb"); //TODO remove this chunk after making sure file naming works
    if (f != NULL) {
       uint8_t buf[1024] = {0};   // zero-filled buffer
       // Read up to 1024 bytes

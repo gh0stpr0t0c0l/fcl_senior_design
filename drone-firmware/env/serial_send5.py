@@ -28,29 +28,8 @@ def wait_for_ack(ser):
     
     return "ACK"
 
-with serial.Serial(PORT, BAUD, timeout=5) as ser:
-
-    print("Opening serial port...")
-    time.sleep(2)
-
-    print("Sending READY...")
-    ser.write(b"READY\n")
-    ser.flush()
-
-    print("Waiting for READY...")
-    ser.read_until(b'READY\n')
-
-    print("Sending START...")
-    ser.write(b"START\n")
-    ser.flush()
-
-    #filename = os.path.basename(SCRIPT_FILE_PATH).encode()
-    #filename_len = len(filename)
-
-    #ser.write(struct.pack("<H", filename_len))
-    #ser.write(filename)
-
-    with open(SCRIPT_FILE_PATH, "rb") as f:
+def send_file(filename):
+    with open(filename, "rb") as f:
         file_data = f.read()
 
     file_size = len(file_data)
@@ -73,6 +52,37 @@ with serial.Serial(PORT, BAUD, timeout=5) as ser:
             print(f"Chunk {i // CHUNK_SIZE + 1} acknowledged")
 
     print("File transfer complete.")
+
+with serial.Serial(PORT, BAUD, timeout=5) as ser:
+
+    print("Opening serial port...")
+    time.sleep(2)
+
+    print("Sending READY...")
+    ser.write(b"READY\n")
+    ser.flush()
+
+    print("Waiting for READY...")
+    ser.read_until(b'READY\n')
+
+    print("Sending START...")
+    ser.write(b"START\n")
+    ser.flush()
+
+    send_file(SCRIPT_FILE_PATH)
+    #TODO sleep??
+    print("Sending READY...")
+    ser.write(b"READY\n")
+    ser.flush()
+
+    print("Waiting for READY...")
+    ser.read_until(b'READY\n')
+
+    print("Sending START...")
+    ser.write(b"START\n")
+    ser.flush()
+    
+    send_file(CONFIG_FILE_PATH)
 
     print("Waiting for file dump from ESP (1024 bytes)...")
 
