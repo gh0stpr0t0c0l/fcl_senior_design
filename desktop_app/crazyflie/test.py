@@ -14,7 +14,7 @@ HOVER_THRUST = 25000  # Adjust as needed
 COMMAND_RATE_HZ = 50  # Setpoint update rate
 LOG_RATE_MS = 50  # 20 ms = 50 Hz logging
 LOG_TYPE = 1  # 0=motors; 1=Pitch PIDs; 2=stateEstimator; 3=motor pwms; 3=Roll PIDs
-JUST_LOG = 1
+JUST_LOG = 0
 FLIGHT_TYPE = 0  # 0=gimbal; 1=altitude
 
 
