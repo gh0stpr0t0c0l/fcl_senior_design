@@ -1,0 +1,51 @@
+# === RATE CONTROLLER (fast inner loop) ===
+PID_ROLL_RATE_KP   0.15
+PID_ROLL_RATE_KI   0.10
+PID_ROLL_RATE_KD   0.002
+
+PID_PITCH_RATE_KP  0.15
+PID_PITCH_RATE_KI  0.10
+PID_PITCH_RATE_KD  0.002
+
+PID_YAW_RATE_KP    0.20
+PID_YAW_RATE_KI    0.12
+PID_YAW_RATE_KD    0.000
+
+# === ANGLE CONTROLLER (outer loop) ===
+PID_ROLL_KP        4.5
+PID_ROLL_KI        0.05
+PID_ROLL_KD        0.10
+
+PID_PITCH_KP       4.5
+PID_PITCH_KI       0.05
+PID_PITCH_KD       0.10
+
+PID_YAW_KP         3.0
+PID_YAW_KI         0.02
+PID_YAW_KD         0.00
+
+# === VELOCITY CONTROLLER ===
+this.pidVX.init.kp  1.0
+this.pidVX.init.ki  0.10
+this.pidVX.init.kd  0.02
+
+this.pidVY.init.kp  1.0
+this.pidVY.init.ki  0.10
+this.pidVY.init.kd  0.02
+
+this.pidVZ.init.kp  2.0
+this.pidVZ.init.ki  0.20
+this.pidVZ.init.kd  0.05
+
+# === POSITION CONTROLLER ===
+this.pidX.init.kp   1.5
+this.pidX.init.ki   0.05
+this.pidX.init.kd   0.10
+
+this.pidY.init.kp   1.5
+this.pidY.init.ki   0.05
+this.pidY.init.kd   0.10
+
+this.pidZ.init.kp   3.0
+this.pidZ.init.ki   0.10
+this.pidZ.init.kd   0.20
