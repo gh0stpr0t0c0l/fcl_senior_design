@@ -64,6 +64,7 @@ def log_callback(timestamp, data, logconf):
                 f"PPitch: {data['pid_rate.pitch_outP']:.2f}, "
                 f"IPitch: {data['pid_rate.pitch_outI']:.2f}, "
                 f"DPitch: {data['pid_rate.pitch_outD']:.2f}, "
+                #f"Pitch: {data['stabilizer.pitch']:.2f}, "
                 #f"Roll: {data['stabilizer.roll']:.2f}, "
                 #f"Pitch: {data['stabilizer.pitch']:.2f}, "
                 # f"thrust: {data['stabilizer.thrust']:.2f}"
@@ -81,6 +82,7 @@ def log_callback(timestamp, data, logconf):
                 f"{data['pid_rate.pitch_outP']:.2f},"
                 f"{data['pid_rate.pitch_outI']:.2f},"
                 f"{data['pid_rate.pitch_outD']:.2f}\n"
+                #f"{data['stabilizer.pitch']:.2f}\n"
                 #f"{data['stabilizer.roll']:.2f},\n"
                 #f"{data['stabilizer.pitch']:.2f}\n"
                 # f"thrust: {data['stabilizer.thrust']:.2f}"
@@ -200,6 +202,7 @@ if __name__ == "__main__":
                 log_config.add_variable("pid_rate.pitch_outP", "float")
                 log_config.add_variable("pid_rate.pitch_outI", "float")
                 log_config.add_variable("pid_rate.pitch_outD", "float")
+                #log_config.add_variable("stabilizer.pitch", "float")
                 #log_config.add_variable("stabilizer.roll", "float")
                 #log_config.add_variable("stabilizer.pitch", "float")
 
