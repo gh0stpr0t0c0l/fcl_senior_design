@@ -529,6 +529,13 @@ static void sensorsDeviceInit(void)
     gpio_set_direction(TOP_XSHUT_PIN, GPIO_MODE_OUTPUT);
     gpio_set_level(TOP_XSHUT_PIN, 0);
 
+    // const uint8_t *xshut_pins = board_get_tof_pins();
+
+    // for (uint8_t pin = 0; pin < TOF_COUNT; pin++) {
+    //     gpio_set_direction(xshut_pins[pin], GPIO_MODE_OUTPUT);
+    //     gpio_set_level(xshut_pins[pin], 0);
+    // }
+
     zRanger2Init();
 
     if (zRanger2Test() == true) {

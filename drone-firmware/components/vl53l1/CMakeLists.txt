@@ -1,5 +1,6 @@
-idf_component_register(SRCS "vl53l1x.c" 
+idf_component_register(SRCS "vl53l1x.c"
                     "zranger2.c"
+                    "yranger2.c"
                     "core/src/vl53l1_api_calibration.c"
                     "core/src/vl53l1_api_core.c"
                     "core/src/vl53l1_api_debug.c"
