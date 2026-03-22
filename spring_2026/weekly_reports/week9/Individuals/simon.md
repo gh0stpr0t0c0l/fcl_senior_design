@@ -1,1 +1,3 @@
-Hours Worked:
+Hours Worked: 12
+
+This week, we continued to press through integration. The GUI is progressing, and I should have the entire flashing script complete (putting the drone firmware and necessities on the drone and then imputting the flight path file) in the next day or two. After this, I'll continue working on getting the commands that we put in the file to the commander script and completing that whole process. That will probably take a lot of work, but I should be able to get it done in time for Brady and Gabe to use it and for Aydan to get to the point where we can integrate it into the app. Additionally, I plan to work on documenting a few things this upcoming week.

@@ -1,1 +1,5 @@
-Hours Worked:
+Hours Worked: 9
+
+Due to poor scheduling, I was again a little short on hours this time---planning on making up (hopefully exceeding the required) some hours in the upcoming weeks. However, this week was not fruitless. I was able to learn a lot about the coding structure of the project and finished implementing the battery checking script. Then I connected it to the telemetry system, and plan to test it this week. We're having some difficulties with the resistor values on the voltage divider---I'll likely have to do some soldering of very tiny resistors to adjust the value. According to Chat, I need to do this rather aggressively, to fix some interesting valued results we are getting, but I need to confirm this with Dr. Kohl.
+
+As for the project as a whole, Dr. Kohl confirmed that we can connect the drone to a battery and a laptop at the same time, making debugging the running drone much simpler. Additionally, we have shipments of motors and mount parts coming soon to enhance our testing ability. We are nearing the end of the allotted time on the Gantt chart for sensor and integration work, so we'll aim to complete the prototype soon.

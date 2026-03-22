@@ -1,0 +1,29 @@
+\documentclass[12pt, titlepage]{article}
+\usepackage{hyperref}
+
+\title{Feedback Controls Lab Weekly Report \\ \normalsize{Week 3}}
+\author{Aydan Vissing, Brady Schick, Gabriel Southwell, Simon Ross}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Aydan Vissing - CFO (12 hrs spent)}
+
+I have been continuing to build the desktop application, which has proven to be a lot of research that I didn't expect. Trying to integrate the GUI with file I/O and Matplotlib is more complex than I anticipated but it seems to be moving along and I anticipate having at least one of the plots working by the end of this week, hopefully. 
+
+\section*{Brady Schick - CTO (6 hrs spent)}
+
+This week was not the most productive. I implemented coordinate conversions in the xy controls and implemented a basic integration windup pervention and re-tuned the controller as needed so that good elevation control worked for up to 3 meters. The rest of the time was spent trying to figure out the current robustness of the controller.
+
+\section*{Gabriel Southwell - CSO (12 hrs spent)}
+
+This week I continued to work on adapting the flight controller to work for our system. The Espressif team already did a lot of good work making the Crazyflie firmware work and compile on esp-32s, but adapting for us is still a lot. Much of what I have been doing is slowly following the control flow of the firmware and snipping the features that we are not going to use.
+
+\section*{Simon Ross - CEO (10 hrs spent)}
+
+This week I spent a lot of time getting to know the codebase - learning how the objects are structured and the basic ESP-IDF functionality. It's been different than what I've worked with before, but I'm picking it up quickly---got a battery checking script done this week and I'll be able to check it early next week. 
+
+Additionally, I spent some time making a wiring harness for the drone so that we can run it using the lab power sources. This way we don't have to spend so much time charging and monitoring batteries.
+
+\end{document}

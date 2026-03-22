@@ -1,1 +1,1 @@
-Hours Worked:
+Hours Worked: 12

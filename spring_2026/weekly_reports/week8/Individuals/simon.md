@@ -1,1 +1,3 @@
-Hours Worked:
+Hours Worked: 12
+
+This week and last I worked on the drone scripting process, and will likely polish off the file transfer this upcoming week. By the milestone, the drone was able to receive a script file from the computer sent over serial and return the contents of this file once it was saved. Over break, I increased the reliability of this process, and have almost gotten it to 100%. Additionally, I will probably lean into Python app development over this coming week (to help Aydan out) and see what Gabe and Brady need, filtering their work into my continued scripting progress.

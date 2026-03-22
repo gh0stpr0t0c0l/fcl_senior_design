@@ -1,1 +1,2 @@
-Hours Worked:
+Hours Worked: 13
+I spent time this week getting the rig ready to 3D print and once that was done, I spent the rest of my time getting QT designer set up and begun the creation of the GUI. I spent a lot of time reading through MatPlotLib's documentation and trying to learn how the functions work. The goal this week is to research numpy and scipy as well as get some data to work with from Gabe to plot with both and get it to work in the GUI. 

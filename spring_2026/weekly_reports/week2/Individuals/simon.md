@@ -1,1 +1,7 @@
-Hours Worked:
+Hours Worked: 12
+
+This week was far more productive for me than the previous one---I even managed to make some real progress. More importantly, however, the team has been making excellent progress on getting the drone into the air. We've all been working our tails off for this project, and I think that's great.
+
+I started the week by learning a bit more about the programming structure of the project. We had our team meeting and then I immediately started assembling the board for a working prototype. On Tuesday, I soldered on a replacement power regulator which works spectacularly. Then on Thursday, I put the rest of the drone together and tested the motors with Gabe. His driver worked successfully, and all of the motors turned---perhaps a little too well. One of the propellers got destroyed in the process and I had a bit more soldering to do. At least it made the first test exciting. Finally, I made a few tweaks to our logo for the app UI. Friday and Saturday were spent on learning more about coding for the ESP and working on a simple battery checker circuit to take something off Gabe's hands.
+
+This upcoming week, I'm going to lean harder into the coding process, hopefully finishing off the battery checker and moving on to more important tasks. I'll also need to do a little more soldering as our battery is too strong for the ADC unit in its current configuration. We'll fix this problem in board v2, but thankfully these small problems aren't hindering testing progress. Gabe has been making great headway on the controller code, Aydan almost has a testing rig ready, and Brady's controller work is incredible. I'm looking forward to what this next week will bring.

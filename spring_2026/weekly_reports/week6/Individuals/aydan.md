@@ -1,1 +1,2 @@
-Hours Worked:
+Hours Worked: 12
+Not a lot of development this week, continuing GUI work, I was able to get it reading files in, however, values aren't being dealt with correctly so I am going to troubleshoot that. I was also able to finish assembly on the rig so it is right for test flights now.

@@ -1,0 +1,33 @@
+\documentclass[12pt, titlepage]{article}
+\usepackage{hyperref}
+
+\title{Feedback Controls Lab Weekly Report \\ \normalsize{Week 4}}
+\author{Aydan Vissing, Brady Schick, Gabriel Southwell, Simon Ross}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Aydan Vissing - CFO (12 hrs spent)}
+
+This week was spent going through amazon for parts to finish the test rig along with furthering the progress on the GUI. I was able to get the parts sent out for order along with being able to produce a basic plot from the GUI, now I am attempting to get the plot into the designer GUI rather than in its own pop up GUI. 
+
+\section*{Brady Schick - CTO (12 hrs spent)}
+
+The first part of this week was spent on remeasuring dimensions and weights of the quadcopter and applying those updates to the simulation before retuning. For the rest of the week, I began looking through the Crazyflie files to see how it's controls work.
+
+\section*{Gabriel Southwell - CSO (14.5 hrs spent)}
+
+This week I continued to work on the crazyflie firmware adaptation. I have somewhat changed my efforts from trying to full adapt it to just making it compile. That way when I try to compile it, I can see what still needs an abstraction and what needs to be stubbed out. 
+
+I also have been encountering a lot of problems with using a newer version of gcc and esp\_idf. gcc has gotten a lot stricter about using pointers to the first index of an array and implicitly trusting it is an array since esp-drone was written 6 years ago. Esp\_idf also has depreciated and replaced a lot of task management functions for better memory safety so those needed replaced too. In hindsight, I would have just downgraded Esp-idf versions, but I have replaced all of them now. 
+
+Currently the only remaining compiler errors are about missing drivers for hardware we are not using. The only thing the esp-drone version of crazyflie needs to hover is the MPU6050, but it does a lot of sensor fusion stuff first. I think I can just feed the stabalized the values straight from the mpu but I am still working understanding what all it does with the data stream.
+
+\section*{Simon Ross - CEO (9 hrs spent)}
+
+Due to poor scheduling, I was again a little short on hours this time---planning on making up (hopefully exceeding the required) some hours in the upcoming weeks. However, this week was not fruitless. I was able to learn a lot about the coding structure of the project and finished implementing the battery checking script. Then I connected it to the telemetry system, and plan to test it this week. We're having some difficulties with the resistor values on the voltage divider---I'll likely have to do some soldering of very tiny resistors to adjust the value. According to Chat, I need to do this rather aggressively, to fix some interesting valued results we are getting, but I need to confirm this with Dr. Kohl.
+
+As for the project as a whole, Dr. Kohl confirmed that we can connect the drone to a battery and a laptop at the same time, making debugging the running drone much simpler. Additionally, we have shipments of motors and mount parts coming soon to enhance our testing ability. We are nearing the end of the allotted time on the Gantt chart for sensor and integration work, so we'll aim to get our prototype on the test bench soon.
+
+\end{document}
