@@ -14,6 +14,7 @@
 #include "mpu_mgr.h"
 #include "tof_mgr.h"
 #include "buzzer.h"
+#include "uart_listener.h"
 
 // static const char *TAG = "Drone";
 
@@ -43,6 +44,9 @@ void app_main()
     i2c_bus_init();
     mpu_manager_init();
     tof_manager_init();
+    // Setup storage
+    storage_init();
+    //uart_listener_start();
 
     buzzer_play(BUZZER_STARTUP);
 
@@ -53,9 +57,9 @@ void app_main()
     }
     buzzer_play(BUZZER_START_BUTTON);
 
-    // rest of initialization
-    storage_init();
+    //uart_listener_stop();
 
+    // rest of initialization
     vTaskDelay(pdMS_TO_TICKS(100));
 
     // create tasks
