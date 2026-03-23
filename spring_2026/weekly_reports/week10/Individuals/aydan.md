@@ -1,1 +1,2 @@
-Hours Worked:
+Hours Worked: 12
+I was able to make the GUI use the input CSVs for the titles of the plots, however, it needs to have time be at the front or else it has some very strange results. The GUI is able to support as many plots as we want to give it in groups of 3 as of right now, but if we want to add more I can attempt to do so. 
