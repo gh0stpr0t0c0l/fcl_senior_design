@@ -49,3 +49,5 @@ posCtlPid.yKd    0.00
 posCtlPid.zKp    0.00
 posCtlPid.zKi    0.00
 posCtlPid.zKd    0.00
+
+quiet.mode
