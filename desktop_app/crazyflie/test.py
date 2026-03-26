@@ -178,6 +178,61 @@ def flight_test(cf):
     #         time.sleep(0.1)
 
 
+def flight_test(cf):
+    print("Starting. Press Ctrl+C to stop.")
+
+    dt = 1.0 / COMMAND_RATE_HZ
+
+    for _ in range(20):
+        cf.commander.send_setpoint(0, 0, 0, 0)
+        time.sleep(0.02)
+
+    if FLIGHT_TYPE == 0:
+        try:
+            while True:
+                # zero roll, pitch, yaw-rate, constant thrust
+                if JUST_LOG:
+                    cf.commander.send_setpoint(0, 0, 0, 0)
+                else:
+                    cf.commander.send_setpoint(0, 0, 0, HOVER_THRUST)
+                time.sleep(dt)
+
+        except KeyboardInterrupt:
+            print("\nStopping...")
+            cf.commander.send_setpoint(0, 0, 0, 0)
+            time.sleep(0.1)
+
+    elif FLIGHT_TYPE == 1:
+        try:
+            while True:
+                if JUST_LOG:
+                    cf.commander.send_setpoint(0, 0, 0, 0)
+                else:
+                    cf.commander.send_position_setpoint(0.0, 0.0, 0.3, 0.0)
+                time.sleep(dt)
+
+        except KeyboardInterrupt:
+            print("\nStopping...")
+            cf.commander.send_setpoint(0, 0, 0, 0)
+            time.sleep(0.1)
+
+        # elif FLIGHT_TYPE == 1:
+    #     try:
+    #         hlc = cf.high_level_commander
+    #         time.sleep(1)
+    #         hlc.takeoff(0.3, 2.0)
+    #         time.sleep(5)
+    #         hlc.land(0.0, 2.0)
+    #         time.sleep(2)
+    #         hlc.stop()
+    #         print("Done")
+
+    #     except KeyboardInterrupt:
+    #         print("\nStopping...")
+    #         cf.commander.send_setpoint(0, 0, 0, 0)
+    #         time.sleep(0.1)
+
+
 if __name__ == "__main__":
     cflib.crtp.init_drivers()
 

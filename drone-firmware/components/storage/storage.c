@@ -10,6 +10,7 @@
 
 static char ram_buffer[BUFFER_SIZE];
 static size_t buffer_index = 0;
+static FILE* current_file = NULL;
 
 void storage_init(void)
 {
@@ -73,4 +74,37 @@ void storage_buffer_write(const char *line)
 
     memcpy(&ram_buffer[buffer_index], line, len);
     buffer_index += len;
+}
+
+void open_new_file(const char *filename) { //TODO this function isn't very modular
+    char path[128];
+
+    if (current_file) {
+        fclose(current_file);
+    }
+
+    snprintf(path, sizeof(path), "/littlefs/%s", filename);
+    current_file = fopen(path, "ab");
+
+    if (!current_file) {
+        //printf("Failed to open %s\n", path); TODO fail
+        return;
+    }
+}
+
+void write_current_file(const uint8_t *buffer, size_t nbyte) //TODO this function isn't very modular
+{
+    if (!current_file) {
+        //("Failed to open %s\n", path); TODO
+        return;
+    }
+    fwrite(buffer, 1, nbyte, current_file);
+    fflush(current_file);
+}
+
+void close_current_file(void) { //TODO this function isn't very modular
+    if (current_file) {
+        fclose(current_file);
+        current_file = NULL;
+    }
 }

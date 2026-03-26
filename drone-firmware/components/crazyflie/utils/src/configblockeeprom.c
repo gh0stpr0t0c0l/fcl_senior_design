@@ -117,7 +117,6 @@ static uint8_t calculate_cksum(void* data, size_t len)
   unsigned char* c = data;
   int i;
   unsigned char cksum=0;
-
   for (i=0; i<len; i++)
     cksum += *(c++);
 
