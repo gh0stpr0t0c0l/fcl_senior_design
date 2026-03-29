@@ -64,7 +64,7 @@ int read_until(uint8_t* search_term, size_t len) {
    return 0; //TODO no timeout whatsoever
 }
 
-int read_file(char* filename) {
+int read_file_to_location(char* filename) {
    uint8_t buf[BUF_SIZE];
    uint32_t file_size;
    read_bytes((uint8_t*)&file_size, 4);
@@ -94,32 +94,32 @@ void drain_rxbuf(void) {
    while (read(0, buf, sizeof(buf)) > 0);
 } */
 
-// receive multiple files - currently script and config files.
+// receive multiple files - currently script and config files. Repeats until drone start
 void listener_task(void *pvParameter)
 {
-   read_until((uint8_t*)"READY\n",6);
-   esp_log_level_set("*", ESP_LOG_NONE);
-   write(1, "READY\n", 6);
-   read_until((uint8_t*)"START\n",6);
+   while(1) { //TODO maybe make it so you don't have to to both files at once??
+      read_until((uint8_t*)"SCRIPT\n",6);
+      ESP_LOGI(TAG, "Ready for file transfer");
+      esp_log_level_set("*", ESP_LOG_NONE);
+      write(1, "READY\n", 6);
+      read_until((uint8_t*)"START\n",6);
 
-   if (read_file(SCRIPT_FILE_NAME)!=0) {
-      esp_log_level_set("*", ESP_LOG_INFO);
+      if (read_file_to_location(SCRIPT_FILE_NAME)!=0) {
+         esp_log_level_set("*", ESP_LOG_INFO);
          ESP_LOGE(TAG, "Error receiving file");
          abort();
-   }
+      }
 
-   read_until((uint8_t*)"READY\n",6); 
-   //esp_log_level_set("*", ESP_LOG_NONE); //TODO resume and stop again?
-   write(1, "READY\n", 6);
-   read_until((uint8_t*)"START\n",6);
+      read_until((uint8_t*)"PARAM\n",6); 
+      //esp_log_level_set("*", ESP_LOG_NONE); //TODO resume and stop again?
+      write(1, "READY\n", 6);
+      read_until((uint8_t*)"START\n",6);
 
-   if (read_file(CONFIG_FILE_NAME)!=0) {
-      esp_log_level_set("*", ESP_LOG_INFO);
+      if (read_file_to_location(CONFIG_FILE_NAME)!=0) {
+         esp_log_level_set("*", ESP_LOG_INFO);
          ESP_LOGE(TAG, "Error receiving file");
          abort();
-   }
-
-   while(1) { //TODO should delete task and return, but that currently causes crashing
+      }
       vTaskDelay(pdMS_TO_TICKS(10));
    }
 }

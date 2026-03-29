@@ -10,7 +10,7 @@ static FILE* current_file = NULL;
 //paramSetInt(paramVarId_t varid, int valuei);
 //paramSetFloat(paramVarId_t varid, float valuef);
 
-//Opens a file (and deletes previous contents)
+//Opens a file (deletes previous contents)
 void open_new_file(const char *filename) { //TODO this function isn't very modular
     char path[128];
 
