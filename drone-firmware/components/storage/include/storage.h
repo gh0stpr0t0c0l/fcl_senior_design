@@ -17,9 +17,6 @@ TODO: Add script reading features
 
 void storage_init(void);
 void storage_buffer_write(const char *line);
-void write_current_file(const uint8_t *buffer, size_t nbyte);
-void open_new_file(const char *filename);
-void close_current_file(void);
 // void storage_buffer_flush(void);
 
 #endif
