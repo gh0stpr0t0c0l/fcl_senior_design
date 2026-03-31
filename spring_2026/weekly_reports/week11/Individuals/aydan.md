@@ -1,1 +1,2 @@
-Hours Worked:
+Hours Worked: 12
+I got the GUI to Milestone standard during the early week. Now that it's complete, I am going to begin work on refining it and continuing to finish the new frame design, which I have been working on since. I hope to have a print of it done by the end of the week. 
