@@ -135,21 +135,20 @@ void uart_listener_stop(void)
       vTaskDelete(listener_handle);
       listener_handle = NULL;
    }
-   
 
-   FILE *f = fopen("/littlefs/config.txt", "rb"); //TODO remove this chunk after making sure file naming works
-   if (f != NULL) {
-      uint8_t buf[1024] = {0};   // zero-filled buffer
-      // Read up to 1024 bytes
-      fread(buf, 1, sizeof(buf), f);
-      fclose(f);
-      // Always send exactly 1024 bytes
-      write(1, buf, sizeof(buf));
-   } else {
-      const char *msg = "Failed to open file\n";
-      write(1, msg, strlen(msg));
-   }
-
+   // FILE *f = fopen(CONFIG_FILE_LOC, "rb"); //TODO remove this chunk after making sure file naming works
+   // if (f != NULL) {
+   //    uint8_t buf[1024] = {0};   // zero-filled buffer
+   //    // Read up to 1024 bytes
+   //    fread(buf, 1, sizeof(buf), f);
+   //    fclose(f);
+   //    // Always send exactly 1024 bytes
+   //    write(1, buf, sizeof(buf));
+   // } else {
+   //    const char *msg = "Failed to open file\n";
+   //    write(1, msg, strlen(msg));
+   // }
 
    esp_log_level_set("*", ESP_LOG_INFO);
+   set_PID_params();
 }
