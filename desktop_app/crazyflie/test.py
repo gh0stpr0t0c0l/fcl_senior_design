@@ -13,9 +13,9 @@ uri = uri_helper.uri_from_env(default="udp://192.168.43.42:2390")
 HOVER_THRUST = 25000  # Adjust as needed
 COMMAND_RATE_HZ = 50  # Setpoint update rate
 LOG_RATE_MS = 50  # 20 ms = 50 Hz logging
-LOG_TYPE = 1  # 0=motors; 1=Pitch PIDs; 2=stateEstimator; 3=Roll PIDs
+LOG_TYPE = 3  # 0=motors; 1=Pitch PIDs; 2=stateEstimator; 3=Roll PIDs
 JUST_LOG = 0
-FLIGHT_TYPE = 1  # 0=gimbal; 1=altitude
+FLIGHT_TYPE = 0  # 0=gimbal; 1=altitude
 
 
 def log_callback(timestamp, data, logconf):
@@ -56,8 +56,8 @@ def log_callback(timestamp, data, logconf):
                 f"DPitch: {data['pid_attitude.pitch_outD']:.2f}, "
                 f"PPitch: {data['pid_rate.pitch_outP']:.2f}, "
                 f"IPitch: {data['pid_rate.pitch_outI']:.2f}, "
-                #f"DPitch: {data['pid_rate.pitch_outD']:.2f}, "
-                f"Pitch: {data['stabilizer.pitch']:.2f}, "
+                f"DPitch: {data['pid_rate.pitch_outD']:.2f}, "
+                #f"Pitch: {data['stabilizer.pitch']:.2f}, "
             )
             log.write(
                 f"{data['pid_attitude.pitch_outP']:.2f}, "
@@ -65,8 +65,8 @@ def log_callback(timestamp, data, logconf):
                 f"{data['pid_attitude.pitch_outD']:.2f}, "
                 f"{data['pid_rate.pitch_outP']:.2f},"
                 f"{data['pid_rate.pitch_outI']:.2f},"
-                #f"{data['pid_rate.pitch_outD']:.2f}\n"
-                f"{data['stabilizer.pitch']:.2f}\n"
+                f"{data['pid_rate.pitch_outD']:.2f}\n"
+                #f"{data['stabilizer.pitch']:.2f}\n"
             )
 
         elif LOG_TYPE == 3:
@@ -231,8 +231,8 @@ if __name__ == "__main__":
                 log_config.add_variable("pid_attitude.pitch_outD", "float")
                 log_config.add_variable("pid_rate.pitch_outP", "float")
                 log_config.add_variable("pid_rate.pitch_outI", "float")
-                #log_config.add_variable("pid_rate.pitch_outD", "float")
-                log_config.add_variable("stabilizer.pitch", "float")
+                log_config.add_variable("pid_rate.pitch_outD", "float")
+                #log_config.add_variable("stabilizer.pitch", "float")
 
                 f.write(
                     "Pitch P,Pitch I,Pitch D,Pitch P rate,Pitch I rate,Pitch D rate\n"
