@@ -8,4 +8,6 @@ set(COMPONENT_ADD_INCLUDEDIRS ".")
 idf_component_register(
     SRCS ${COMPONENT_SRCS}
     INCLUDE_DIRS ${COMPONENT_ADD_INCLUDEDIRS}
-    REQUIRES i2c_bus board storage telemetry wifi mpu_mgr tof_mgr buzzer batt_adc)
+    # REQUIRES i2c_bus board storage telemetry wifi mpu_mgr tof_mgr buzzer motors crazyflie)
+    REQUIRES buzzer crazyflie nvs_flash platform
+    LDFRAGMENTS linker_fragment.lf)

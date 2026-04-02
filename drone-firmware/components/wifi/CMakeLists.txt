@@ -1,3 +1,3 @@
-idf_component_register(SRCS "wifi.c"
-    INCLUDE_DIRS "include"
-    REQUIRES telemetry buzzer esp_netif esp_event esp_wifi nvs_flash lwip)
+idf_component_register(SRCS "wifi_esp32.c"
+                      INCLUDE_DIRS "." "include"
+                      REQUIRES crazyflie platform config esp_wifi)

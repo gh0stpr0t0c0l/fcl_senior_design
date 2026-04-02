@@ -18,20 +18,6 @@ void tof_logging(void *pvPerameter)
     uint8_t dataReady;
     uint16_t ranges[TOF_COUNT];
 
-    // Now all the sensors are activated with their xshut pins high
-    // and all have unique addresses    ESP_LOGI(TAG, "I2C scan after readdressing:");
-    // for (uint8_t addr = 1; addr < 127; ++addr) {
-    //     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
-    //     i2c_master_start(cmd);
-    //     i2c_master_write_byte(cmd, (addr << 1) | I2C_MASTER_WRITE, true);
-    //     i2c_master_stop(cmd);
-    //     esp_err_t ret = i2c_master_cmd_begin(I2C_MASTER_NUM, cmd, pdMS_TO_TICKS(50));
-    //     i2c_cmd_link_delete(cmd);
-    //     if (ret == ESP_OK) {
-    //         ESP_LOGI(TAG, "I2C device found at 0x%02X", addr);
-    //     }
-    // }
-
     while(1){
         for(uint8_t sensor = 0; sensor < TOF_COUNT; sensor++){
             VL53L1_StartMeasurement(&dev[sensor]);

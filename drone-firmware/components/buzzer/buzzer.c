@@ -48,13 +48,41 @@ static const buzzer_step_t start_button_pattern[] = {
 static const buzzer_step_t wifi_connected_pattern[] = {
     { true, 50 },
     { false, 50 },
-    { true, 200 },
+    { true, 250 },
 };
 
 static const buzzer_step_t wifi_disconnected_pattern[] = {
-    { true, 200 },
+    { true, 250 },
     { false, 50 },
     { true, 50},
+};
+
+static const buzzer_step_t motors_test_pattern[] = {
+    { true, 100 },
+    { false, 100 },
+    { true, 100 },
+    { false, 100 },
+    { true, 100 },
+    { false, 100 },
+    { true, 100 },
+    { false, 100 },
+}; //gross
+
+// static const buzzer_step_t bat_good_pattern[] = {
+//     { true, 50 },
+//     { false, 100 },
+//     { true, 300 },
+//     { false, 100 },
+//     { true, 50 },
+// };
+
+static const buzzer_step_t bat_low_pattern[] = {
+    { true, 50 },
+    { false, 200},
+};
+
+static const buzzer_step_t mpu_calibrated_pattern[] = {
+    { true, 50 },
 };
 
 // more here as needed
@@ -82,6 +110,26 @@ static const buzzer_pattern_def_t patterns[BUZZER_PATTERN_COUNT] = {
     [BUZZER_WIFI_DISCONNECTED] = {
         .steps = wifi_disconnected_pattern,
         .length = sizeof(wifi_disconnected_pattern) / sizeof(buzzer_step_t),
+        .repeat = false,
+    },
+    [BUZZER_MOTORS_TEST] = {
+        .steps = motors_test_pattern,
+        .length = sizeof(motors_test_pattern) / sizeof(buzzer_step_t),
+        .repeat = false,
+    },
+    // [BUZZER_BAT_GOOD] = {
+    //     .steps = bat_good_pattern,
+    //     .length = sizeof(bat_good_pattern) / sizeof(buzzer_step_t),
+    //     .repeat = false,
+    // },
+    [BUZZER_BAT_LOW] = {
+        .steps = bat_low_pattern,
+        .length = sizeof(bat_low_pattern) / sizeof(buzzer_step_t),
+        .repeat = true,
+    },
+    [BUZZER_MPU_CALIBRATED] = {
+        .steps = mpu_calibrated_pattern,
+        .length = sizeof(mpu_calibrated_pattern) / sizeof(buzzer_step_t),
         .repeat = false,
     },
 };

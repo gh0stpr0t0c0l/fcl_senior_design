@@ -30,9 +30,11 @@
 #include "freertos/task.h"
 #include "freertos/queue.h"
 
+#include "stm32_legacy.h"
 #include "i2cdev.h"
 #include "i2c_drv.h"
-
+#include "nvicconf.h"
+#include "debug_cf.h"
 
 int i2cdevInit(I2C_Dev *dev)
 {
@@ -128,7 +130,7 @@ bool i2cdevReadReg8(I2C_Dev *dev, uint8_t devAddress, uint8_t memAddress,
 #endif
 
     if (err == ESP_OK) {
-        return true;
+        return TRUE;
     } else {
         return false;
     }
@@ -187,7 +189,7 @@ bool i2cdevReadReg16(I2C_Dev *dev, uint8_t devAddress, uint16_t memAddress,
 #endif
 
     if (err == ESP_OK) {
-        return true;
+        return TRUE;
     } else {
         return false;
     }
@@ -276,7 +278,7 @@ bool i2cdevWriteReg8(I2C_Dev *dev, uint8_t devAddress, uint8_t memAddress,
 #endif
 
     if (err == ESP_OK) {
-        return true;
+        return TRUE;
     } else {
         return false;
     }
@@ -333,7 +335,7 @@ bool i2cdevWriteReg16(I2C_Dev *dev, uint8_t devAddress, uint16_t memAddress,
 #endif
 
     if (err == ESP_OK) {
-        return true;
+        return TRUE;
     } else {
         return false;
     }

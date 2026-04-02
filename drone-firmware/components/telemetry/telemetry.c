@@ -58,15 +58,6 @@ void telemetry_publish_tof(uint8_t sensor, int64_t timestamp_us, int16_t mm)
     }
 }
 
-void telemetry_publish_batt(int64_t timestamp_us, int32_t voltage_mv)
-{
-    if (xSemaphoreTake(snapshot_mutex, pdMS_TO_TICKS(5)) == pdTRUE) {
-        latest_snapshot.batt_timestamp_us = timestamp_us;
-        latest_snapshot.batt_voltage_mv = voltage_mv;
-        xSemaphoreGive(snapshot_mutex);
-    }
-}
-
 QueueHandle_t telemetry_get_queue(void) {return telemetry_queue;}
 
 static void telemetry_aggregator_task(void *pvParameter)

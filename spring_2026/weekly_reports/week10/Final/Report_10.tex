@@ -1,0 +1,33 @@
+\documentclass[12pt, titlepage]{article}
+\usepackage{hyperref}
+
+\title{Feedback Controls Lab Weekly Report \\ \normalsize{Week 10}}
+\author{Aydan Vissing, Brady Schick, Gabriel Southwell, Simon Ross}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Aydan Vissing - CFO (12 hrs spent)}
+
+I was able to make the GUI use the input CSVs for the titles of the plots, however, it needs to have time be at the front or else it has some very strange results. The GUI is able to support as many plots as we want to give it in groups of 3 as of right now, but if we want to add more I can attempt to do so. 
+
+\section*{Brady Schick - CTO (11 hrs spent)}
+
+I didn't get the controller tuned as well as I would have liked by now. Although I had pitch somewhat working last week, it still needs a lot of work to be able to correct itself faster in order to actually hover. The next two weeks are extremely busy for me, and I won't be able to devote much time to this, but I'll do my best. It is very very likely that I won't be able to attend the meeting/senior design on the Tuesday.
+
+\section*{Gabriel Southwell - CSO (11 hrs spent)}
+
+This week I worked on readding the tof sensors into the drone code. I had some problems with doing this, but I did get it working. The issue all init timings beign different on this hardware for some reason.
+
+This week I also researched how best to incorporate the tofs into the Kalman filter. Fortunately, it won't require massive changes to the underlying system. It will not be super easy though. I do not have a plan right now for testing if the state estimator works, but I will be thinking about it this coming week while I work on it. 
+
+We also need to work towards a mounting system for the tofs as well as printing another good frame since the one are using right now is falling apart. 
+
+\section*{Simon Ross - CEO (12 hrs spent)}
+
+This week has been brutal for all of us. As far as I can tell, we're still making good progress, but I don't know how things are coming on the milestone front. I'm going to see if I can pivot from what I'm working on and help Brady with the tuning, but these next few days are packed. 
+
+This past week, I did a lot of merging work to get our GitHub up to date with the latest changes. I also did some research, and it should be reasonably straightforward to set the parameters that Brady needs from the file system. We'll keep grinding and hopefully we'll get everything done.
+
+\end{document}
