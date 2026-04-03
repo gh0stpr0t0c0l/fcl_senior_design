@@ -13,7 +13,6 @@
 
 #include "file_manager.h"
 #include "uart_listener.h"
-#include "esp_log_level.h"
 
 static const unsigned int BUF_SIZE = 32; //starts to have odd uart problems with larger numbers
 static const unsigned int MAX_UART_RETRIES = 1000;
@@ -97,23 +96,19 @@ void listener_task(void *pvParameter)
    while(1) { //TODO maybe make it so you don't have to to both files at once??
       read_until((uint8_t*)"SCRIPT\n",6);
       ESP_LOGI(TAG, "Ready for file transfer");
-      esp_log_level_set("*", ESP_LOG_NONE);
       write(1, "READY\n", 6);
       read_until((uint8_t*)"START\n",6);
 
       if (read_file_to_location(SCRIPT_FILE_LOC)!=0) {
-         esp_log_level_set("*", ESP_LOG_INFO);
          ESP_LOGE(TAG, "Error receiving file");
          abort();
       }
 
       read_until((uint8_t*)"PARAM\n",6); 
-      //esp_log_level_set("*", ESP_LOG_NONE); //TODO resume and stop again?
       write(1, "READY\n", 6);
       read_until((uint8_t*)"START\n",6);
 
       if (read_file_to_location(CONFIG_FILE_LOC)!=0) {
-         esp_log_level_set("*", ESP_LOG_INFO);
          ESP_LOGE(TAG, "Error receiving file");
          abort();
       }
@@ -149,6 +144,5 @@ void uart_listener_stop(void)
    //    write(1, msg, strlen(msg));
    // }
 
-   esp_log_level_set("*", ESP_LOG_INFO);
    set_PID_params();
 }
