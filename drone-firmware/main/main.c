@@ -16,6 +16,7 @@
 // #include "tof_mgr.h"
 #include "buzzer.h"
 #include "uart_listener.h"
+#include "control.h"
 #include "platform.h"
 #include "esp_log.h"
 
@@ -67,9 +68,10 @@ void app_main()
     while (gpio_get_level(START_BUTTON_GPIO) == 1) {
         vTaskDelay(pdMS_TO_TICKS(50));
     }
-    ESP_LOGE("dasfs","Reset reason: %d\n", reason);
     uart_listener_stop();
-
+    drone_script_control_start();
+    vTaskDelay(pdMS_TO_TICKS(1000));
+    ESP_LOGE("dasfs","Reset reason: %d\n", reason);
 
     // create tasks
     // telemetry_start_aggregator();
