@@ -1,1 +1,7 @@
-Hours Worked:
+Hours Worked: 14
+
+Made a little bit of progress on the tuning, but there is still a strong imbalance with the pitch. I'm pretty sure it's not a weight imbalance and I swapped the older motors for newer ones so it's likely not a motor imbalance either. I've also checked the pwm signals (according to crazyflie's output) and the duty cycles don't seem to be the problem.
+
+This is becoming a big problem because it requires a large integral component to account for this imbalance, making the integral term overpower the proportional term too much. There's a limit to how much I can increase the rate proportional term before it causes severe oscillations. I was hoping to get more done over Easter break, but I got pretty sick and wasn't able to do much.
+
+However, roll doesn't have to seem this problem, and it is tuning much easier, but still get's thrown off a little by the pitch imbalance. I'm planning to hook up the motors to the oscilloscope to see if the imbalance is due to a current level imbalance. I was planning to do that today, but I think I fried part of the board when I tried to do this. I'll be looking at the board more tomorrow when the others are here to see if it is repairable.
