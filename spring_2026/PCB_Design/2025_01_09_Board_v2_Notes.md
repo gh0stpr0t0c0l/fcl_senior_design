@@ -3,3 +3,5 @@
 - Move bottom ToF for velcro?
 - Knock down the green pwr LED brightness
 - Swap R13 for a 50K for 1/3 voltage divider
+- Connect MPU to its own i2c line
+- tof interrupts??
