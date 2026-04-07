@@ -17,7 +17,7 @@ Current Hardware Version: V1
 #define BOARD_REV 1
 
 // Hardware Counts
-#define TOF_COUNT 2
+#define TOF_COUNT 5
 #define MOTOR_COUNT 4
 
 /* ------------------------------
