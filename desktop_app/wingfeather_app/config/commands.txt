@@ -1,0 +1,11 @@
+# time(s)  value(m)  freq(Hz)
+
+STEP 0.0 0.2
+STEP 2.0 0.5
+
+SINE 4.0 0.6 0.5
+SINE 10.0 0.3 1.0
+
+STEP 14.0 0.4
+
+STOP 18.0
