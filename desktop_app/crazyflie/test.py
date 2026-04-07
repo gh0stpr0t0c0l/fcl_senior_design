@@ -21,7 +21,7 @@ FLIGHT_TYPE = 0  # 0=gimbal; 1=altitude
 def log_callback(timestamp, data, logconf):
     with open("flightDump.csv", "a") as log:
         log.write(
-            f"{timestamp}",
+            f"{timestamp},",
         )
         if LOG_TYPE == 0:
             print(
