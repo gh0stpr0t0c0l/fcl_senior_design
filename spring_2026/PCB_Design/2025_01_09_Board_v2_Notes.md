@@ -1,5 +1,5 @@
 - lm11173.3 power regulator swap
-	- [HT7333-A](https://jlcpcb.com/partdetail/HoltekSemicon-HT7333A/C21583)
+	- [HT7533-1](https://jlcpcb.com/partdetail/HoltekSemicon-HT75331/C14289)
 - Move bottom ToF for velcro?
 - Knock down the green pwr LED brightness
 - Swap R13 for a 50K for 1/3 voltage divider
