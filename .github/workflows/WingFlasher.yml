@@ -57,14 +57,25 @@ jobs:
         with:
           path: release-assets
 
-      - name: Zip artifacts for release
+      - name: Rename artifacts nicely
         run: |
-          cd release-assets
-          zip -r ../wingflasher-builds.zip .
+          mkdir final
+
+          # Windows
+          cp release-assets/wingflasher-windows-latest/* final/WingFlasher-Windows.exe || true
+
+          # Linux
+          cp release-assets/wingflasher-ubuntu-latest/* final/WingFlasher-Linux || true
+
+          # macOS
+          cp release-assets/wingflasher-macos-latest/* final/WingFlasher-macOS || true
 
       - name: Create or update release
         uses: softprops/action-gh-release@v2
         with:
-          files: wingflasher-builds.zip
+          files: |
+            final/WingFlasher-Windows.exe
+            final/WingFlasher-Linux
+            final/WingFlasher-macOS
           generate_release_notes: true
           tag_name: ${{ github.ref_name }}
