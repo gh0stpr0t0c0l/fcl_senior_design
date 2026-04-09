@@ -1,4 +1,14 @@
+## WingFlasher Build Notes
+
+PyInstaller builds are not cross-platform. Build the Windows binary on Windows, the Linux binary on Linux, and the macOS binary on macOS.
+
+- Windows: `dist/WingFlasher.exe`
+- Linux: `dist/WingFlasher`
+- macOS: `dist/WingFlasher`
+
 To build the app with PyInstaller using `uv`, first sync dependencies:
+
+**UPDATE ".python-version" WITH YOUR PYTHON VERSION**
 
 ``` bash
 uv sync --group dev
