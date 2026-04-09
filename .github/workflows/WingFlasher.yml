@@ -1,10 +1,13 @@
-name: Build WingFlasher
+name: Build and Publish WingFlasher
 
 on:
   workflow_dispatch:
   push:
     tags:
       - "v*"
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -36,8 +39,30 @@ jobs:
         working-directory: desktop_app/wingfeather_app
         run: uv run pyinstaller WingFlasher.spec --noconfirm
 
-      - name: Upload artifact
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: wingflasher-${{ matrix.os }}
           path: desktop_app/wingfeather_app/dist/
+
+  release:
+    name: Publish GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+
+      - name: Zip artifacts for release
+        run: |
+          cd release-assets
+          zip -r ../wingflasher-builds.zip .
+
+      - name: Create or update release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: wingflasher-builds.zip
+          generate_release_notes: true
