@@ -3,5 +3,5 @@ A space to plan and execute work on the Feedback Controls Lab senior design proj
 
 ## Desktop Flasher App Downloads
 
-- [Latest Release](https://github.com/OWNER/REPO/releases/latest)
-- [All Releases](https://github.com/OWNER/REPO/releases)
+- [Latest Release](https://github.com/gh0stpr0t0c0l/fcl_senior_design/releases/latest)
+- [All Releases](https://github.com/gh0stpr0t0c0l/fcl_senior_design/releases)
