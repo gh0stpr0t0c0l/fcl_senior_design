@@ -57,6 +57,10 @@ static struct {
 #define DEFAULT_IDLE_THRUST 0
 #endif
 
+#ifndef CORRECTION_CONST
+#define CORRECTION_CONST 0.8//set to 1 for no correction
+#endif
+
 static uint32_t idleThrust = DEFAULT_IDLE_THRUST;
 
 void powerDistributionInit(void)
@@ -88,10 +92,10 @@ void powerDistribution(const control_t *control)
   #ifdef QUAD_FORMATION_X
     int16_t r = control->roll / 2.0f;
     int16_t p = control->pitch / 2.0f;
-    motorPower.m1 = limitThrust(control->thrust - r + p + control->yaw);
+    motorPower.m1 = limitThrust(control->thrust - r + p + control->yaw)*CORRECTION_CONST;//Motor to adjust
     motorPower.m2 = limitThrust(control->thrust - r - p - control->yaw);
     motorPower.m3 =  limitThrust(control->thrust + r - p + control->yaw);
-    motorPower.m4 =  limitThrust(control->thrust + r + p - control->yaw);
+    motorPower.m4 =  limitThrust(control->thrust + r + p - control->yaw)*CORRECTION_CONST;//Motor to adjust
   #else // QUAD_FORMATION_NORMAL
     motorPower.m1 = limitThrust(control->thrust + control->pitch +
                                control->yaw);
