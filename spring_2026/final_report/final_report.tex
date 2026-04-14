@@ -5,9 +5,9 @@
 
 %\usepackage{hyperref}
 
-\title{\Huge Feedback Controls Fall Final Design Report \\ \normalsize{EGEE 4810 - Senior Design}}
+\title{\Huge Feedback Controls Spring Final Design Report \\ \normalsize{EGEE 4810 - Senior Design}}
 \author{by \\ \Large TEAM WINGFEATHER \\ Aydan Vissing \\ Brady Schick \\ Gabriel Southwell \\ Simon Ross}
-\date{\footnotesize{Due} \\ \normalsize{December 12, 2025}}
+\date{\footnotesize{Due} \\ \normalsize{April 29, 2026}}
 
 
 %\setlength{\topmargin}{-.25in}
@@ -44,7 +44,7 @@ This project seeks to redefine the Cedarville Feedback Controls Laboratory exper
 
 The current lab experience for EGME-4660 uses the Feedback Analogue Unit 33-110 and the Feedback Mechanical Unit 33-100. Although the labs using the equipment do cover the desired content, they are often tedious and perhaps confusing to new users, especially users unfamiliar with Feedback Controls concepts. The user interface to conduct the experiments is a circuit board with nodes and banana plug cords. The user can connect these nodes to create feedback circuits whose effect is then shown using the mechanical unit. As mentioned, understanding what is happening between the units (and even in the electrical circuits) can be challenging for students. This causes the applications of the class material to  seem boring and irrelevant, especially for mechanical engineering students who may not have extensive electronics background. In addition, the equipment is old and fragile - adjusting the power supply or wiring the power incorrectly can result in damage to the equipment, often requiring parts to be replaced. Since the equipment is out of production and thus quite expensive, the current repair method has been de-soldering and soldering components by hand. We plan to improve the lab experience by replacing the current equipment with cheap and robust drones that can be reprogrammed for the purposes of the lab with a user-friendly interface. In this way, the instructor can choose the complexity of the tasks given to students for the lab.
 
-\section{Objectives}
+\section{Objectives Revisited}
 \subsection{Marketing Requirements}
 
 The following requirements define the end user experience as desired by the customer:
@@ -105,7 +105,13 @@ The following requirements define the end user experience as desired by the cust
   \item The final laboratory experience must not use MATLAB.
 \end{itemize}
 
-\section{Engineering Design}
+\section{Engineering Design revisited}
+\subsection{Hardware}
+\subsubsection{Frame Design}
+\subsubsection{PCB Design}
+\subsection{Software}
+\subsubsection{Components}
+\subsection{Controls}
 The sections below outline major design decisions that have been made over the past semester in the areas of software, hardware, and controls. Also included are some future plans for development in these areas.
 
 \subsection{Hardware}
@@ -248,12 +254,6 @@ The sections below outline major design decisions that have been made over the p
 \subsection{Controls}
 \begin{enumerate}
 		\item Non-Linear Model
-		\begin{figure}[htbp]
-    			\centering
-    			\includegraphics[width=0.9\textwidth]{ControlsFlowchart}
-    			\caption{Control Loop for Quad-copter Flight}
-    			\label{fig:myimage}
-		\end{figure}
 		\begin{itemize}
 			\item Fully defines how the drone will be controlled in software using PID controllers.
 			\item PID controllers were used for their simplicity and their widespread use in controls fields
@@ -271,28 +271,16 @@ The sections below outline major design decisions that have been made over the p
 		\end{itemize}
 \end{enumerate}
 
-\section{Project Schedule}
-Figure 2 below shows an up-to-date version of our project schedule. Dates over semester 1 are the events that have taken place while the second semester remains notional. Up to this point, the project has remained incredibly close to the proposed schedule, as can be seen by comparing this report with our proposal. 
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=5.7in]{../gantt/gantt_2_0.png}
-  \caption{Project Gantt Chart Schedule}
-  \label{fig:gantt}
-\end{figure}
-
-
 \section{Project Summary}
 
-\subsection{Current Progress}
+\subsection{Final Results}
+
+\subsection{Challenges Overcome}
+
 
 As of now, we have a fully designed PCB, an almost fully designed drone frame, and the majority of the parts needed to assemble the quadcopter. A lot of the work has also been done in setting up the drone firmware and designing the flight controls. Moving forward, we plan to assemble the drone and finish up the firmware and controls. Then, we will be able to move on to controller tuning, lab design, and setting up the desktop application.
 
-\subsection{Milestones}
-
-\subsubsection[October 3, 2025]{Milestone 1: October 3, 2025} By this date, we selected and ordered all of the components needed to construct a prototype drone (using perfboard instead of a PCB) by this date. Additionally, this time was spent researching open source software options for working with the selected components. 
-
-\subsubsection[November 14, 2025]{Milestone 2: November 14, 2025} This milestone was modified part of the way into the semester as recommended by Dr. Kohl and Dr. Fredette - instead of having a hardware prototype, we instead produced a fully designed PCB and ordered it. This way we can use winter break to debug the PCB for the beginning of next semester.
+\subsection{Future Potential}
 
 \subsection{Budget}
 The budget below describes how we intend to use funds in constructing a prototype. Under this paradigm, we will be far under our proposed budget of \$600. However, this budget does not account for mistakes in prototyping and drastic changes to the program. This budget is up to date with what we have spent on each component so far.
