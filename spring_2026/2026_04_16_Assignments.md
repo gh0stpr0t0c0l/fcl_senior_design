@@ -41,8 +41,6 @@
     - Troubleshooting guides (REQUIRED to some extent)
 ### Hours Log and Weekly Reports
 - Submit final hours logs and weekly reports (preferably before Monday afternoon)
-### Video
-- Complete before Apr 28
 
 ## Aydan
 ### Presentation
@@ -87,6 +85,8 @@
     - Troubleshooting guides (REQUIRED to some extent)
 ### Hours Log and Weekly Reports
 - Submit final hours logs and weekly reports (preferably before Monday afternoon)
+### Other
+- Update README.md for print files (if nothing else with a link to the user manual)
 
 ## Gabe
 ### Presentation
